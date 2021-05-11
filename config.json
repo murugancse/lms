@@ -1,0 +1,13 @@
+{
+  "version": "2.1.2",
+  "release_date": "04/05/2021",
+  "migrations": [
+    "Modules/ModuleManager/Database/Migrations/2021_04_22_112935_AddChatModule.php",
+    "Modules/CourseSetting/Database/Migrations/2021_05_04_154252_AddSubscriptionListColumn.php",
+    "database/migrations/2021_04_29_104655_add_column_subscription.php",
+    "database/migrations/2021_05_04_110437_add_user_table_couse_subscription_column.php",
+    "database/migrations/2021_04_28_103019_add_free_module2.php"
+  ],
+  "url": "https://spondonit.com/contact",
+  "notes": "This is a bug fixing, design improve, new feature added."
+}
