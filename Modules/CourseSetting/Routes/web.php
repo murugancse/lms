@@ -57,6 +57,12 @@ Route::group(['prefix' => 'admin/course', 'middleware' => ['auth', 'admin']], fu
     Route::get('/publishCourse/{id}', 'CourseSettingController@publishCourse')->name('publishCourse');
     Route::post('/courseStatus', 'CourseSettingController@courseStatus')->name('AdminCourseStatus')->middleware('RoutePermissionCheck:course.status_update');
 
+    //Manage Batches
+    Route::get('/batches', 'CourseSettingController@getAllBatch')->name('getAllBatch');
+    Route::post('course-batches/store', 'CourseSettingController@BatchStore')->name('batch.store');
+    Route::post('course-batches/update', 'CourseSettingController@BatchUpdate')->name('batch.update');
+    Route::get('course-batches/edit/{id}', 'CourseSettingController@BatchEdit')->name('batch.edit');
+    Route::get('course-batches/delete/{id}', 'CourseSettingController@BatchDelete')->name('batch.delete');
 
     Route::get('/getEnroll/{id}', 'CourseSettingController@getEnroll')->name('getEnroll');
     Route::post('/rejectEnroll', 'CourseSettingController@rejectEnroll')->name('rejectEnroll');

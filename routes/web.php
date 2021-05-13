@@ -305,6 +305,9 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'course', 'as' => 'course.', '
     Route::get('sub-categories/delete/{id}', 'CourseController@sub_category_delete')->name('subcategory.delete')->middleware('RoutePermissionCheck:course.subcategory.delete');
 
 
+    //Manage Batches
+    //Route::get('batches', 'CourseController@getAllBatch')->name('getAllBatch');
+    //->middleware('RoutePermissionCheck:getAllBatch');
 });
 Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('profile-settings', 'UserController@changePassword')->name('changePassword');

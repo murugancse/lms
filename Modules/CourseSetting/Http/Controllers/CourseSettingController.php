@@ -24,6 +24,7 @@ use Modules\CourseSetting\Entities\CourseExercise;
 use Modules\CourseSetting\Entities\CourseLevel;
 use Modules\CourseSetting\Entities\Lesson;
 use Modules\CourseSetting\Entities\SubCategory;
+use Modules\CourseSetting\Entities\Batch;
 use Modules\Localization\Entities\Language;
 use Modules\Newsletter\Http\Controllers\GetResponseController;
 use Modules\Newsletter\Http\Controllers\MailchimpController;
@@ -32,6 +33,7 @@ use Modules\Quiz\Entities\OnlineQuiz;
 use Modules\Setting\Model\GeneralSetting;
 use Modules\SystemSetting\Entities\GeneralSettings;
 use Vimeo\Laravel\Facades\Vimeo;
+use Illuminate\Support\Facades\Validator;
 
 
 class CourseSettingController extends Controller
@@ -991,5 +993,129 @@ class CourseSettingController extends Controller
 
         Toastr::success(trans('common.Operation successful'), trans('common.Success'));
         return redirect()->back();
+    }
+    public function getAllBatch()
+    {
+        $query = Batch::with('course');
+        if (isInstructor()) {
+            $query->where('user_id', '=', Auth::id());
+        }
+        $batches = $query->orderBy('id', 'desc')->get();
+        $getsmSetting = GeneralSetting::leftjoin('currencies', 'currencies.id', '=', 'general_settings.currency_id')->first();
+        $courses = Course::get();
+        $languages = Language::select('id', 'native', 'code')
+            ->where('status', '=', 1)
+            ->get();
+        $title = 'All Batches';
+
+        $sub_lists = $this->getSubscriptionList();
+        return view('coursesetting::batches', compact('sub_lists', 'title', 'batches', 'courses', 'getsmSetting', 'languages'));
+    }
+    public function BatchStore(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'batch_name' => 'required|max:255',
+            'course_id' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $is_exist = Batch::where('course_id', $request->course_id)->where('batch_name', $request->batch_name)->first();
+        if ($is_exist) {
+            Toastr::error('This name has been already taken', 'Failed');
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+
+        try {
+            DB::beginTransaction();
+            $batch = new Batch;
+            $batch->batch_name = $request->batch_name;
+            $batch->status = $request->status;
+            $batch->course_id = $request->course_id;
+            $batch->start_date = $request->start_date;
+            $batch->end_date = $request->end_date;
+            $batch->batch_location = $request->batch_location;
+            $batch->save();
+            DB::commit();
+            Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+            return redirect()->back();
+        } catch (\Exception $e) {
+            Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+            return redirect()->back();
+        }
+    }
+
+    public function BatchEdit($id)
+    {
+        try {
+            $batches = Batch::all();
+            $edit = Batch::where('id', $id)->with('course')->first();
+            $courses = Course::orderBy('id', 'asc')->get();
+            $sub_lists = $this->getSubscriptionList();
+            $title = 'Edit Batch';
+            return view('coursesetting::batches', compact('sub_lists', 'title', 'batches', 'courses', 'edit'));
+        } catch (\Exception $e) {
+            Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+            return redirect()->back();
+        }
+    }
+
+    public function BatchUpdate(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'batch_name' => 'required|max:255',
+            'course_id' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $is_exist = Batch::where('course_id', $request->course_id)->where('batch_name', $request->batch_name)->where('id', '!=', $request->id)->first();
+        if ($is_exist) {
+            Toastr::error('This name has been already taken', 'Failed');
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+
+        try {
+            $batch = Batch::find($request->id);
+            $batch->batch_name = $request->batch_name;
+            $batch->status = $request->status;
+            $batch->course_id = $request->course_id;
+            $batch->start_date = $request->start_date;
+            $batch->end_date = $request->end_date;
+            $batch->batch_location = $request->batch_location;
+            $results = $batch->save();
+            if ($results) {
+                Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+                return redirect()->back();
+            } else {
+                Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+                return redirect()->back();
+            }
+
+        } catch (\Exception $e) {
+            //  dd($e->getMessage());
+            Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+            return redirect()->back();
+        }
+    }
+    public function BatchDelete($id)
+    {
+        try {
+            $result = Batch::find($id)->delete();
+            Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+            return redirect()->back();
+        } catch (\Exception $e) {
+            Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+            return redirect()->back();
+        }
+
     }
 }
