@@ -81,6 +81,9 @@
                     <li>
                         <a href="{{ route('getAllBatch') }}">Batches</a>
                     </li>
+                    <li>
+                        <a href="{{ route('getAllExam') }}">Exams</a>
+                    </li>
                     @endif
                 </ul>
             </li>

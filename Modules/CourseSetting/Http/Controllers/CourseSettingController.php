@@ -25,6 +25,7 @@ use Modules\CourseSetting\Entities\CourseLevel;
 use Modules\CourseSetting\Entities\Lesson;
 use Modules\CourseSetting\Entities\SubCategory;
 use Modules\CourseSetting\Entities\Batch;
+use Modules\CourseSetting\Entities\BatchExam;
 use Modules\Localization\Entities\Language;
 use Modules\Newsletter\Http\Controllers\GetResponseController;
 use Modules\Newsletter\Http\Controllers\MailchimpController;
@@ -997,9 +998,9 @@ class CourseSettingController extends Controller
     public function getAllBatch()
     {
         $query = Batch::with('course');
-        if (isInstructor()) {
-            $query->where('user_id', '=', Auth::id());
-        }
+        // if (isInstructor()) {
+        //     $query->where('user_id', '=', Auth::id());
+        // }
         $batches = $query->orderBy('id', 'desc')->get();
         $getsmSetting = GeneralSetting::leftjoin('currencies', 'currencies.id', '=', 'general_settings.currency_id')->first();
         $courses = Course::get();
@@ -1110,6 +1111,150 @@ class CourseSettingController extends Controller
     {
         try {
             $result = Batch::find($id)->delete();
+            Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+            return redirect()->back();
+        } catch (\Exception $e) {
+            Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+            return redirect()->back();
+        }
+
+    }
+    public function getAllExam()
+    {
+        $query = BatchExam::with('batch');
+        
+        $exams = $query->orderBy('id', 'desc')->get();
+        $getsmSetting = GeneralSetting::leftjoin('currencies', 'currencies.id', '=', 'general_settings.currency_id')->first();
+        $batches = Batch::with('course')->get();
+        $courses = Course::get();
+        $languages = Language::select('id', 'native', 'code')
+            ->where('status', '=', 1)
+            ->get();
+        $title = 'All Exams';
+        $students = User::where('role_id', 3)->get();
+        $batcheslist = [];
+
+        $sub_lists = $this->getSubscriptionList();
+        return view('coursesetting::exams', compact('sub_lists','exams', 'title', 'batcheslist', 'courses', 'getsmSetting', 'languages','students'));
+    }
+    public function ajaxGetCourseBatch(Request $request)
+    {
+        try {
+            $batches = Batch::where('course_id', '=', $request->id)->get();
+
+            return response()->json([$batches]);
+        } catch (Exception $e) {
+            return response()->json("", 404);
+        }
+    }
+
+    public function ExamStore(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'course_id' => 'required',
+            'batch_id' => 'required',
+            'user_id' => 'required',
+            'exam_date' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            DB::beginTransaction();
+            
+            foreach ($request->user_id as $key => $user_id) {
+                $is_exist = BatchExam::where('batch_id', $request->batch_id)->where('user_id', $user_id)->first();
+                if (!$is_exist) {
+                    $batch = new BatchExam;
+                    $batch->batch_id = $request->batch_id;
+                    $batch->user_id = $user_id;
+                    $batch->status = $request->status;
+                    $batch->exam_date = $request->exam_date;
+
+                    $batch->save();
+                }
+            }
+            
+            DB::commit();
+            Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+            return redirect()->back();
+        } catch (\Exception $e) {
+            Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+            return redirect()->back();
+        }
+    }
+
+    public function ExamEdit($id)
+    {
+        try {
+            $query = BatchExam::with('batch');
+        
+            $exams = $query->orderBy('id', 'desc')->get();
+            $getsmSetting = GeneralSetting::leftjoin('currencies', 'currencies.id', '=', 'general_settings.currency_id')->first();
+            //$batches = Batch::with('course')->where('')->get();
+            
+            $languages = Language::select('id', 'native', 'code')
+                ->where('status', '=', 1)
+                ->get();
+            $students = User::where('role_id', 3)->get();
+
+            $edit = BatchExam::where('id', $id)->with('batch')->first();
+            $batcheslist = Batch::with('course')->where('course_id',$edit->batch->course_id)->get();
+            $courses = Course::get();
+            $sub_lists = $this->getSubscriptionList();
+            $title = 'Edit Exams';
+            return view('coursesetting::exams', compact('sub_lists','exams', 'title', 'courses', 'edit','students','batcheslist'));
+        } catch (\Exception $e) {
+            Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+            return redirect()->back();
+        }
+    }
+
+    public function ExamUpdate(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'course_id' => 'required',
+            'batch_id' => 'required',
+            'user_id' => 'required',
+            'exam_date' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $is_exist = BatchExam::where('batch_id', $request->batch_id)->where('user_id', $request->user_id)->where('id', '!=', $request->id)->first();
+        if ($is_exist) {
+            Toastr::error('This user has been already taken for this course', 'Failed');
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+        try {
+            $batch = BatchExam::find($request->id);
+            $batch->batch_id = $request->batch_id;
+            $batch->user_id = $request->user_id[0];
+            $batch->status = $request->status;
+            $batch->exam_date = $request->exam_date;
+            $results = $batch->save();
+            if ($results) {
+                Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+                return redirect()->back();
+            } else {
+                Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+                return redirect()->back();
+            }
+
+        } catch (\Exception $e) {
+            //  dd($e->getMessage());
+            Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+            return redirect()->back();
+        }
+    }
+    public function ExamDelete($id)
+    {
+        try {
+            $result = BatchExam::find($id)->delete();
             Toastr::success(trans('common.Operation successful'), trans('common.Success'));
             return redirect()->back();
         } catch (\Exception $e) {

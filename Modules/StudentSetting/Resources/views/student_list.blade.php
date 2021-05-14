@@ -50,7 +50,7 @@
                                         <th scope="col">{{__('common.SL')}}</th>
                                         <th scope="col">{{__('common.Image')}}</th>
                                         <th scope="col">{{__('common.Name')}}*</th>
-                                        <th scope="col">{{__('common.RollNo')}}*</th>
+                                        <th scope="col">RollNo*</th>
                                         <th scope="col">{{__('common.Email')}}*</th>
                                         <th scope="col">{{__('common.Status')}}</th>
                                         <th scope="col">{{__('common.Action')}}</th>

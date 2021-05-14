@@ -17,6 +17,7 @@ Route::group(['prefix' => 'admin/course', 'middleware' => ['auth', 'admin']], fu
 
     //Get Course Subcategory
     Route::get('/ajaxGetCourseSubCategory', 'CourseSettingController@ajaxGetCourseSubCategory');
+    Route::get('/ajax_get_course_batch', 'CourseSettingController@ajaxGetCourseBatch');
 
     //Manage Category
     Route::get('/messages', 'CourseSettingController@toastrMessages')->name('toastrMessages');
@@ -63,6 +64,14 @@ Route::group(['prefix' => 'admin/course', 'middleware' => ['auth', 'admin']], fu
     Route::post('course-batches/update', 'CourseSettingController@BatchUpdate')->name('batch.update');
     Route::get('course-batches/edit/{id}', 'CourseSettingController@BatchEdit')->name('batch.edit');
     Route::get('course-batches/delete/{id}', 'CourseSettingController@BatchDelete')->name('batch.delete');
+
+    //Manage Exams
+   
+    Route::get('/exams', 'CourseSettingController@getAllExam')->name('getAllExam');
+    Route::post('batch-exams/store', 'CourseSettingController@ExamStore')->name('exam.store');
+    Route::post('batch-exams/update', 'CourseSettingController@ExamUpdate')->name('exam.update');
+    Route::get('batch-exams/edit/{id}', 'CourseSettingController@ExamEdit')->name('exam.edit');
+    Route::get('batch-exams/delete/{id}', 'CourseSettingController@ExamDelete')->name('exam.delete');
 
     Route::get('/getEnroll/{id}', 'CourseSettingController@getEnroll')->name('getEnroll');
     Route::post('/rejectEnroll', 'CourseSettingController@rejectEnroll')->name('rejectEnroll');
