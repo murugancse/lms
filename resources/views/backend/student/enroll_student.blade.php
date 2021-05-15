@@ -26,6 +26,7 @@
                     <div class="white_box mb_30">
                         <div class="white_box_tittle list_header">
                             <h4>{{__('student.Filter Enroll History')}}</h4>
+                            
                         </div>
                         <form action="{{route('admin.enrollFilter')}}" method="POST">
                             @csrf
@@ -104,7 +105,11 @@
                     <div class="box_header common_table_header">
                         <div class="main-title d-md-flex">
                             <h3 class="mb-0 mr-30 mb_xs_15px mb_sm_20px">{{__('student.Enrolled Student')}} {{__('common.List')}}</h3>
-
+                            <ul class="d-flex">
+                                <li>
+                                    <a class="primary-btn radius_30px mr-10 fix-gr-bg" data-toggle="modal" id="add_student_btn"  data-target="#enrol_student" href="#"><i class="ti-plus"></i>{{__('Enrol Student')}}</a>
+                                </li>
+                            </ul>
                         </div>
 
                     </div>
@@ -120,8 +125,9 @@
                                         <th scope="col">{{__('common.SL')}} </th>
                                         <th scope="col">{{__('common.Image')}} </th>
                                         <th scope="col">{{__('common.Name')}} </th>
-                                        <th scope="col">{{__('common.Email Address')}} </th>
+                                        <!-- <th scope="col">{{__('common.Email Address')}} </th> -->
                                         <th scope="col">{{__('courses.Courses')}} {{__('courses.Enrolled')}}</th>
+                                        <th scope="col">Batch Name</th>
                                         <th scope="col">{{__('courses.Enrollment')}} {{__('common.Date')}} </th>
                                         <th scope="col">{{__('common.Action')}}</th>
                                     </tr>
@@ -140,8 +146,9 @@
                                                 </div>
                                             </td>
                                             <td>{{@$enroll->user->name}}</td>
-                                            <td>{{@$enroll->user->email}}</td>
+                                            <!-- <td>{{@$enroll->user->email}}</td> -->
                                             <td>{{@$enroll->course->title}}</td>
+                                            <td>{{@$enroll->batch->batch_name }}</td>
                                             <td>{{@$enroll->course->dateFormat}}</td>
                                             <td>
                                                 <div class="dropdown CRM_dropdown">
@@ -246,9 +253,148 @@
                     </div>
                 </div>
                 <!-- Add Modal Item_Details -->
+                <!-- Add Modal Item_Details -->
+                <div class="modal fade admin-query" id="enrol_student">
+                    <div class="modal-dialog modal_500px modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Enrol a student</h4>
+                                <button type="button" class="close " data-dismiss="modal">
+                                    <i class="ti-close "></i>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <form action="{{route('enrol.student')}}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col-xl-12">
+                                            <div class="primary_input mb-25">
+                                                <label class="primary_input_label"
+                                                       for="user_id">Student <strong
+                                                        class="text-danger">*</strong></label>
+                                                <select class="primary_select mb-25" name="user_id"
+                                                        id="user_id">
+                                                    @foreach ($students as $key => $student)
+                                                        <option
+                                                            value="{{ @$student->id }}" {{isset($edit)?(@$edit->user_id == @$student->id?'selected':''):''}} >{{ @$student->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-12">
+                                            <div class="primary_input mb-25">
+                                                <label class="primary_input_label"
+                                                       for="course_id">Courses <strong
+                                                        class="text-danger">*</strong></label>
+                                                <select class="primary_select mb-25" name="course_id"
+                                                        id="course_id">
+                                                    <option value='' >Select</option>
+                                                    @foreach ($courses as $key => $c)
+                                                        <option
+                                                            value="{{ @$c->id }}" {{isset($edit)?(@$edit->batch->course->id == @$c->id?'selected':''):''}} >{{ @$c->title }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-12">
+                                            <div id="batch_iddiv" class="primary_input mb-25">
+                                                <label class="primary_input_label"
+                                                       for="batch_id">Batch <strong
+                                                        class="text-danger">*</strong></label>
+                                                <select class="primary_select mb-25" name="batch_id" id="batch_id">
+                                                    
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                   
+                                    <div class="col-lg-12 text-center pt_15">
+                                        <div class="d-flex justify-content-center">
+                                            <button class="primary-btn semi_large2  fix-gr-bg" id="save_button_parent"
+                                                    type="submit"><i
+                                                    class="ti-check"></i> {{__('common.Save')}}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
     @include('backend.partials.delete_modal')
 
 @endsection
+
+@push('scripts')
+    <script>
+        $.ajaxSetup({
+              headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              }
+        });
+        $("#course_id").on("change", function() {
+            var url = "{{url('/')}}";
+            // console.log(url);
+
+            var formData = {
+                id: $(this).val(),
+            };
+            // get section for student
+            $.ajax({
+                type: "GET",
+                data: formData,
+                dataType: "json",
+                url: url + "/" + "admin/course/ajax_get_course_batch",
+                success: function(data) {
+                    var a = "";
+                    $.each(data, function(i, item) {
+                        if (item.length) {
+                            $("#batch_id").find("option").remove();
+                            $("#batch_id ul").find("li").remove();
+                            console.log(item);
+                            $("#batch_id").append(
+                                    $("<option>", {
+                                        value: '',
+                                        text: 'Select',
+                                    })
+                                );
+                                $("#batch_iddiv ul").append(
+                                    "<li data-value='' class='option'> Select </li>"
+                                );
+                            $.each(item, function(i, section) {
+                                $("#batch_id").append(
+                                    $("<option>", {
+                                        value: section.id,
+                                        text: section.batch_name,
+                                    })
+                                );
+
+                                $("#batch_iddiv ul").append(
+                                    "<li data-value='" +
+                                    section.id +
+                                    "' class='option'>" +
+                                    section.batch_name +
+                                    "</li>"
+                                );
+                            });
+                        } else {
+                            $("#batch_id").find("option").remove();
+                            $("#batch_iddiv ul").find("li").remove();
+                        }
+                    });
+                    console.log(a);
+                },
+                error: function(data) {
+                    console.log("Error:", data);
+                },
+            });
+        });
+        
+    </script>
+    
+@endpush

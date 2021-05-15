@@ -106,7 +106,6 @@ Route::group(['prefix' => 'admin/course', 'middleware' => ['auth', 'admin']], fu
     Route::get('/course_chapters/{id}', 'InstructorCourseSettingController@course_chapters')->name('course_chapters');
     Route::post('/deleteFile2', 'InstructorCourseSettingController@deleteFile')->name('deleteFile');
 
-
     Route::resource('course-level', 'CourseLevelController')->except('destroy');
     Route::get('course-level-delete/{id}', 'CourseLevelController@delete')->name('course-level.destroy');
 

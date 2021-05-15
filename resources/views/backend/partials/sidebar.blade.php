@@ -77,7 +77,7 @@
                             <a href="{{ route('getPendingCourse') }}">{{ __('courses.Pending') }} {{ __('courses.Courses') }}</a>
                         </li>
                     @endif
-                    @if (permissionCheck('getAllCourse'))
+                    @if (auth()->user()->role_id==1)
                     <li>
                         <a href="{{ route('getAllBatch') }}">Batches</a>
                     </li>

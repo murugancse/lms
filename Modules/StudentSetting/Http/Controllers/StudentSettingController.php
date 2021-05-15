@@ -10,7 +10,12 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use Modules\CourseSetting\Entities\CourseEnrolled;
+use Modules\CourseSetting\Entities\Course;
+use Illuminate\Support\Facades\Validator;
 use Image;
+
+use DB;
 
 
 class StudentSettingController extends Controller
@@ -226,6 +231,48 @@ class StudentSettingController extends Controller
             Toastr::success($success, 'Success');
             return redirect()->back();
 
+        } catch (\Exception $e) {
+            Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+            return redirect()->back();
+        }
+    }
+
+    public function Enrolstore(Request $request){
+        $validator = Validator::make($request->all(), [
+            'course_id' => 'required',
+            'batch_id' => 'required',
+            'user_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $course = Course::find($request->course_id);
+            $enrolled = $course->total_enrolled;
+            $course->total_enrolled = ($enrolled + 1);
+           // dd($course);
+
+            $enroll = new CourseEnrolled();
+            //$instractor = User::find($cart->instructor_id);
+            $enroll->user_id = $request->user_id;
+            $enroll->tracking = getTrx();
+            $enroll->course_id = $course->id;
+            $enroll->batch_id = $request->batch_id;
+            $enroll->purchase_price = $course->price;
+            $enroll->coupon = null;
+            $enroll->discount_amount = $course->discount_price;
+            $enroll->status = 1;
+            $enroll->reveune = 0;
+            $enroll->save();
+            //dd($enroll);
+            $course->save();
+
+            DB::commit();
+            Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+            return redirect()->back();
         } catch (\Exception $e) {
             Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
             return redirect()->back();

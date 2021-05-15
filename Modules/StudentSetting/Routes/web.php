@@ -8,6 +8,7 @@ Route::group(['prefix' => 'admin/student', 'middleware' => ['auth', 'admin']], f
     Route::post('/update', 'StudentSettingController@update')->name('student.update')->middleware('RoutePermissionCheck:student.edit');
     Route::post('/destroy', 'StudentSettingController@destroy')->name('student.delete')->middleware('RoutePermissionCheck:student.delete');
     Route::get('/status/{id}', 'StudentSettingController@status')->name('student.change_status')->middleware('RoutePermissionCheck:student.enable_disable');
+    Route::post('/enrol_store', 'StudentSettingController@Enrolstore')->name('enrol.student');
 });
 
 

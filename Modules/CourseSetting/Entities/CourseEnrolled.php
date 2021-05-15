@@ -51,4 +51,8 @@ class CourseEnrolled extends Model
         return $this->belongsTo(BillingDetails::class, 'tracking', 'tracking_id')->withDefault();
 
     }
+	public function batch()
+    {
+        return $this->belongsTo(Batch::class, 'batch_id', 'id')->withDefault();
+    }
 }
