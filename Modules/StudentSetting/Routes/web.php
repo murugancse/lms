@@ -9,6 +9,10 @@ Route::group(['prefix' => 'admin/student', 'middleware' => ['auth', 'admin']], f
     Route::post('/destroy', 'StudentSettingController@destroy')->name('student.delete')->middleware('RoutePermissionCheck:student.delete');
     Route::get('/status/{id}', 'StudentSettingController@status')->name('student.change_status')->middleware('RoutePermissionCheck:student.enable_disable');
     Route::post('/enrol_store', 'StudentSettingController@Enrolstore')->name('enrol.student');
+    Route::post('/enrol_update', 'StudentSettingController@EnrolUpdate')->name('enrol.update');
+
+    Route::get('importExportView', 'StudentSettingController@importExportView')->name('student.importview');
+	Route::post('import', 'StudentSettingController@import')->name('import');
 });
 
 

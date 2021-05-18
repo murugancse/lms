@@ -26,6 +26,17 @@
         <div class="container-fluid p-0">
             <div class="row justify-content-center">
                 <div class="col-12">
+                    <ul class="d-flex float-right">
+                        <li><a class="primary-btn radius_30px mr-10 fix-gr-bg" id="add_student_btn" href="{{asset('storage/app/students/sample.xlsx')}}"><i
+                                                class="ti-arrow-down"></i>Download Sample</a></li>
+                        <li><a class="primary-btn radius_30px mr-10 fix-gr-bg" id="add_student_btn" href="{{route('student.importview')}}"><i
+                                                class="ti-arrow-up"></i>Upload</a></li>
+                    </ul>
+                    <br>
+                    <br>
+                </div>
+
+                <div class="col-12">
                     <div class="box_header common_table_header">
                         <div class="main-title d-md-flex">
                             <h3 class="mb-0 mr-30 mb_xs_15px mb_sm_20px">{{__('student.Students List')}}</h3>

@@ -14,6 +14,9 @@ use Modules\CourseSetting\Entities\CourseEnrolled;
 use Modules\CourseSetting\Entities\Course;
 use Illuminate\Support\Facades\Validator;
 use Image;
+use Maatwebsite\Excel\Facades\Excel;
+
+use App\Imports\StudentsImport;
 
 use DB;
 
@@ -25,7 +28,7 @@ class StudentSettingController extends Controller
     public function index()
     {
         try {
-            $students = User::where('role_id', 3)->latest()->paginate(15);
+            $students = User::where('role_id', 3)->latest()->get();
 
             return view('studentsetting::student_list', compact('students'));
 
@@ -279,5 +282,52 @@ class StudentSettingController extends Controller
         }
     }
 
+    public function EnrolUpdate(Request $request){
 
+        $validator = Validator::make($request->all(), [
+            'editbatch_id' => 'required',
+            'editcourse_id' => 'required',
+            'edituser_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $course = Course::find($request->course_id);
+           
+            $enroll = CourseEnrolled::find($request->auto_id);
+            //$instractor = User::find($cart->instructor_id);
+            $enroll->user_id = $request->edituser_id;
+            $enroll->course_id = $request->editcourse_id;
+            $enroll->batch_id = $request->editbatch_id;
+            $enroll->status = 1;
+            $enroll->save();
+
+            DB::commit();
+            Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+            return redirect()->back();
+        } catch (\Exception $e) {
+            Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+            return redirect()->back();
+        }
+    }
+
+    public function importExportView()
+    {
+       return view('studentsetting::import');
+    }
+
+    /**
+    * @return \Illuminate\Support\Collection
+    */
+    public function import() 
+    {
+        Excel::import(new StudentsImport,request()->file('file'));
+         
+        Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+        return redirect()->back();
+    }
 }

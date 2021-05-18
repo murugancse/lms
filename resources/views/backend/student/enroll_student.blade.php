@@ -138,6 +138,17 @@
                                         <tr>
 
                                             <th>{{$key+1}}</th>
+                                            @php
+                                                $dataone = new \stdClass();
+
+                                                $dataone->enrol = $enroll;
+                                                
+                                               $course = $enroll->course;
+                                               $batch = Modules\CourseSetting\Entities\Course::find($enroll->course_id);
+                                               //$enroll['batches'] = $batch->batches;
+                                               $dataone->batches = $batch->batches;
+                                               //dd(gettype($dataone));
+                                            @endphp
 
                                             <td>
                                                 <div class="profile_info">
@@ -160,7 +171,9 @@
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-right"
                                                          aria-labelledby="dropdownMenu2">
-
+                                                            <button data-item="{{json_encode($dataone,TRUE)}}"  data-toggle="modal" data-target="#edit_student"
+                                                                    class="dropdown-item edit_student"
+                                                                    type="button">{{__('common.Edit')}}</button>
                                                         @if (permissionCheck('admin.enrollDelete'))
                                                             <a onclick="confirm_modal('{{route('admin.enrollDelete', $enroll->id)}}');"
                                                                class="dropdown-item edit_brand">{{__('common.Delete')}}</a>
@@ -323,6 +336,78 @@
                         </div>
                     </div>
                 </div>
+
+
+                <div class="modal fade admin-query" id="edit_student">
+                    <div class="modal-dialog modal_500px modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Update student</h4>
+                                <button type="button" class="close " data-dismiss="modal">
+                                    <i class="ti-close "></i>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <form action="{{route('enrol.update')}}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col-xl-12">
+                                            <div class="primary_input mb-25">
+                                                <input type="hidden" name="auto_id" id="auto_id"/>
+                                                <label class="primary_input_label"
+                                                       for="edituser_id">Student <strong
+                                                        class="text-danger">*</strong></label>
+                                                <select class="primary_select mb-25" name="edituser_id"
+                                                        id="edituser_id">
+                                                    @foreach ($students as $key => $student)
+                                                        <option
+                                                            value="{{ @$student->id }}" {{isset($edit)?(@$edit->user_id == @$student->id?'selected':''):''}} >{{ @$student->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-12">
+                                            <div class="primary_input mb-25">
+                                                <label class="primary_input_label"
+                                                       for="editcourse_id">Courses <strong
+                                                        class="text-danger">*</strong></label>
+                                                <select class="primary_select mb-25" name="editcourse_id"
+                                                        id="editcourse_id">
+                                                    <option value='' >Select</option>
+                                                    @foreach ($courses as $key => $c)
+                                                        <option
+                                                            value="{{ @$c->id }}" {{isset($edit)?(@$edit->batch->course->id == @$c->id?'selected':''):''}} >{{ @$c->title }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-12">
+                                            <div id="editbatch_iddiv" class="primary_input mb-25">
+                                                <label class="primary_input_label"
+                                                       for="editbatch_id">Batch <strong
+                                                        class="text-danger">*</strong></label>
+                                                <select class="primary_select mb-25" name="editbatch_id" id="editbatch_id">
+                                                    
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                   
+                                    <div class="col-lg-12 text-center pt_15">
+                                        <div class="d-flex justify-content-center">
+                                            <button class="primary-btn semi_large2  fix-gr-bg" id="save_button_parent"
+                                                    type="submit"><i
+                                                    class="ti-check"></i> {{__('common.Save')}}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -394,7 +479,129 @@
                 },
             });
         });
+        $("#editcourse_id").on("change", function() {
+            var url = "{{url('/')}}";
+            // console.log(url);
+
+            var formData = {
+                id: $(this).val(),
+            };
+            // get section for student
+            $.ajax({
+                type: "GET",
+                data: formData,
+                dataType: "json",
+                url: url + "/" + "admin/course/ajax_get_course_batch",
+                success: function(data) {
+                    var a = "";
+                    $.each(data, function(i, item) {
+                        if (item.length) {
+                            $("#editbatch_id").find("option").remove();
+                            $("#editbatch_id ul").find("li").remove();
+                            console.log(item);
+                            $("#editbatch_id").append(
+                                    $("<option>", {
+                                        value: '',
+                                        text: 'Select',
+                                    })
+                                );
+                                $("#editbatch_iddiv ul").append(
+                                    "<li data-value='' class='option'> Select </li>"
+                                );
+                            $.each(item, function(i, section) {
+                                $("#editbatch_id").append(
+                                    $("<option>", {
+                                        value: section.id,
+                                        text: section.batch_name,
+                                    })
+                                );
+
+                                $("#editbatch_iddiv ul").append(
+                                    "<li data-value='" +
+                                    section.id +
+                                    "' class='option'>" +
+                                    section.batch_name +
+                                    "</li>"
+                                );
+                            });
+                        } else {
+                            $("#editbatch_id").find("option").remove();
+                            $("#editbatch_iddiv ul").find("li").remove();
+                        }
+                    });
+                    console.log(a);
+                },
+                error: function(data) {
+                    console.log("Error:", data);
+                },
+            });
+        });
         
     </script>
     
+@endpush
+@push('scripts')
+    <script type="text/javascript">
+        $(document).on('click', '.edit_student', function () {
+
+            let studentObj = $(this).data('item');
+            //var studentObj = JSON.parse(Obj);
+            console.log(studentObj);
+
+            student = studentObj.enrol;
+            batches = studentObj.batches;
+
+            $("#editbatch_id").find("option").remove();
+            $("#editbatch_iddiv ul").find("li").remove();
+
+            $("#editbatch_id").append(
+                $("<option>", {
+                    value: '',
+                    text: 'Select',
+                })
+            );
+            $("#editbatch_iddiv ul").append(
+                "<li data-value='' class='option'> Select </li>"
+            );
+            if(batches.length>0){
+
+                $.each(batches, function(i, item) {
+                    
+                    $("#editbatch_id").find("option").remove();
+                    $("#editbatch_id ul").find("li").remove();
+                    
+                    $("#editbatch_id").append(
+                        $("<option>", {
+                            value: item.id,
+                            text: item.batch_name,
+                        })
+                    );
+
+                    $("#editbatch_iddiv ul").append(
+                        "<li data-value='" +
+                        item.id +
+                        "' class='option'>" +
+                        item.batch_name +
+                        "</li>"
+                    );
+            
+                });
+
+            }
+            console.log(student);
+            $('#auto_id').val(student.id);
+            $('#edituser_id').val(student.user_id).niceSelect('update');
+
+
+            //$('#edituser_id').val(student.user_id);
+            $('#editcourse_id').val(student.course_id).niceSelect('update');
+            if(student.batch_id!=0){
+                $('#editbatch_id').val(student.batch_id).niceSelect('update');
+            }
+            
+            $("#editStudent").modal('show');
+
+        });
+    </script>
+ 
 @endpush
