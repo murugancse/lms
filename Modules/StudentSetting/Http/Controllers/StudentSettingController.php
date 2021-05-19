@@ -161,7 +161,7 @@ class StudentSettingController extends Controller
             'name' => 'required',
             'nric' => 'required',
             'phone' => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:11|unique:users,phone,' . $request->id,
-            'roll_number' => 'required|unique:users,roll_number',
+            'roll_number' => 'required|unique:users,roll_number,' . $request->id,
             'email' => 'required|email|unique:users,email,' . $request->id,
             'password' => 'bail|nullable|min:8|confirmed',
 
