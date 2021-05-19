@@ -59,28 +59,49 @@
                                     <thead>
                                     <tr>
                                         <th scope="col">{{__('common.SL')}}</th>
-                                        <th scope="col">{{__('common.Image')}}</th>
+                                        <!-- <th scope="col">{{__('common.Image')}}</th> -->
                                         <th scope="col">{{__('common.Name')}}*</th>
                                         <th scope="col">RollNo*</th>
                                         <th scope="col">{{__('common.Email')}}*</th>
+                                        <!-- <th scope="col">NRIC*</th> -->
+                                        <th width="30%" scope="col">Courses</th>
                                         <th scope="col">{{__('common.Status')}}</th>
                                         <th scope="col">{{__('common.Action')}}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     @foreach ($students as $key => $student)
+                                        @php
+                                            $courses = $student->enrollCourse;
+                
+                                        @endphp
                                         <tr>
                                             <th>{{$key+1}}</th>
-                                            <td>
+                                            <!-- <td>
                                                 <div class="profile_info">
                                                     <img src="{{getStudentImage($student->image)}}"
                                                          alt="{{@$student->name}}'s image">
                                                 </div>
-                                            </td>
+                                            </td> -->
                                             <td>{{@$student->name}}</td>
                                             <td>{{@$student->roll_number}}</td>
                                             <td>{{@$student->email}}</td>
+                                            <!-- <td>{{@$student->nric}}</td> -->
+                                            <td>
+                                                <ul>
+                                                    
+                                               
+                                                @foreach($courses as $course)
+                                                <li style="list-style-type: circle;"> {{$course->title}}</li>
+                                                  
+                                                @endforeach
+                                                 </ul>
+                                            </td>
                                             <td class="nowrap">
+                                                <span id="spanstatus{{@$student->id }}">
+                                                    @if (@$student->status == 1) Active @else Inactive @endif 
+                                                </span> 
+                                                <br>
                                                 <label class="switch_toggle" for="active_checkbox{{@$student->id }}">
                                                     <input type="checkbox"
                                                            class="@if (permissionCheck('student.change_status')) status_enable_disable @endif "
@@ -139,7 +160,7 @@
                                 <form action="{{route('student.store')}}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <div class="row">
-                                        <div class="col-xl-8">
+                                        <div class="col-xl-12">
                                             <div class="primary_input mb-25">
                                                 <label class="primary_input_label" for="">{{__('common.Name')}} <strong
                                                         class="text-danger">*</strong></label>
@@ -148,9 +169,21 @@
                                                        value="{{ old('name') }}" {{$errors->first('name') ? 'autofocus' : ''}}>
                                             </div>
                                         </div>
-                                        <div class="col-xl-4">
+                                       
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xl-6">
                                             <div class="primary_input mb-25">
-                                                <label class="primary_input_label" for="">{{__('common.RollNo')}} <strong
+                                                <label class="primary_input_label" for="">{{__('NRIC')}} <strong
+                                                        class="text-danger">*</strong></label>
+                                                <input class="primary_input_field" name="nric" placeholder="-"
+                                                       type="text" id="addNRIC"
+                                                       value="{{ old('nric') }}" {{$errors->first('nric') ? 'autofocus' : ''}}>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <div class="primary_input mb-25">
+                                                <label class="primary_input_label" for="">{{__('RollNo')}} <strong
                                                         class="text-danger">*</strong></label>
                                                 <input class="primary_input_field" name="roll_number" placeholder="-"
                                                        type="text" id="roll_number" value="{{ old('roll_number') }}" {{$errors->first('roll_number') ? 'autofocus' : ''}}>
@@ -337,7 +370,7 @@
                                     @csrf
                                     <input type="hidden" name="id" value="{{old('id')}}" id="studentId">
                                     <div class="row">
-                                        <div class="col-xl-8">
+                                        <div class="col-xl-12">
                                             <div class="primary_input mb-25">
                                                 <label class="primary_input_label"
                                                        for="">{{__('common.Name')}} <strong
@@ -348,9 +381,21 @@
                                                        type="text" {{$errors->first('name') ? 'autofocus' : ''}}>
                                             </div>
                                         </div>
-                                        <div class="col-xl-4">
+
+                                    </div>
+                                    <div class="row">
+                                         <div class="col-xl-6">
                                             <div class="primary_input mb-25">
-                                                <label class="primary_input_label" for="">{{__('common.RollNo')}} <strong
+                                                <label class="primary_input_label" for="">{{__('NRIC')}} <strong
+                                                        class="text-danger">*</strong></label>
+                                                <input class="primary_input_field" name="nric" placeholder="-"
+                                                       type="text" id="editNRIC"
+                                                       value="{{ old('nric') }}" {{$errors->first('nric') ? 'autofocus' : ''}}>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <div class="primary_input mb-25">
+                                                <label class="primary_input_label" for="">{{__('RollNo')}} <strong
                                                         class="text-danger">*</strong></label>
                                                 <input class="primary_input_field" name="roll_number" placeholder="-"
                                                        type="text" id="editroll_number" value="{{ old('roll_number') }}" {{$errors->first('roll_number') ? 'autofocus' : ''}}>

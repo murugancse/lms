@@ -19,7 +19,6 @@
             return false;
         }
 
-
         let status = 0;
         if ($(this).is(':checked')) {
             status = 1;
@@ -46,6 +45,13 @@
                 if (data.warning) {
                     toastr.warning(data.warning, 'Error');
                 } else if (data.success) {
+                    if(table=='users'){
+                        if(status==0){
+                            $("#spanstatus"+id).text('Inactive');
+                        }else{
+                            $("#spanstatus"+id).text('Active');
+                        }
+                    }
                     toastr.success(data.success, 'Success');
                 } else if (data.error) {
                     toastr.error(data.error, 'Error');

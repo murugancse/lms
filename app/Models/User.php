@@ -39,7 +39,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $table = 'users';
 
     protected $fillable = [
-        'name', 'role_id', 'username', 'email', 'phone', 'password', 'email_verified_at', 'mobile_verified_at', 'avatar', 'subscribe','roll_number','dob',
+        'name', 'role_id', 'username', 'email', 'phone', 'password', 'email_verified_at', 'mobile_verified_at', 'avatar', 'subscribe','roll_number','dob','nric',
     ];
 
     /**
@@ -97,8 +97,34 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function enrolls()
     {
-        return $this->hasManyThrough(CourseEnrolled::class, Course::class);
+        return $this->hasManyThrough(
+            CourseEnrolled::class, 
+            Course::class,
+        );
+        // return $this->hasManyThrough(
+        //     'App\Post',
+        //     'App\User',
+        //     'country_id', // Foreign key on users table...
+        //     'user_id', // Foreign key on posts table...
+        //     'id', // Local key on countries table...
+        //     'id' // Local key on users table...
+        // );
     }
+
+    // public function allCourses()
+    // {
+    //     return $this->belongsToMany(
+    //         CourseEnrolled::class
+    //     );
+    //     // return $this->hasManyThrough(
+    //     //     'App\Post',
+    //     //     'App\User',
+    //     //     'country_id', // Foreign key on users table...
+    //     //     'user_id', // Foreign key on posts table...
+    //     //     'id', // Local key on countries table...
+    //     //     'id' // Local key on users table...
+    //     // );
+    // }
 
     public function withdraws()
     {

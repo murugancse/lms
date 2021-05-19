@@ -22,6 +22,7 @@ $(document).on('click', '.editStudent', function () {
     $('#studentId').val(student.id);
     $('#studentName').val(student.name);
     $('#editroll_number').val(student.roll_number);
+    $('#editNRIC').val(student.nric);
     $('#studentAbout').summernote("code", student.about);
     $('#studentDob').val(student.dob);
     $('#studentPhone').val(student.phone);

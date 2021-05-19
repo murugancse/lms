@@ -29,6 +29,12 @@ class StudentSettingController extends Controller
     {
         try {
             $students = User::where('role_id', 3)->latest()->get();
+            // $courses = $students[0]->enrollCourse;
+            // foreach ($courses as $key => $course) {
+            //     print_r($course->title);
+            //     echo '<br>';
+            // }
+            // dd('ok');
 
             return view('studentsetting::student_list', compact('students'));
 
@@ -58,6 +64,7 @@ class StudentSettingController extends Controller
         $request->validate([
             'name' => 'required',
             'roll_number' => 'required|unique:users,roll_number',
+            'nric' => 'required|unique:users,nric',
             'phone' => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:5|unique:users,phone',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed',
@@ -71,6 +78,7 @@ class StudentSettingController extends Controller
             $user = new User;
             $user->name = $request->name;
             $user->email = $request->email;
+            $user->nric = $request->nric;
             $user->roll_number = $request->roll_number;
             $user->username = $request->email;
             $user->password = bcrypt($request->password);
@@ -151,6 +159,7 @@ class StudentSettingController extends Controller
         }
         $request->validate([
             'name' => 'required',
+            'nric' => 'required',
             'phone' => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:11|unique:users,phone,' . $request->id,
             'roll_number' => 'required|unique:users,roll_number',
             'email' => 'required|email|unique:users,email,' . $request->id,
@@ -169,6 +178,7 @@ class StudentSettingController extends Controller
                 $user = User::find($request->id);
                 $user->name = $request->name;
                 $user->email = $request->email;
+                $user->nric = $request->nric;
                 $user->roll_number = $request->roll_number;
                 $user->username = $request->email;
                 $user->phone = $request->phone;
