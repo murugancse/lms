@@ -14,5 +14,11 @@
                 <a href="{{ route('zoom.settings') }}">  {{__('zoom.Zoom Settings')}}</a>
             </li>
         @endif
+        @if (auth()->user()->role_id == 2) 
+            @if (permissionCheck('virtual-class.index'))
+                <li><a href="{{ route('virtual-class.index') }}">  {{__('virtual-class.Class List')}}</a></li>
+            @endif
+
+        @endif
     </ul>
 </li>

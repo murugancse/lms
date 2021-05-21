@@ -189,9 +189,12 @@
             @endif
         @endif
 
-
-        @if (permissionCheck('virtual-class'))
-            @include('virtualclass::menu')
+        @if (auth()->check()) 
+            @if (auth()->user()->role_id == 1) 
+                @if (permissionCheck('virtual-class'))
+                    @include('virtualclass::menu')
+                @endif
+            @endif
         @endif
 
 

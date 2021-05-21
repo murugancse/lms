@@ -55,6 +55,7 @@ class VerifyEmail extends Notification
         $body = str_replace($key, $value, $body);
 
         $config = EmailSetting::where('active_status', 1)->first();
+
         if ($config && $config->id == 3) {
             $email = !empty($notifiable->email)?$notifiable->email:Auth::user()->email;
             $emailSendGrid = new \SendGrid\Mail\Mail();
@@ -64,6 +65,7 @@ class VerifyEmail extends Notification
             $emailSendGrid->addContent(
                 "text/html", $body
             );
+           
             $sendgrid = new \SendGrid($config->api_key);
             $response = $sendgrid->send($emailSendGrid);
 

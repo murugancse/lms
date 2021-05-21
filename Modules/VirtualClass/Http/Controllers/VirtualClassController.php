@@ -33,12 +33,16 @@ class VirtualClassController extends Controller
 {
     public function index()
     {
+        $roleid = auth()->user()->role_id;
+        $userid = auth()->user()->id;
+        $virtualclass = $roleid==2 ? VirtualClass::where('user_id',$userid)->get() : VirtualClass::all();
+        
         $data = [
             'languages' => Language::where('status', 1)->get(),
-            'classes' => VirtualClass::all(),
+            'classes' => $virtualclass,
             'categories' => Category::all(),
         ];
-
+        
         return view('virtualclass::class.index')->with($data);
     }
 
@@ -74,6 +78,7 @@ class VirtualClassController extends Controller
             $class->type = $request->type;
             $class->host = $request->host;
             $class->lang_id = $request->lang_id;
+            $class->user_id = auth()->user()->id;
 
             if (!empty($request->start_date)) {
                 $class->start_date = date('Y-m-d', strtotime($request->start_date));
@@ -233,6 +238,7 @@ class VirtualClassController extends Controller
             $class->sub_category_id = $request->sub_category;
             $class->fees = $request->free ? 0 : $request->fees;
             $class->type = $request->type;
+            $class->user_id = auth()->user()->id;
 
             if (!empty($request->start_date)) {
                 $class->start_date = date('Y-m-d', strtotime($request->start_date));
