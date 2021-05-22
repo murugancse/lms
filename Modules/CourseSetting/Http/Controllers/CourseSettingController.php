@@ -459,7 +459,8 @@ class CourseSettingController extends Controller
 
         if ($request->type == 1) {
             $request->validate([
-                'duration' => 'required',
+                'hours' => 'required',
+                'minutes' => 'required',
                 'level' => 'required',
                 'host' => 'required',
 
@@ -503,13 +504,13 @@ class CourseSettingController extends Controller
                 $course->thumbnail = 'public/uploads/courses/' . $name;
             }
 
-
+            $duration = ($request->hours*60)+$request->minutes;
             $course->user_id = Auth::id();
             $course->drip = $request->drip;
             $course->lang_id = $request->language;
             $course->title = $request->title;
             $course->slug = Str::slug($request->title) == "" ? str_replace(' ', '-', $request->title) : Str::slug($request->title);
-            $course->duration = $request->duration;
+            $course->duration = $duration;
             $course->subscription_list = $request->subscription_list;
             if ($request->price) {
                 $course->price = $request->price ? $request->price / $getsmSetting->conversion_rate : 0;

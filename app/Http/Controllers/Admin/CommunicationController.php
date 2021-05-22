@@ -22,12 +22,13 @@ class CommunicationController extends Controller
 
     public function PrivateMessage()
     {
-        if (Auth::id() == 1)
-            $users = User::where('id', '!=', Auth::id())->where('role_id',2)->with('reciever')->paginate(10);
+        $users = [];
+        if (Auth::user()->role_id == 1)
+            $users = User::where('id', '!=', Auth::id())->where('role_id',2)->with('reciever')->get();
         elseif (Auth::user()->role_id == 2)
             $users = User::with('reciever')->where('id','!=',Auth::id())->where(function ($query){
               $query->where('role_id',1)->orWhereHas('enrollStudents');
-            })->paginate(10);
+            })->get();
 
 
         $singleMessage = Message::where('sender_id', Auth::id())->orderBy('id', 'DESC')->first();

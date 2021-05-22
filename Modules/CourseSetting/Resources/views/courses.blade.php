@@ -435,7 +435,7 @@
                                                                     </select>
                                                                 </div>
 
-                                                                <div class="col-xl-4 mt-30 makeResize">
+                                                                <div class="col-xl-6 mt-30 makeResize">
                                                                     <select class="primary_select"
                                                                             name="level" {{$errors->has('level') ? 'autofocus' : ''}}>
                                                                         <option
@@ -452,7 +452,7 @@
 
                                                                     </select>
                                                                 </div>
-                                                                <div class="col-xl-4 mt-30 makeResize" id="">
+                                                                <div class="col-xl-6 mt-30 makeResize" id="">
                                                                     <select class="primary_select mb_30" name="language"
                                                                             id="" {{$errors->has('language') ? 'autofocus' : ''}}>
                                                                         <option
@@ -467,19 +467,38 @@
                                                                         @endforeach
                                                                     </select>
                                                                 </div>
-                                                                <div class="col-xl-4 makeResize">
-                                                                    <div class="primary_input mb-25">
-                                                                        <label class="primary_input_label"
-                                                                               for="">{{__('common.Duration')}}
-                                                                            *</label>
-                                                                        <input class="primary_input_field"
-                                                                               name="duration" placeholder="-"
-                                                                               value="{{@$course->duration}}"
-                                                                               type="text" {{$errors->has('duration') ? 'autofocus' : ''}}>
-                                                                    </div>
+                                                                
+                                                            </div>
+                                                            @php
+                                                                $hours = 0;
+                                                                $minutes = 0;
+                                                                
+                                                                if(isset($course)){
+                                                                    $duration = (int) $course->duration;
+                                                                    $hours = floor($duration / 60);
+                                                                    $minutes = ($duration % 60);
+                                                                }
+                                                            @endphp
+                                                            <div class="row">
+                                                                <div class="col-lg-6">
+                                                                    <label> Hours *</label>
+                                                                    <select class="primary_select" id="edithours" name="hours">
+                                                                        <option value="">Select</option>
+                                                                        @for($i=0;$i<=100;$i++)
+                                                                        <option {{ $hours==$i ? 'selected' : '' }} value="{{$i}}">{{$i}}</option>
+                                                                        @endfor
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-lg-6">
+                                                                    <label> Minutes *</label>
+                                                                    <select class="primary_select" id="editminutes" name="minutes">
+                                                                        <option value="">Select</option>
+                                                                        @for($i=0;$i<=60;$i++)
+                                                                        <option {{ $minutes==$i ? 'selected' : '' }} value="{{$i}}">{{$i}}</option>
+                                                                        @endfor
+                                                                    </select>
                                                                 </div>
                                                             </div>
-
 
                                                             <div class="row d-none">
                                                                 <div class="col-lg-6">

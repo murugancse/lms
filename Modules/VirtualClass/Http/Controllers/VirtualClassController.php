@@ -53,26 +53,30 @@ class VirtualClassController extends Controller
 
     public function store(Request $request)
     {
-
+        ini_set('memory_limit', '128M');
 
         $request->validate([
             'title' => 'required',
-            'duration' => 'required',
+            'hours' => 'required',
+            'minutes' => 'required',
             'category' => 'required',
             'lang_id' => 'required',
             'type' => 'required',
             'host' => 'required',
             'start_date' => 'required',
             'end_date' => 'required_if:type,==,1',
-            'image' => 'required',
+            'image' => 'required|max:2000',
         ]);
 
         try {
 
+            $duration = ($request->hours*60)+$request->minutes;
+            
+
             $class = new VirtualClass();
             $class->title = $request->title;
             $class->fees = $request->free ? 0 : $request->fees;
-            $class->duration = $request->duration;
+            $class->duration = $duration;
             $class->category_id = $request->category;
             $class->sub_category_id = $request->sub_category;
             $class->type = $request->type;
@@ -103,6 +107,7 @@ class VirtualClassController extends Controller
             }
 
             $class->save();
+            
             $course = new Course();
             $course->class_id = $class->id;
             $course->user_id = Auth::id();
@@ -111,31 +116,34 @@ class VirtualClassController extends Controller
             $course->title = $request->title;
             $course->slug = Str::slug($request->title) == "" ? str_replace(' ', '-', $request->title) : Str::slug($request->title);
             if ($request->file('image') != "") {
-
+                //dd('image');
                 $name = md5($request->title . rand(0, 1000)) . '.' . 'png';
+
                 $img = Image::make($request->image);
 
                 $upload_path = 'public/uploads/courses/';
                 $img->save($upload_path . $name);
+                
                 $course->image = 'public/uploads/courses/' . $name;
 
+               // $name = md5($request->title . rand(0, 1000)) . '.' . 'png';
+               // $img = Image::make($request->image);
 
-                $name = md5($request->title . rand(0, 1000)) . '.' . 'png';
-                $img = Image::make($request->image);
-
-                $upload_path = 'public/uploads/courses/';
+                //$upload_path = 'public/uploads/courses/';
                 $img->save($upload_path . $name);
                 $course->thumbnail = 'public/uploads/courses/' . $name;
             }
             $course->type = 3;
             $course->save();
-
+            //dd($course);
 
             Toastr::success('Class has been created. Please Create Live Class Event', 'Success!');
-
+           
             if ($class->host == "Zoom") {
+                
                 if ($class->type == 0) {
                     $hasAlready = ZoomMeeting::where('class_id', $class->id)->first();
+
                     if ($hasAlready) {
                         Toastr::error("Already Assign a meeting", 'Error!');
                         return back();
@@ -167,7 +175,6 @@ class VirtualClassController extends Controller
                 }
 
             } elseif ($class->host == "Jitsi") {
-
                 if (moduleStatusCheck('Jitsi')) {
                     if ($class->type == 0) {
                         $hasAlready = JitsiMeeting::where('class_id', $class->id)->first();
@@ -221,7 +228,8 @@ class VirtualClassController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'duration' => 'required',
+            'hours' => 'required',
+            'minutes' => 'required',
             'category' => 'required',
             'sub_category' => 'required',
             'type' => 'required',
@@ -231,9 +239,13 @@ class VirtualClassController extends Controller
         ]);
 
         try {
+
+
+            $duration = ($request->hours*60)+$request->minutes;
+
             $class = VirtualClass::find($id);
             $class->title = $request->title;
-            $class->duration = $request->duration;
+            $class->duration = $duration;
             $class->category_id = $request->category;
             $class->sub_category_id = $request->sub_category;
             $class->fees = $request->free ? 0 : $request->fees;
@@ -453,7 +465,8 @@ class VirtualClassController extends Controller
             'password' => 'required',
             'attached_file' => 'nullable|mimes:jpeg,png,jpg,doc,docx,pdf,xls,xlsx',
             'time' => 'required',
-            'durration' => 'required',
+            'hours' => 'required',
+            'minutes' => 'required',
             'join_before_host' => 'required',
             'host_video' => 'required',
             'participant_video' => 'required',
@@ -483,13 +496,14 @@ class VirtualClassController extends Controller
 
 
             $users = Zoom::user()->where('status', 'active')->setPaginate(false)->setPerPage(300)->get()->toArray();
+            $duration = ($request->hours*60)+$request->minutes;
 
             $profile = $users['data'][0];
             $start_date = Carbon::parse($request['date'])->format('Y-m-d') . ' ' . date("H:i:s", strtotime($request['time']));
             $meeting = Zoom::meeting()->make([
                 "topic" => $request['topic'],
                 "type" => $request['is_recurring'] == 1 ? 8 : 2,
-                "duration" => $request['durration'],
+                "duration" => $duration,
                 "timezone" => config('app.timezone'),
                 "password" => $request['password'],
                 "start_time" => new Carbon($start_date),
@@ -531,7 +545,7 @@ class VirtualClassController extends Controller
                 'description' => $request['description'],
                 'date_of_meeting' => $request['date'],
                 'time_of_meeting' => $request['time'],
-                'meeting_duration' => $request['durration'],
+                'meeting_duration' => $duration,
 
                 'host_video' => $request['host_video'],
                 'participant_video' => $request['participant_video'],
@@ -549,7 +563,7 @@ class VirtualClassController extends Controller
                 'meeting_id' => $meeting_details->id,
                 'password' => $meeting_details->password,
                 'start_time' => Carbon::parse($start_date)->toDateTimeString(),
-                'end_time' => Carbon::parse($start_date)->addMinute($request['durration'])->toDateTimeString(),
+                'end_time' => Carbon::parse($start_date)->addMinute($duration)->toDateTimeString(),
                 'attached_file' => $fileName,
                 'created_by' => Auth::user()->id,
             ]);

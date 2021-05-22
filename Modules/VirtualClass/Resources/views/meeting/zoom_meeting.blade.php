@@ -106,9 +106,39 @@
                                             @endif
                                         </div>
                                     </div>
-                                    <div class="row mt-40">
-                                        <div class="col-lg-12">
-                                            <div class="input-effect">
+                                    <div class="row mt-20">
+                                        @php
+                                            $hours = 0;
+                                            $minutes = 0;
+                                            if(isset($class)){
+                                                $duration = $class->duration;
+                                                $hours = floor($duration / 60);
+                                                $minutes = ($duration % 60);
+                                            }
+                                        @endphp
+                                        
+                                        <div class="col-lg-6">
+                                            <label> Hours *</label>
+                                            <select class="primary_select" id="hours" name="hours">
+                                                <option value="">Select</option>
+                                                @for($i=0;$i<=100;$i++)
+                                                <option {{ $hours==$i ? 'selected' : '' }} value="{{$i}}">{{$i}}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <label> Minutes *</label>
+                                            <select class="primary_select" id="minutes" name="minutes">
+                                                <option value="">Select</option>
+                                                @for($i=0;$i<=60;$i++)
+                                                <option {{ $minutes==$i ? 'selected' : '' }} value="{{$i}}">{{$i}}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="col-lg-12 ">
+                                            
+                                            <div style="display: none;" class="input-effect d-hide">
                                                 <input
                                                     class="primary-input form-control{{ $errors->has('durration') ? ' is-invalid' : '' }}"
                                                     type="number" name="durration" autocomplete="off"

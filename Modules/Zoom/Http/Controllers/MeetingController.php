@@ -117,7 +117,8 @@ class MeetingController extends Controller
             'password' => 'required',
             'attached_file' => 'nullable|mimes:jpeg,png,jpg,doc,docx,pdf,xls,xlsx',
             'time' => 'required',
-            'durration' => 'required',
+            'hours' => 'required',
+            'minutes' => 'required',
             'join_before_host' => 'required',
             'host_video' => 'required',
             'participant_video' => 'required',
@@ -147,13 +148,14 @@ class MeetingController extends Controller
 
 
             $users = Zoom::user()->where('status', 'active')->setPaginate(false)->setPerPage(300)->get()->toArray();
+            $duration = ($request->hours*60)+$request->minutes;
 
             $profile = $users['data'][0];
             $start_date = Carbon::parse($request['date'])->format('Y-m-d') . ' ' . date("H:i:s", strtotime($request['time']));
             $meeting = Zoom::meeting()->make([
                 "topic" => $request['topic'],
                 "type" => $request['is_recurring'] == 1 ? 8 : 2,
-                "duration" => $request['durration'],
+                "duration" => $duration,
                 "timezone" => config('app.timezone'),
                 "password" => $request['password'],
                 "start_time" => new Carbon($start_date),
@@ -195,7 +197,7 @@ class MeetingController extends Controller
                 'description' => $request['description'],
                 'date_of_meeting' => $request['date'],
                 'time_of_meeting' => $request['time'],
-                'meeting_duration' => $request['durration'],
+                'meeting_duration' => $duration,
 
                 'host_video' => $request['host_video'],
                 'participant_video' => $request['participant_video'],
@@ -213,7 +215,7 @@ class MeetingController extends Controller
                 'meeting_id' => $meeting_details->id,
                 'password' => $meeting_details->password,
                 'start_time' => Carbon::parse($start_date)->toDateTimeString(),
-                'end_time' => Carbon::parse($start_date)->addMinute($request['durration'])->toDateTimeString(),
+                'end_time' => Carbon::parse($start_date)->addMinute($duration)->toDateTimeString(),
                 'attached_file' => $fileName,
                 'created_by' => Auth::user()->id,
             ]);
@@ -371,7 +373,8 @@ class MeetingController extends Controller
             'password' => 'required',
             'attached_file' => 'nullable|mimes:jpeg,png,jpg,doc,docx,pdf,xls,xlsx',
             'time' => 'required',
-            'durration' => 'required',
+            'hours' => 'required',
+            'minutes' => 'required',
             'join_before_host' => 'required',
             'host_video' => 'required',
             'participant_video' => 'required',
@@ -398,10 +401,12 @@ class MeetingController extends Controller
             $profile = $users['data'][0];
             $start_date = Carbon::parse($request['date'])->format('Y-m-d') . ' ' . date("H:i:s", strtotime($request['time']));
 
+            $duration = ($request->hours*60)+$request->minutes;
+
             $meeting = Zoom::meeting()->find($system_meeting->meeting_id)->make([
                 "topic" => $request['topic'],
                 "type" => $request['is_recurring'] == 1 ? 8 : 2,
-                "duration" => $request['durration'],
+                "duration" => $duration,
                 "timezone" => config('app.timezone'),
                 "start_time" => new Carbon($start_date),
                 "password" => $request['password'],
@@ -438,7 +443,7 @@ class MeetingController extends Controller
                 'description' => $request['description'],
                 'date_of_meeting' => $request['date'],
                 'time_of_meeting' => $request['time'],
-                'meeting_duration' => $request['durration'],
+                'meeting_duration' => $duration,
                 'password' => $request['password'],
 
                 'host_video' => $request['host_video'],
@@ -457,7 +462,7 @@ class MeetingController extends Controller
 
 
                 'start_time' => Carbon::parse($start_date)->toDateTimeString(),
-                'end_time' => Carbon::parse($start_date)->addMinute($request['durration'])->toDateTimeString(),
+                'end_time' => Carbon::parse($start_date)->addMinute($duration)->toDateTimeString(),
                 'updated_by' => Auth::user()->id,
             ]);
 

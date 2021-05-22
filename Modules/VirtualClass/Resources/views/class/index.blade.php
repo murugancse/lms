@@ -79,12 +79,41 @@
                                     </div>
                                     <div class="row mt-25">
                                         <div class="col-lg-12">
+                                            @php
+                                                $hours = 0;
+                                                $minutes = 0;
+                                                if(isset($class)){
+                                                    $duration = $class->duration;
+                                                    $hours = floor($duration / 60);
+                                                    $minutes = ($duration % 60);
+                                                }
+                                            @endphp
                                             <div class="input-effect">
-                                                <label> {{__('virtual-class.Duration')}}
-                                                    ({{__('virtual-class.in Minute')}}) *</label>
+                                                
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <label> Hours *</label>
+                                                        <select class="primary_select" id="hours" name="hours">
+                                                            <option value="">Select</option>
+                                                            @for($i=0;$i<=100;$i++)
+                                                            <option {{ $hours==$i ? 'selected' : '' }} value="{{$i}}">{{$i}}</option>
+                                                            @endfor
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <label> Minutes *</label>
+                                                        <select class="primary_select" id="minutes" name="minutes">
+                                                            <option value="">Select</option>
+                                                            @for($i=0;$i<=60;$i++)
+                                                            <option {{ $minutes==$i ? 'selected' : '' }} value="{{$i}}">{{$i}}</option>
+                                                            @endfor
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
                                                 <input {{ $errors->has('duration') ? ' autofocus' : '' }}
                                                        class="primary_input_field name{{ $errors->has('duration') ? ' is-invalid' : '' }}"
-                                                       type="number" name="duration" placeholder="e.g.30min"
+                                                       type="hidden" name="duration" placeholder="e.g.30min"
                                                        value="{{isset($class)? $class->duration:(old('duration')!=''?(old('duration')):'')}}">
                                                 <span class="focus-border"></span>
                                                 @if ($errors->has('duration'))
@@ -461,7 +490,18 @@
                                             <td>{{$class->category->name}}</td>
                                             <td>{{$class->subCategory->name}}</td>
                                             <td>{{$class->language->native}}</td>
-                                            <td>{{$class->duration}}</td>
+                                            @php
+                                                $chours = floor($class->duration / 60);
+                                                $cminutes = ($class->duration % 60);
+                                                $durationstring = '';
+                                                if($chours>0){
+                                                    $durationstring .= $chours.' H ';
+                                                }
+                                                if($cminutes>0){
+                                                    $durationstring .= $cminutes.' M';
+                                                }
+                                            @endphp
+                                            <td>{{$durationstring}}</td>
                                             <td>{{$currency->symbol}} {{$class->fees}}</td>
                                             <td>
                                                 @if($class->type == 0)
