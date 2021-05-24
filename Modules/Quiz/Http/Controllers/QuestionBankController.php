@@ -11,6 +11,7 @@ use Modules\Quiz\Entities\QuestionBank;
 use Modules\Quiz\Entities\QuestionBankMuOption;
 use Modules\Quiz\Entities\QuestionGroup;
 use Modules\Quiz\Entities\QuestionLevel;
+use Intervention\Image\Facades\Image;
 
 class QuestionBankController extends Controller
 {
@@ -20,7 +21,7 @@ class QuestionBankController extends Controller
             $groups = QuestionGroup::where('active_status', 1)->get();
             $categories = Category::get();
             $banks = QuestionBank::where('active_status', 1)->get();
-           return view('quiz::question_bank', compact('banks','groups','categories'));
+            return view('quiz::question_bank', compact('banks','groups','categories'));
         }catch (\Exception $e) {
            Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
            return redirect()->back();
@@ -48,6 +49,16 @@ class QuestionBankController extends Controller
                 'marks' => "required",
                 'number_of_option' => "required"
             ]);
+        }
+        elseif ($request->question_type == "IA") {
+            $request->validate([
+                'group' => "required",
+                'category' => "required",
+                'question' => "required",
+                'question_type' => "required",
+                'marks' => "required",
+                'image' => "required|max:2000"
+            ]);
         } elseif ($request->question_type == "F") {
             $request->validate([
                 'group' => "required",
@@ -59,27 +70,61 @@ class QuestionBankController extends Controller
             ]);
         }
         try{
-            if ($request->question_type != 'M') {
-                $online_question = new QuestionBank();
-                $online_question->type = $request->question_type;
-                $online_question->q_group_id = $request->group;
-                $online_question->category_id = $request->category;
-                $online_question->sub_category_id = $request->sub_category;
-                $online_question->marks = $request->marks;
-                $online_question->question = $request->question;
-                if ($request->question_type == "F") {
-                    $online_question->suitable_words = $request->suitable_words;
-                } elseif ($request->question_type == "T") {
-                    $online_question->trueFalse = $request->trueOrFalse;
+           
+            if ($request->question_type != 'M' && $request->question_type != 'MM') {
+                if ($request->question_type == 'IA') {
+                    $name = '';
+                    if ($request->hasFile('image')) {
+
+                        $strpos = strpos($request->image, ';');
+                        $sub = substr($request->image, 0, $strpos);
+                        $name = md5($request->title . rand(0, 1000)) . '.' . 'png';
+
+                        $img = Image::make($request->image);
+                        $upload_path = 'public/uploads/questions/';
+                        $img->save($upload_path . $name);
+                       // dd($upload_path . $name);
+                    }
+                    $online_question = new QuestionBank();
+                    $online_question->type = $request->question_type;
+                    $online_question->q_group_id = $request->group;
+                    $online_question->category_id = $request->category;
+                    $online_question->sub_category_id = $request->sub_category;
+                    $online_question->marks = $request->marks;
+                    $online_question->image = 'public/uploads/questions/' . $name;
+                    $online_question->question = $request->question;
+                   
+                    $result = $online_question->save();
+                    if ($result) {
+                        Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+                        return redirect()->back();
+                    } else {
+                        Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+                        return redirect()->back();
+                    }
+                }else{
+                    $online_question = new QuestionBank();
+                    $online_question->type = $request->question_type;
+                    $online_question->q_group_id = $request->group;
+                    $online_question->category_id = $request->category;
+                    $online_question->sub_category_id = $request->sub_category;
+                    $online_question->marks = $request->marks;
+                    $online_question->question = $request->question;
+                    if ($request->question_type == "F") {
+                        $online_question->suitable_words = $request->suitable_words;
+                    } elseif ($request->question_type == "T") {
+                        $online_question->trueFalse = $request->trueOrFalse;
+                    }
+                    $result = $online_question->save();
+                    if ($result) {
+                        Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+                        return redirect()->back();
+                    } else {
+                        Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+                        return redirect()->back();
+                    }
                 }
-                $result = $online_question->save();
-                if ($result) {
-                    Toastr::success(trans('common.Operation successful'), trans('common.Success'));
-                    return redirect()->back();
-                } else {
-                    Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
-                    return redirect()->back();
-                }
+                
             } else {
 
                 DB::beginTransaction();
@@ -203,8 +248,27 @@ class QuestionBankController extends Controller
             ]);
         }
         try{
-            if ($request->question_type != 'M') {
+            if ($request->question_type != 'M' && $request->question_type != 'MM') {
+
+                
                 $online_question = QuestionBank::find($id);
+                if ($request->question_type=='IA'){
+                    $name = $online_question->image;
+                    if ($request->hasFile('image')) {
+
+                        $strpos = strpos($request->image, ';');
+                        $sub = substr($request->image, 0, $strpos);
+                        $name = md5($request->title . rand(0, 1000)) . '.' . 'png';
+
+                        $img = Image::make($request->image);
+                        $upload_path = 'public/uploads/questions/';
+                        $img->save($upload_path . $name);
+                        $online_question->image = $upload_path . $name;
+                      // dd($upload_path . $name);
+                    }
+                }
+                
+
                 $online_question->type = $request->question_type;
                 $online_question->q_group_id = $request->group;
                 $online_question->category_id = $request->category;
@@ -216,7 +280,9 @@ class QuestionBankController extends Controller
                 } elseif ($request->question_type == "T") {
                     $online_question->trueFalse = $request->trueOrFalse;
                 }
+                //dd($online_question->image);
                 $result = $online_question->save();
+                
                 if ($result) {
                     Toastr::success(trans('common.Operation successful'), trans('common.Success'));
                      return redirect('quiz/question-bank');

@@ -134,9 +134,9 @@
                                                     data-display=" {{__('common.Select')}} {{__('quiz.Sub Category')}} *"
                                                     value="">{{__('common.Select')}} {{__('quiz.Sub Category')}} *
                                                 </option>
-
+                                               
                                                 @if(isset($bank))
-                                                    <option value="{{@$bank->subcategory_id}}"
+                                                    <option value="{{$bank->sub_category_id}}"
                                                             selected>{{@$bank->subCategory->name}}</option>
                                                 @endif
                                             </select>
@@ -160,7 +160,17 @@
                                                 </option>
 
                                                 <option
-                                                    value="M" {{isset($bank)? $bank->type == "M"? 'selected': '' : ''}}> {{__('Multiple Choice')}}</option>
+                                                    value="M" {{isset($bank)? $bank->type == "M"? 'selected': '' : ''}}> {{__('Multiple Choice Single Answer')}}</option>
+                                                <option
+                                                    value="T" {{isset($bank)? $bank->type == "T"? 'selected': '' : ''}}> {{__('True/False')}}</option>
+                                                <option
+                                                    value="MM" {{isset($bank)? $bank->type == "MM"? 'selected': '' : ''}}> {{__('Multiple Choice Multiple Answer')}}</option>
+                                                <option
+                                                    value="SA" {{isset($bank)? $bank->type == "SA"? 'selected': '' : ''}}> {{__('Short Answer')}}</option>
+                                                <option
+                                                    value="LA" {{isset($bank)? $bank->type == "LA"? 'selected': '' : ''}}> {{__('Long Answer')}}</option>
+                                                <option
+                                                    value="IA" {{isset($bank)? $bank->type == "IA"? 'selected': '' : ''}}> {{__('Short Answer With Image')}}</option>
                                             </select>
                                             @if ($errors->has('question_type'))
                                                 <span class="invalid-feedback invalid-select" role="alert">
@@ -204,11 +214,11 @@
                                     </div>
                                     @php
                                         if(!isset($bank)){
-                                            if(old('question_type') == "M"){
+                                            if(old('question_type') == "M" || old('question_type') == "MM" ){
                                                 $multiple_choice = "";
                                             }
                                         }else{
-                                            if($bank->type == "M" || old('question_type') == "M"){
+                                            if($bank->type == "M" || old('question_type') == "M" || $bank->type == "MM" || old('question_type') == "MM"){
                                                 $multiple_choice = "";
                                             }
                                         }
@@ -218,6 +228,7 @@
                                         <div class="row  mt-25">
                                             <div class="col-lg-8">
                                                 <div class="input-effect">
+
                                                     <label> {{__('quiz.Number Of Options')}}*</label>
                                                     <input {{ $errors->has('number_of_option') ? ' autofocus' : '' }}
                                                            class="primary_input_field name{{ $errors->has('number_of_option') ? ' is-invalid' : '' }}"
@@ -240,23 +251,24 @@
                                     </div>
                                     @php
                                         if(!isset($bank)){
-                                            if(old('question_type') == "M"){
+                                            if(old('question_type') == "M" || old('question_type') == "MM"){
                                                 $multiple_options = "";
                                             }
                                         }else{
-                                            if($bank->type == "M" || old('question_type') == "M"){
+                                            if($bank->type == "M" || old('question_type') == "M" || $bank->type == "MM" || old('question_type') == "MM"){
                                                 $multiple_options = "";
                                             }
                                         }
                                     @endphp
                                     <div class="multiple-options"
-                                         id="{{isset($multiple_options)? "": 'multiple-options'}}">
+                                         id="{{isset($multiple_options)? '': 'multiple-options'}}">
                                         @php
                                             $i=0;
                                             $multiple_options = [];
+                                            //dd($bank->questionMu);
 
                                             if(isset($bank)){
-                                                if($bank->type == "M"){
+                                                if($bank->type == "M" || $bank->type == "MM"){
                                                     $multiple_options = $bank->questionMu;
                                                 }
                                             }
@@ -350,6 +362,29 @@
                                         </div>
                                     </div>
                                     @php
+                                        $hideimage = 'display:none';
+                                        if(isset($bank)){
+                                            if($bank->type=='IA'){
+                                                $hideimage = '';
+                                            }
+                                        }
+                                    @endphp
+                                    <div class="image-question" style="{{ $hideimage }};" 
+                                         id="image-question">
+                                        <div class="row  mt-25">
+                                            <div class="col-lg-12">
+                                                <div class="input-effect">
+                                                    <input type="file" name="image" id="image" />
+                                                </div>
+                                                @if(isset($bank))
+                                                    @if($bank->type=='IA')
+                                                        <img src="{{ asset($bank->image) }}" width="40" alt="no image"/>
+                                                    @endif
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @php
                                         $tooltip = "";
                                           if (permissionCheck('question-bank.store')){
                                               $tooltip = "";
@@ -409,11 +444,17 @@
                                             <td>{{@$bank->question}}</td>
                                             <td>
                                                 @if(@$bank->type == "M")
-                                                    Multiple Choice
+                                                    Multiple Choice(S)
                                                 @elseif(@$bank->type == "T")
                                                     True False
+                                                @elseif(@$bank->type == "MM")
+                                                    Multiple Choice(M)
+                                                @elseif(@$bank->type == "IA")
+                                                    Image Question
+                                                @elseif(@$bank->type == "SA")
+                                                    Short Answer
                                                 @else
-                                                    Fill in the blank
+                                                    Long Answer
                                                 @endif
                                             </td>
                                             <td>

@@ -2116,20 +2116,37 @@ $(document).on("change", "#question-type", function(event) {
         $('#question_bank div#multiple-choice').hide();
         $('#question_bank div#true-false').hide();
         $('#question_bank div#fill-in-the-blanks').hide();
+        $('#question_bank div#image-question').hide();
         $('#question_bank div#multiple-options').html('');
-    } else if (question_type == "M") {
+    } else if (question_type == "M" || question_type == "MM") {
         $('#question_bank div#multiple-choice').show();
         $('#question_bank div#true-false').hide();
+        $('#question_bank div#image-question').hide();
         $('#question_bank div#fill-in-the-blanks').hide();
     } else if (question_type == "T") {
         $('#question_bank div#multiple-choice').hide();
         $('#question_bank div#true-false').show();
+        $('#question_bank div#image-question').hide();
         $('#question_bank div#fill-in-the-blanks').hide();
+        $('#question_bank div#multiple-options').html('');
+    } else if (question_type == "SA") {
+        $('#question_bank div#multiple-choice').hide();
+        $('#question_bank div#true-false').hide();
+        $('#question_bank div#image-question').hide();
+        //$('#question_bank div#fill-in-the-blanks').show();
+        $('#question_bank div#multiple-options').html('');
+    } else if (question_type == "IA") {
+       
+        $('#question_bank div#multiple-choice').hide();
+        $('#question_bank div#true-false').hide();
+        $('#question_bank div#image-question').show();
+       // $('#question_bank div#fill-in-the-blanks').show();
         $('#question_bank div#multiple-options').html('');
     } else {
         $('#question_bank div#multiple-choice').hide();
         $('#question_bank div#true-false').hide();
-        $('#question_bank div#fill-in-the-blanks').show();
+        $('#question_bank div#image-question').hide();
+        //$('#question_bank div#fill-in-the-blanks').show();
         $('#question_bank div#multiple-options').html('');
     }
 });
