@@ -114,11 +114,17 @@
                                         <td>{{@$question_bank->questionGroup !=""?@$question_bank->questionGroup->title:""}}</td>
                                         <td>
                                             @if(@$question_bank->type == "M")
-                                                {{'Multiple Choice'}}
-                                            @elseif(@$question_bank->type == "F")
-                                                {{'Fill In The Blanks'}}
-                                            @else
+                                                {{'Multiple Choice(S)'}}
+                                            @elseif(@$question_bank->type == "T")
                                                 {{'True False'}}
+                                            @elseif(@$question_bank->type == "MM")
+                                                {{'Multiple Choice(M)'}}
+                                            @elseif(@$question_bank->type == "SA")
+                                                {{'Short Answer'}}
+                                            @elseif(@$question_bank->type == "SA")
+                                                {{'Long Answer'}}
+                                            @else
+                                                {{'Image With Answer'}}
                                             @endif
                                         </td>
                                         <td>{{@$question_bank->question}}</td>

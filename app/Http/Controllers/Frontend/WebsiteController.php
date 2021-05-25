@@ -57,6 +57,7 @@ use Modules\Quiz\Entities\QuestionBankMuOption;
 use Modules\Quiz\Entities\QuizeSetup;
 use Modules\Quiz\Entities\QuizTest;
 use Modules\Quiz\Entities\QuizTestDetails;
+use Modules\Quiz\Entities\QuestionBank;
 use Modules\Setting\Entities\CookieSetting;
 use Modules\StudentSetting\Entities\BookmarkCourse;
 use Modules\Subscription\Entities\CourseSubscription;
@@ -3567,51 +3568,56 @@ class WebsiteController extends Controller
             $quiz->course_id = $courseId;
             $quiz->quiz_id = $quizId;
             $quiz->save();
-            //dd($allAns);
-            foreach ($allAns as $itemArr) {
-                foreach ($itemArr as $item) {
-                    $qusAns = explode('|', $item);
-                    $qus = $qusAns[0] ?? '';
-                    $ans = $qusAns[1] ?? '';
-                    //print_r($qus);
+            
+            if(count($allAns)>0){
+                foreach ($allAns as $itemArr) {
+                    foreach ($itemArr as $item) {
+                        $qusAns = explode('|', $item);
+                        $qus = $qusAns[0] ?? '';
+                        $ans = $qusAns[1] ?? '';
+                        //print_r($qus);
 
 
-                    if ($courseId && !empty($qusAns)) {
-                        $quizDetails = new QuizTestDetails();
-                        $option = QuestionBankMuOption::find($ans);
-                        if ($option) {
-                            $quizDetails->quiz_test_id = $quiz->id;
-                            $quizDetails->qus_id = $qus;
-                            $quizDetails->ans_id = $ans;
-                            $quizDetails->status = $option->status;
-                            $quizDetails->mark = $option->question->marks;
+                        if ($courseId && !empty($qusAns)) {
+                            $quizDetails = new QuizTestDetails();
+                            $option = QuestionBankMuOption::find($ans);
+                            if ($option) {
+                                $quizDetails->quiz_test_id = $quiz->id;
+                                $quizDetails->qus_id = $qus;
+                                $quizDetails->ans_id = $ans;
+                                $quizDetails->status = $option->status;
+                                $quizDetails->mark = $option->question->marks;
 
-                            $quizDetails->save();
+                                $quizDetails->save();
+                            }
+
+
                         }
+                    }
+                }
+            }
+            
+            if($allAnswer != null){
+                foreach ($allAnswer as $item) {
+                    
+                    $ans = $item;
 
+                    if ($courseId && !empty($allAnswer)) {
+                        $quizDetails = new QuizTestDetails();
+                        
+                        $quizDetails->quiz_test_id = $quiz->id;
+                        $quizDetails->qus_id = $qus;
+                        $quizDetails->ans_id = 0;
+                        $quizDetails->answer = $ans;
+                        $quizDetails->status = 0;
+                        $quizDetails->mark = 0;
+
+                        $quizDetails->save();
 
                     }
                 }
             }
-
-            foreach ($allAnswer as $item) {
-                
-                $ans = $item;
-
-                if ($courseId && !empty($allAnswer)) {
-                    $quizDetails = new QuizTestDetails();
-                    
-                    $quizDetails->quiz_test_id = $quiz->id;
-                    $quizDetails->qus_id = $qus;
-                    $quizDetails->ans_id = 0;
-                    $quizDetails->answer = $ans;
-                    $quizDetails->status = 0;
-                    $quizDetails->mark = 0;
-
-                    $quizDetails->save();
-
-                }
-            }
+            
             //dd('done');
             Toastr::success('Successfully submitted', 'Success');
             return redirect()->route('getQuizResult', $quiz->id);
@@ -3625,7 +3631,7 @@ class WebsiteController extends Controller
 
     public function quizResult($id)
     {
-        try {
+        //try {
             $data = $this->common();
             $quizSetup = QuizeSetup::first();
             $user = Auth::user();
@@ -3636,12 +3642,14 @@ class WebsiteController extends Controller
 
 
                 $onlineQuiz = OnlineQuiz::find($quiz->quiz_id);
+                //dd($onlineQuiz);
 
                 $totalQus = totalQuizQus($quiz->quiz_id);
                 $totalAns = count($quiz->details);
                 $totalCorrect = 0;
                 $totalScore = totalQuizMarks($quiz->quiz_id);
                 $score = 0;
+                //dd($totalAns);
                 if ($totalAns != 0) {
                     foreach ($quiz->details as $test) {
                         $qtype = DB::table('question_banks')->where('id',$test->qus_id)->pluck('type')->first();
@@ -3656,21 +3664,58 @@ class WebsiteController extends Controller
                                     $totalCorrect++;
                                 }
                             }
-                        }else if($qtype='MM'){
-                            if (!empty($ans)) {
-                                if ($ans->status == 1) {
-
-                                    //$score += $ans->question->marks ?? 1;
-                                    //$totalCorrect++;
-                                }
-                            }
-                        }else{
-
                         }
                         
 
                     }
                 }
+                //dd($totalCorrect);
+                $totalCorrect = 0;
+                $textcount = 0;
+                $totalmultiple = 0;
+               $questions = QuestionBank::where('q_group_id',$onlineQuiz->id)->get();
+               $questionid = QuestionBank::where('q_group_id',$onlineQuiz->id)->where('type','=','MM')->pluck('id');
+               //dd($questions);
+               foreach ($questions as $key => $value) {
+                    if($value->type=='MM'){
+                        $options = $value->questionMu;
+                        $coptions = [];
+                        foreach ($options as $key1 => $option) {
+                            if($option->status==1){
+                                $coptions[] = $option->id;
+                            }
+                        }
+                        //dd($coptions);
+                        $anscount = DB::table('quiz_test_details')->where('quiz_test_id',$quiz->id)->whereIn('ans_id',$coptions)->where('status',1)->count();
+                        if($anscount==count($coptions)){
+                            $score += $value->marks ?? 1;
+                            $totalCorrect++;
+                        }else{
+                            $totalmultiple = $totalmultiple+$anscount;
+                        }
+                        //dd($anscount);
+                    }else if($value->type=='SA' || $value->type=='LA' || $value->type=='IA'){
+                        $textcount++;
+                    }else{
+                        foreach ($quiz->details as $test) {
+                            $ans = QuestionBankMuOption::where('id',$test->ans_id)->where('question_bank_id',$value->id)->whereNotIn('question_bank_id',$questionid)->first();
+                            //dd(ans)
+                           if($ans!=null){
+                            //echo "<pre>";
+                            
+                                if ($ans->status) {
+                                   // print_r($ans->status);
+                                    $totalCorrect++;
+                                }
+                           }
+                            
+                            
+                        }
+                    }
+                    
+               }
+              // dd($totalCorrect);
+               //dd($questions);
 
                 //$qtype = DB::table('question_banks')->where('id',$test->qus_id)->pluck('type')->first();
 
@@ -3679,9 +3724,10 @@ class WebsiteController extends Controller
                 $result['totalQus'] = $totalQus;
                 $result['totalAns'] = $totalAns;
                 $result['totalCorrect'] = $totalCorrect;
-                $result['totalWrong'] = $totalAns - $totalCorrect;
+                $result['totalWrong'] = count($questions)- $result['totalCorrect']-$textcount;
                 $result['score'] = $score;
                 $result['totalScore'] = $totalScore;
+                $result['textcount'] = $textcount;
                 $result['passMark'] = $onlineQuiz->percentage ?? 0;
                 $result['mark'] = $score / $totalScore * 100 ?? 0;
                 $result['status'] = $result['mark'] >= $result['passMark'] ? "Passed" : "Failed";
@@ -3694,11 +3740,11 @@ class WebsiteController extends Controller
                 return redirect()->back();
             }
 
-        } catch (\Exception $e) {
+        // } catch (\Exception $e) {
 
-            Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
-            return redirect()->back();
-        }
+        //     Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+        //     return redirect()->back();
+        // }
     }
 
     public function quizResultPreview($id)

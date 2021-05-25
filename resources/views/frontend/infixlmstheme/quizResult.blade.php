@@ -58,7 +58,7 @@
                                                                         class="label_name">{{$result['totalCorrect']}} {{__('student.Correct Answer')}}</span>
                                                                 </label>
                                                             </li>
-                                                            <li>
+                                                            <li class="mb_15">
                                                                 <label class="primary_checkbox2 error_ans d-flex">
                                                                     <input checked="" name="qus" type="checkbox"
                                                                            disabled>
@@ -67,12 +67,21 @@
                                                                         class="label_name">{{$result['totalWrong']}} {{__('student.Wrong Answer')}}</span>
                                                                 </label>
                                                             </li>
+                                                            <li>
+                                                                <label class="primary_checkbox2 d-flex">
+                                                                    <input checked="" name="qus" type="checkbox"
+                                                                           disabled>
+                                                                    <span class="checkmark mr_10"></span>
+                                                                    <span
+                                                                        class="label_name">{{$result['textcount']}} Text Anwsers</span>
+                                                                </label>
+                                                            </li>
                                                         </ul>
                                                     </div>
-                                                    <div class="single_score_view">
+                                                    <!-- <div class="single_score_view">
                                                         <p>{{__('student.Rating')}}:</p>
                                                         <h4 class="f_w_700 theme_text">{{$result['status']}}</h4>
-                                                    </div>
+                                                    </div> -->
                                                 </div>
                                             </div>
                                         </div>
