@@ -3549,12 +3549,16 @@ class WebsiteController extends Controller
 
     public function quizSubmit(Request $request)
     {
+        //return $request->all();
         try {
             $setting = QuizeSetup::first();
             $allAns = $request->ans;
+            $allAnswer = $request->answer;
             $userId = Auth::id();
             $courseId = $request->get('courseId');
             $quizId = $request->get('quizId');
+            $quiz_start_time = $request->get('quiz_start_time');
+            $quiz_end_time = date('Y-m-d h:i:s');
             $question_review = $setting->question_review;
             $show_result_each_submit = $setting->show_result_each_submit;
 
@@ -3563,28 +3567,52 @@ class WebsiteController extends Controller
             $quiz->course_id = $courseId;
             $quiz->quiz_id = $quizId;
             $quiz->save();
-            foreach ($allAns as $item) {
-                $qusAns = explode('|', $item);
-                $qus = $qusAns[0] ?? '';
-                $ans = $qusAns[1] ?? '';
+            //dd($allAns);
+            foreach ($allAns as $itemArr) {
+                foreach ($itemArr as $item) {
+                    $qusAns = explode('|', $item);
+                    $qus = $qusAns[0] ?? '';
+                    $ans = $qusAns[1] ?? '';
+                    //print_r($qus);
 
 
-                if ($courseId && !empty($qusAns)) {
-                    $quizDetails = new QuizTestDetails();
-                    $option = QuestionBankMuOption::find($ans);
-                    if ($option) {
-                        $quizDetails->quiz_test_id = $quiz->id;
-                        $quizDetails->qus_id = $qus;
-                        $quizDetails->ans_id = $ans;
-                        $quizDetails->status = $option->status;
-                        $quizDetails->mark = $option->question->marks;
+                    if ($courseId && !empty($qusAns)) {
+                        $quizDetails = new QuizTestDetails();
+                        $option = QuestionBankMuOption::find($ans);
+                        if ($option) {
+                            $quizDetails->quiz_test_id = $quiz->id;
+                            $quizDetails->qus_id = $qus;
+                            $quizDetails->ans_id = $ans;
+                            $quizDetails->status = $option->status;
+                            $quizDetails->mark = $option->question->marks;
 
-                        $quizDetails->save();
+                            $quizDetails->save();
+                        }
+
+
                     }
+                }
+            }
 
+            foreach ($allAnswer as $item) {
+                
+                $ans = $item;
+
+                if ($courseId && !empty($allAnswer)) {
+                    $quizDetails = new QuizTestDetails();
+                    
+                    $quizDetails->quiz_test_id = $quiz->id;
+                    $quizDetails->qus_id = $qus;
+                    $quizDetails->ans_id = 0;
+                    $quizDetails->answer = $ans;
+                    $quizDetails->status = 0;
+                    $quizDetails->mark = 0;
+
+                    $quizDetails->save();
 
                 }
             }
+            //dd('done');
             Toastr::success('Successfully submitted', 'Success');
             return redirect()->route('getQuizResult', $quiz->id);
 
@@ -3616,18 +3644,35 @@ class WebsiteController extends Controller
                 $score = 0;
                 if ($totalAns != 0) {
                     foreach ($quiz->details as $test) {
+                        $qtype = DB::table('question_banks')->where('id',$test->qus_id)->pluck('type')->first();
+                        //dd($qtype);
                         $ans = QuestionBankMuOption::find($test->ans_id);
 
-                        if (!empty($ans)) {
-                            if ($ans->status == 1) {
+                        if($qtype='M' || $qtype='T'){
+                            if (!empty($ans)) {
+                                if ($ans->status == 1) {
 
-                                $score += $ans->question->marks ?? 1;
-                                $totalCorrect++;
+                                    $score += $ans->question->marks ?? 1;
+                                    $totalCorrect++;
+                                }
                             }
+                        }else if($qtype='MM'){
+                            if (!empty($ans)) {
+                                if ($ans->status == 1) {
+
+                                    //$score += $ans->question->marks ?? 1;
+                                    //$totalCorrect++;
+                                }
+                            }
+                        }else{
+
                         }
+                        
 
                     }
                 }
+
+                //$qtype = DB::table('question_banks')->where('id',$test->qus_id)->pluck('type')->first();
 
 
                 $result = [];

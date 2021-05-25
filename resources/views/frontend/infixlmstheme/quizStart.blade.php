@@ -4,7 +4,9 @@
 
 @endsection
 @section('js')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <script src="{{ asset('public/frontend/infixlmstheme/js/quiz_start.js') }}"></script>
+
 @endsection
 
 @section('mainContent')
@@ -65,6 +67,8 @@
                                     <div class="quiz_test_body">
                                         <div class="tabControl">
                                             <!-- nav-pills  -->
+                                            <input type="hidden" name="quiz_start_time" id="quiz_start_time" value="{{date('Y-m-d h:i:s')}}"/>
+                                            <input type="hidden" name="quiz_end_time" id="quiz_end_time" value=""/>
                                             <ul class="nav nav-pills nav-fill d-none" id="pills-tab" role="tablist">
                                                 @if(isset($quiz->assign))
                                                     @foreach($quiz->assign as $key=>$itemAssign)
@@ -75,6 +79,7 @@
                                                         </li>
                                                     @endforeach
                                                 @endif
+                                                
                                             </ul>
                                             <!-- tab-content  -->
                                             <div class="tab-content" id="pills-tabContent">
@@ -112,19 +117,26 @@
                                                                 </div>
                                                             </div>
                                                             <div class="multypol_qustion mb_30">
-                                                                <h4 class="font_18 f_w_700 mb-0"> {{@$assign->questionBank->question}}</h4>
+                                                                <h4 class="font_18 f_w_700 mb-0"> {{@$assign->questionBank->question}} {{ $assign->questionBank->type }}</h4>
+                                                                <input type="hidden" name="qtype" id="qtype{{$key}}" class="qtype" value="{{$assign->questionBank->type}}">
                                                             </div>
                                                             <ul class="quiz_select">
                                                                 @if(isset($assign->questionBank->questionMu))
                                                                     @foreach(@$assign->questionBank->questionMu as $option)
-
+                                                                        @php
+                                                                            if($assign->questionBank->type=='MM'){
+                                                                                $inputtype = 'checkbox';
+                                                                            }else{
+                                                                                $inputtype = 'radio';
+                                                                            }
+                                                                        @endphp
                                                                         {{--                                                            $user_previous->question_id . '|' . $option->id--}}
                                                                         <li>
                                                                             <label
                                                                                 class="primary_bulet_checkbox d-flex">
                                                                                 <input class="quizAns"
-                                                                                       name="ans[{{$option->question_bank_id}}]"
-                                                                                       type="radio"
+                                                                                       name="ans[{{$option->question_bank_id}}][]"
+                                                                                       type="{{$inputtype}}"
                                                                                        value="{{$option->question_bank_id}}|{{$option->id}}">
 
                                                                                 <span class="checkmark mr_10"></span>
@@ -135,6 +147,21 @@
                                                                     @endforeach
                                                                 @endif
                                                             </ul>
+                                                            @if($assign->questionBank->type=='SA')
+                                                            <div class="multypol_qustion mb_30">
+                                                                <input type="text" class="form-control answer" name="answer[{{$assign->questionBank->id}}]" id="answer{{$assign->id}}" />
+                                                            </div>
+                                                            @elseif($assign->questionBank->type=='LA' || $assign->questionBank->type=='IA')
+                                                            @if($assign->questionBank->type=='IA')
+                                                            <div class="multypol_qustion mb_10">
+                                                               <img src="{{ asset($assign->questionBank->image) }}" width="80" alt="no image"/>
+                                                            </div>
+                                                            @endif
+                                                             <div class="multypol_qustion mb_20">
+                                                                <textarea class="form-control answer" name="answer[{{$assign->questionBank->id}}]" id="answer{{$assign->id}}"></textarea>
+                                                            </div>
+                                                            @endif
+                                                            <input type="hidden" id="question_end_time_{{$key+1}}" name="question_end_time{{$assign->id}}[]" value=""/>
                                                             <div class="sumit_skip_btns d-flex align-items-center">
                                                                 @if(count($quiz->assign)!=$count)
                                                                     <span

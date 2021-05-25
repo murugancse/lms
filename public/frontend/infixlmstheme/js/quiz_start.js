@@ -46,16 +46,45 @@ $(".skip").click(function (e) {
 
 $(".next").click(function (e) {
     e.preventDefault();
-    let ans = $(".tab-pane:visible").find('.quizAns:checked').val();
+    var qtype = $(".tab-pane:visible").find(".qtype").val();
+    var keyid =$(".tab-pane:visible").find(".qtype").attr('id').replace(/qtype/, '');
+    //alert(keyid);
 
-    if (ans == "undefined" || ans == "" || ans == null) {
-        toastr.error('Please select a option', 'Error Alert', {
-            timeOut: 2000
-        });
-        return false;
-    } else {
-        $('.nav-pills .active').parent().next('li').find('a').trigger('click');
+    if(qtype=='M' || qtype=='MM' || qtype=='T'){
+        let ans = $(".tab-pane:visible").find('.quizAns:checked').val();
 
+        if (ans == "undefined" || ans == "" || ans == null) {
+            toastr.error('Please select a option', 'Error Alert', {
+                timeOut: 2000
+            });
+            return false;
+        } else {
+            var date = new Date();
+            var convertedDate = convertTZ(date, "Asia/Singapore");
+            var qtime = moment(convertedDate).format('YYYY-MM-DD HH:mm:ss');
+           // $("#question_start_time_"+(next_question-1)).val(qtime);
+
+            $("#question_end_time_"+(keyid+1)).val(qtime);
+            //alert($("#question_end_time_"+(keyid+1)).val());
+            $('.nav-pills .active').parent().next('li').find('a').trigger('click');
+
+        }
+    }else{
+        var answer = $(".tab-pane:visible").find(".answer").val();
+        if(answer==''){
+            toastr.error('Please fill the answer', 'Error Alert', {
+                timeOut: 2000
+            });
+            return false;
+        } else {
+            $('.nav-pills .active').parent().next('li').find('a').trigger('click');
+
+        }
     }
+    
 
 });
+
+function convertTZ(date, tzString) {
+    return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {timeZone: tzString}));   
+}
