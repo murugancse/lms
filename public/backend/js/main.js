@@ -293,6 +293,7 @@
     $('.primary-input.date').on('changeDate', function () {
 
         $(this).focus();
+        $(this).attr('value', $(this).val());
     });
 
     $('.primary-input.time').datetimepicker({

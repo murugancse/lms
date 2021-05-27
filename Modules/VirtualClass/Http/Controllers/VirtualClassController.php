@@ -54,7 +54,7 @@ class VirtualClassController extends Controller
     public function store(Request $request)
     {
         ini_set('memory_limit', '128M');
-
+        
         $request->validate([
             'title' => 'required',
             'hours' => 'required',
@@ -84,13 +84,20 @@ class VirtualClassController extends Controller
             $class->lang_id = $request->lang_id;
             $class->user_id = auth()->user()->id;
 
-            if (!empty($request->start_date)) {
-                $class->start_date = date('Y-m-d', strtotime($request->start_date));
-            }
-            if (!empty($request->end_date)) {
-                $class->end_date = date('Y-m-d', strtotime($request->end_date));
+            if($class->type==1){
+                if (!empty($request->start_date)) {
+                    $class->start_date = date('Y-m-d', strtotime($request->start_date));
+                    //dd($class->start_date);
+                }
+                if (!empty($request->end_date)) {
+                    $class->end_date = date('Y-m-d', strtotime($request->end_date));
 
+                }
+            }else{
+                $class->start_date = date('Y-m-d', strtotime($request->date));
+                $class->end_date = date('Y-m-d', strtotime($request->date));
             }
+            
             if (!empty($request->time)) {
                 $class->time = date("H:i", strtotime($request->time));
             }
@@ -135,7 +142,6 @@ class VirtualClassController extends Controller
             }
             $course->type = 3;
             $course->save();
-            //dd($course);
 
             Toastr::success('Class has been created. Please Create Live Class Event', 'Success!');
            
@@ -252,12 +258,17 @@ class VirtualClassController extends Controller
             $class->type = $request->type;
             $class->user_id = auth()->user()->id;
 
-            if (!empty($request->start_date)) {
-                $class->start_date = date('Y-m-d', strtotime($request->start_date));
-            }
-            if (!empty($request->end_date)) {
-                $class->end_date = date('Y-m-d', strtotime($request->end_date));
+            if($class->type==1){
+                if (!empty($request->start_date)) {
+                    $class->start_date = date('Y-m-d', strtotime($request->start_date));
+                }
+                if (!empty($request->end_date)) {
+                    $class->end_date = date('Y-m-d', strtotime($request->end_date));
 
+                }
+            }else{
+                $class->start_date = date('Y-m-d', strtotime($request->date));
+                $class->end_date = date('Y-m-d', strtotime($request->date));
             }
             if (!empty($request->time)) {
                 $class->time = date("H:i", strtotime($request->time));
@@ -274,6 +285,7 @@ class VirtualClassController extends Controller
 
             }
             $class->save();
+
 
             $course = Course::where('class_id', $id)->where('type', 3)->first();
             $course->user_id = Auth::id();

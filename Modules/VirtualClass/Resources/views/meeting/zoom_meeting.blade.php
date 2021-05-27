@@ -84,7 +84,7 @@
                                             <input class="primary-input date form-control" id="startDate"
                                                    type="text"
                                                    name="date" readonly="true"
-                                                   value="{{ isset($class) ? old('date',Carbon\Carbon::parse($class->start_date)->format('m/d/Y')): old('date',Carbon\Carbon::now()->format('m/d/Y'))}}"
+                                                   value="{{ isset($class) ? date('m/d/Y',strtotime($class->start_date)): old('date',Carbon\Carbon::now()->format('m/d/Y'))}}"
                                                    required>
                                             @if ($errors->has('date'))
                                                 <span class="invalid-feedback" role="alert">

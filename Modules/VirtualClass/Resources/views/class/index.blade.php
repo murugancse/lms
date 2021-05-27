@@ -286,9 +286,9 @@
                                                             <div class="">
                                                                 <input placeholder="Start Date"
                                                                        class="primary_input_field primary-input date form-control  {{ @$errors->has('start_date') ? ' is-invalid' : '' }}"
-                                                                       id="start_date" type="text"
+                                                                       id="start_dates" type="text"
                                                                        name="start_date"
-                                                                       value="{{isset($class)? $class->start_date : date('m/d/Y')}}"
+                                                                       value="{{isset($class)? date('m/d/Y',strtotime($class->start_date)) : date('m/d/Y')}}"
                                                                        autocomplete="off">
                                                             </div>
                                                         </div>
@@ -316,7 +316,7 @@
                                                                        class="primary_input_field primary-input date form-control  {{ @$errors->has('end_date') ? ' is-invalid' : '' }}"
                                                                        id="end_date" type="text"
                                                                        name="end_date"
-                                                                       value="{{isset($class)?  $class->end_date : date('m/d/Y')}}"
+                                                                       value="{{isset($class)?  date('m/d/Y',strtotime($class->end_date)) : date('m/d/Y')}}"
                                                                        autocomplete="off">
                                                             </div>
                                                         </div>
@@ -345,10 +345,10 @@
                                                         <div class="col">
                                                             <div class="">
                                                                 <input placeholder="Date"
-                                                                       class="primary_input_field primary-input date form-control  {{ @$errors->has('date') ? ' is-invalid' : '' }}"
+                                                                       class="primary_input_field primary-input form-control  {{ @$errors->has('date') ? ' is-invalid' : '' }}"
                                                                        id="start_date" type="text"
                                                                        name="date"
-                                                                       value="{{isset($class) && $class->type == 0 ? $class->start_date : date('m/d/Y')}}"
+                                                                       value="{{isset($class) && $class->type == 0 ? date('m/d/Y',strtotime($class->start_date)) : date('m/d/Y')}}"
                                                                        autocomplete="off">
                                                             </div>
                                                         </div>
@@ -581,4 +581,16 @@
 @endsection
 @push('scripts')
     <script src="{{asset('/')}}/Modules/CourseSetting/Resources/assets/js/course.js"></script>
+    <script type="text/javascript">
+       $('#start_date').datepicker({
+            autoclose: true,
+            setDate: new Date()
+        });
+        $('#start_date').on('changeDate', function () {
+
+            $(this).focus();
+            $("#start_date").attr('value', $(this).val());
+        });
+
+    </script>
 @endpush
