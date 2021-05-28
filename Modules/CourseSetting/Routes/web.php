@@ -18,6 +18,7 @@ Route::group(['prefix' => 'admin/course', 'middleware' => ['auth', 'admin']], fu
     //Get Course Subcategory
     Route::get('/ajaxGetCourseSubCategory', 'CourseSettingController@ajaxGetCourseSubCategory');
     Route::get('/ajax_get_course_batch', 'CourseSettingController@ajaxGetCourseBatch');
+    Route::get('/ajax_get_course_students', 'CourseSettingController@ajaxGetCourseStudents');
 
     //Manage Category
     Route::get('/messages', 'CourseSettingController@toastrMessages')->name('toastrMessages');

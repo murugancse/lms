@@ -114,8 +114,19 @@
                 <ul>
                     @if (permissionCheck('communication.PrivateMessage'))
                         <li>
-                            <a href="{{ route('communication.PrivateMessage') }}">{{__('communication.Private Messages')}}</a>
+                            <a href="{{ route('communication.PrivateMessage') }}">
+                                @if (auth()->user()->role_id == 1) 
+                                    Instructor Messages
+                                @else
+                                    {{__('communication.Private Messages')}}
+                                @endif
+                            </a>
                         </li>
+                        @if (auth()->user()->role_id == 1) 
+                        <li>
+                            <a href="{{ route('communication.StudentMessage') }}">Student Messages</a>
+                        </li>
+                        @endif
                     @endif
                 </ul>
             </li>

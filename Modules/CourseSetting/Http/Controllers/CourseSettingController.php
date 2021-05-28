@@ -1148,6 +1148,20 @@ class CourseSettingController extends Controller
             return response()->json("", 404);
         }
     }
+    public function ajaxGetCourseStudents(Request $request)
+    {
+        try {
+            $students = DB::table('course_enrolleds as e')
+                        ->leftjoin('users as u', 'u.id', 'e.user_id')
+                        ->where('e.course_id', '=', $request->id)
+                        ->select('u.*')
+                        ->get();
+
+            return response()->json([$students]);
+        } catch (Exception $e) {
+            return response()->json("", 404);
+        }
+    }
 
     public function ExamStore(Request $request)
     {

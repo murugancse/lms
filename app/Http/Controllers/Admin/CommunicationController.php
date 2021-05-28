@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Modules\SystemSetting\Entities\Message;
 use Modules\CourseSetting\Entities\Notification;
 use Modules\CourseSetting\Entities\CourseComment;
+use Modules\CourseSetting\Entities\Course;
+use DB;
 
 class CommunicationController extends Controller
 {
@@ -42,6 +44,27 @@ class CommunicationController extends Controller
         // return $singleMessages;
         return view('backend.communication.private_messages', compact('messages', 'users', 'singleMessage'));
     }
+
+
+    public function StudentMessage()
+    {
+        $users = [];
+        $users = User::where('id', '!=', Auth::id())->where('role_id',3)->with('reciever')->get();
+        
+
+        $singleMessage = Message::where('sender_id', Auth::id())->orderBy('id', 'DESC')->first();
+        if ($singleMessage) {
+            $messages = Message::whereIn('reciever_id', array(Auth::id(), $singleMessage->reciever_id))
+                ->whereIn('sender_id', array(Auth::id(), $singleMessage->reciever_id))->get();
+
+        } else {
+            $messages = "";
+        }
+        $courses = Course::get();
+        // return $singleMessages;
+        return view('backend.communication.student_messages', compact('messages', 'users', 'singleMessage','courses'));
+    }
+
 
 
     public function StorePrivateMessage(Request $request)
@@ -84,6 +107,56 @@ class CommunicationController extends Controller
         }
     }
 
+    public function StoreStudentMessage(Request $request)
+    {
+        //return $request->all();
+
+        $request->validate([
+            'message' => 'required',
+            'course_id' => 'required',
+        ]);
+        try {
+            $course_id = $request->course_id;
+            $student_id = $request->student_id;
+            if(!isset($student_id)){
+                $students = DB::table('course_enrolleds as e')
+                            ->leftjoin('users as u', 'u.id', 'e.user_id')
+                            ->where('e.course_id', '=', $course_id)
+                            ->pluck('u.id')->toArray();
+                $users = $students;
+            }else{
+                $users = $student_id;
+            }
+
+            foreach($users as $user){
+                $message = new Message;
+                $message->sender_id = Auth::id();
+                $message->reciever_id = $user;
+                $message->message = $request->message;
+                $message->type = Auth::id() == 1 ? 1 : 2;
+                $message->seen = 0;
+                $message->save();
+
+                $notification = new Notification();
+                $notification->author_id = Auth::id();
+                $notification->user_id = $user;
+                $notification->message_id = $message->id;
+                $notification->save();
+            }
+
+            
+
+
+            Toastr::success('Message has been send successfully', 'Success');
+
+            return redirect()->back();
+
+        } catch (\Exception $e) {
+
+            Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+            return redirect()->back();
+        }
+    }
 
     public function getMessage(Request $request)
     {

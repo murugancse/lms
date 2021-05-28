@@ -318,8 +318,10 @@ Route::post('get-user-by-role', 'UserController@getUsersByRole')->name('getUsers
 
 Route::group(['namespace' => 'Admin', 'prefix' => 'communication', 'as' => 'communication.', 'middleware' => ['auth', 'admin']], function () {
     Route::get('private-messages', 'CommunicationController@PrivateMessage')->name('PrivateMessage')->middleware('RoutePermissionCheck:communication.PrivateMessage');
+    Route::get('student-messages', 'CommunicationController@StudentMessage')->name('StudentMessage');
     Route::get('questions-answer', 'CommunicationController@QuestionAnswer')->name('QuestionAnswer')->middleware('RoutePermissionCheck:communication.QuestionAnswer');
     Route::any('StorePrivateMessage', 'CommunicationController@StorePrivateMessage')->name('StorePrivateMessage')->middleware('RoutePermissionCheck:communication.send');
+    Route::any('StoreStudentMessage', 'CommunicationController@StoreStudentMessage')->name('StoreStudentMessage');
     Route::post('getMessage', 'CommunicationController@getMessage')->name('getMessage');
 });
 
