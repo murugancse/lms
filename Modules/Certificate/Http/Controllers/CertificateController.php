@@ -50,6 +50,10 @@ class CertificateController extends Controller
        // try {
             $certificate = Certificate::create($request->except(['image', 'signature', '_token', 'certificate_id', 'makeURL', 'uploadURL', 'bgImageInput', 'sigImageInput']));
 
+            if (!file_exists('public/uploads/certificate/')) {
+                mkdir('public/uploads/certificate/', 666, true);
+            }
+
 
             if ($request->file('signature') != "") {
                 $name = md5($request->title . time()) . '.' . 'png';
@@ -104,6 +108,10 @@ class CertificateController extends Controller
             $certificate = Certificate::findOrFail($id);
             $input = $request->except(['image', 'signature', '_token', 'certificate_id', 'makeURL', 'uploadURL', 'bgImageInput', 'sigImageInput']);
             $certificate->fill($input);
+
+            if (!file_exists('public/uploads/certificate/')) {
+                mkdir('public/uploads/certificate/', 666, true);
+            }
 
             if ($request->file('image') != "") {
                 $name = md5($request->title . time()) . '.' . 'png';
