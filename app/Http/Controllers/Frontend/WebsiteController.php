@@ -3896,8 +3896,13 @@ class WebsiteController extends Controller
 
         $course = Course::findOrFail($id);
 
-        if ($course->type == 1)
-            $certificate = Certificate::where('for_course', 1)->first();
+
+        if ($course->type == 1){
+            $certificate = Certificate::where('course_id', $course->id)->first();
+            if(empty($certificate)){
+                $certificate = Certificate::where('for_course', 1)->first();
+            }
+        } 
         else
             $certificate = Certificate::where('for_quiz', 1)->first();
 
@@ -3905,7 +3910,6 @@ class WebsiteController extends Controller
             Toastr::error(trans('certificate.Right Now You Cannot Download The Certificate'));
             return back();
         }
-
 
         if (!isEnrolled($course->id, Auth::user()->id)) {
             Toastr::error(trans('certificate.You Are Not Already Enrolled This course. Please Enroll It First'));
@@ -3921,7 +3925,7 @@ class WebsiteController extends Controller
         $title = "{$course->slug}-certificate-for-" . Auth::user()->name . ".jpg";
 
         $downloadFile = new CertificateController();
-        try {
+        //try {
             $request->course = $course;
             $request->user = Auth::user();
             $certificate = $downloadFile->makeCertificate($certificate->id, $request)['image'] ?? '';
@@ -3935,11 +3939,11 @@ class WebsiteController extends Controller
             return response()->stream(function () use ($certificate) {
                 echo $certificate;
             }, 200, $headers);
-        } catch (\Exception $e) {
+       // } catch (\Exception $e) {
 
-            Toastr::error(trans('common.Something Went Wrong'), 'Error');
-            return back();
-        }
+        //     Toastr::error(trans('common.Something Went Wrong'), 'Error');
+        //     return back();
+        // }
 
     }
 

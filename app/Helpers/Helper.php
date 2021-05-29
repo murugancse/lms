@@ -1188,6 +1188,16 @@ if (!function_exists('getStudentImage')) {
         }
     }
 }
+if (!function_exists('getStudentNewImage')) {
+    function getStudentNewImage($path)
+    {
+        if (File::exists($path)) {
+            return base_path($path);
+        } else {
+            return base_path('public/demo/user/student.png');
+        }
+    }
+}
 if (!function_exists('getBlogImage')) {
     function getBlogImage($path)
     {

@@ -131,7 +131,7 @@ class CertificateController extends Controller
             Toastr::success(trans('certificate.Certificate Update Successfully'), trans('common.Success'));
             return redirect()->route('certificate.index');
         } catch (\Exception $e) {
-            dd($e);
+            //dd($e);
             Toastr::success(trans('common.Something Went Wrong'), trans('common.Success'));
             return back();
         }
@@ -253,11 +253,10 @@ class CertificateController extends Controller
         $img = Image::canvas($width, $height);
         
         if (!empty($bg_image)) {
-            //dd(base_path($bg_image));
+           // dd(base_path($bg_image));
             $img->insert(base_path($bg_image));
         }
-       // dd($img);
-
+      
 
         if (!empty($request->title)) {
             $title = $request->title;
@@ -378,6 +377,7 @@ class CertificateController extends Controller
         }
 
 
+
         $profile = $request->profile ?? 1;
 
         if (!empty($request->profile_x)) {
@@ -467,6 +467,7 @@ class CertificateController extends Controller
         } else {
             $name_font_color = '#000';
         }
+       //  dd($name_font_color);
 
 
         if (isset($request->date)) {
@@ -653,7 +654,8 @@ class CertificateController extends Controller
         //Profile  part
         if ($profile == 1) {
             if (isset($request->user) & isset($request->course)) {
-                $imagePath = getStudentImage($request->user->image);
+                $imagePath = getStudentNewImage($request->user->image);
+                //dd($imagePath);
 
             } else {
                 $imagePath = base_path('public/uploads/staff/user.png');
