@@ -839,6 +839,29 @@
                             </div>
 
                         </div>
+
+                    </div>
+                    <div class="row mt-25 padding_40">
+                        <div class="col-md-12">
+                            <div class="input-effect">
+                                <label> Courses </label>
+                                <select class="primary_select "
+                                        id="course_id" 
+                                        name="course_id">
+                                    <option value="">Select</option> 
+                                    @foreach($courses as $key=>$value)
+                                        <option
+                                            value="{{$value->id}}" {{isset($certificate)?$certificate->course_id==$value->id?'selected':'':''}}>
+                                            {{$value->title}}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @if ($errors->has('signature_text_font_family'))
+                                    <span
+                                        class="error text-danger"><strong>{{ $errors->first('signature_text_font_family') }}</strong></span>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
 

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Intervention\Image\Facades\Image;
 use Modules\Certificate\Entities\Certificate;
+use Modules\CourseSetting\Entities\Course;
 use Modules\Setting\Model\DateFormat;
 
 
@@ -32,8 +33,9 @@ class CertificateController extends Controller
     public function create()
     {
         $font_list = $this->fonts();
+        $courses = Course::all();
         $formats = DateFormat::all();
-        return view('certificate::certificate.index', compact('font_list', 'formats'));
+        return view('certificate::certificate.index', compact('font_list', 'formats','courses'));
     }
 
     public function store(Request $request)
@@ -45,7 +47,7 @@ class CertificateController extends Controller
             'image' => 'required'
 
         ]);
-        try {
+       // try {
             $certificate = Certificate::create($request->except(['image', 'signature', '_token', 'certificate_id', 'makeURL', 'uploadURL', 'bgImageInput', 'sigImageInput']));
 
 
@@ -67,10 +69,10 @@ class CertificateController extends Controller
             $certificate->save();
             Toastr::success(trans('certificate.Certificate Saved Successfully'), trans('common.Success'));
             return redirect()->route('certificate.index');
-        } catch (\Exception $e) {
-            Toastr::error(trans('common.Something Went Wrong'), 'Error');
-            return back();
-        }
+        // } catch (\Exception $e) {
+        //     Toastr::error(trans('common.Something Went Wrong'), 'Error');
+        //     return back();
+        // }
     }
 
     /**
@@ -86,9 +88,10 @@ class CertificateController extends Controller
     public function edit($id)
     {
         $font_list = $this->fonts();
+        $courses = Course::all();
         $certificate = Certificate::findOrFail($id);
         $formats = DateFormat::all();
-        return view('certificate::certificate.index', compact('certificate', 'font_list', 'formats'));
+        return view('certificate::certificate.index', compact('certificate', 'font_list', 'formats','courses'));
     }
 
     public function update(Request $request, $id)
@@ -221,6 +224,7 @@ class CertificateController extends Controller
             $bg_image = '';
         }
 
+        //dd($bg_image);
 
         if (!empty($request->sigImageInput)) {
             $sig_image = $request->sigImageInput;
@@ -239,9 +243,12 @@ class CertificateController extends Controller
 
 
         $img = Image::canvas($width, $height);
+        
         if (!empty($bg_image)) {
-            $img->insert(asset($bg_image));
+            //dd(base_path($bg_image));
+            $img->insert(base_path($bg_image));
         }
+       // dd($img);
 
 
         if (!empty($request->title)) {
@@ -641,7 +648,7 @@ class CertificateController extends Controller
                 $imagePath = getStudentImage($request->user->image);
 
             } else {
-                $imagePath = asset('public/uploads/staff/user.png');
+                $imagePath = base_path('public/uploads/staff/user.png');
             }
 
             $profileImageRow = Image::make($imagePath);
@@ -666,12 +673,15 @@ class CertificateController extends Controller
         }
 
         if (!empty($sig_image)) {
-            $sigImageRow = Image::make(asset($sig_image));
+
+            $sigImageRow = Image::make(base_path($sig_image));
+
             $sigImageRow->resize($signature_weight, $signature_height);
             $sigImg = Image::canvas($signature_weight, $signature_height);
             $sigImg->opacity(0);
             $sigImg->insert($sigImageRow, 'center', 0, 0);
             $img->insert($sigImg, 'bottom', $signature_position_x + 300, $signature_position_y + 200);
+
         }
 
 
@@ -696,13 +706,14 @@ class CertificateController extends Controller
         $data['image'] = $img;
         $data['height'] = $height;
         $data['width'] = $width;
+        //dd($sigImg);
 
         return $data;
     }
 
     public function download($id, Request $request)
     {
-        try {
+        //try {
             $certificate = $this->makeCertificate($id, $request)['image'] ?? '';
 
             $certificate->encode('jpg');
@@ -713,10 +724,10 @@ class CertificateController extends Controller
             return response()->stream(function () use ($certificate) {
                 echo $certificate;
             }, 200, $headers);
-        } catch (\Exception $e) {
-            Toastr::success(trans('common.Something Went Wrong'), trans('common.Success'));
-            return back();
-        }
+        // } catch (\Exception $e) {
+        //     Toastr::success(trans('common.Something Went Wrong'), trans('common.Success'));
+        //     return back();
+        // }
 
     }
 

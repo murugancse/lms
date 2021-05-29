@@ -3013,7 +3013,6 @@ class WebsiteController extends Controller
         $data = $this->common();
         $query = Course::with('user', 'category', 'subCategory', 'enrolls', 'comments', 'reviews', 'lessons');
 
-
         $type = $request->type;
         if (empty($type)) {
             $type = '';
@@ -3063,8 +3062,11 @@ class WebsiteController extends Controller
             $category = '';
         } else {
             $categories = explode(',', $category);
+            //dd($categories);
+            //$query->whereIn('category_id', $categories);
+           // dd($categories);
 
-            $query->whereHas('quiz', function ($q) use ($categories) {
+            $query->whereHas('class', function ($q) use ($categories) {
                 $q->whereIn('category_id', $categories);
             });
 
@@ -3072,6 +3074,7 @@ class WebsiteController extends Controller
 
 
         $query->where('type', 3)->where('status', 1);
+       
 
         $order = $request->order;
         if (empty($order)) {
