@@ -170,6 +170,7 @@
                                             <a href="javascript:void(0)"
                                                class="theme_btn d-block text-center height_50 mb_10">{{__('common.Added To Cart')}}</a>
                                         @else
+                                            <!-- //course -->
                                             <a href="{{route('addToCart',[@$course->id])}}"
                                                class="theme_btn d-block text-center height_50 mb_10">{{__('common.Add To Cart')}}</a>
                                         @endif
@@ -1298,8 +1299,13 @@ $duration =secondsToHour($duration*60);
                                                 <a href="javascript:void(0)"
                                                    class="theme_btn d-block text-center height_50 mb_10">{{__('common.Added To Cart')}}</a>
                                             @else
+                                                @if( $meeting->currentStatus == 'waiting')
                                                 <a href="{{route('addToCart',[@$course->id])}}"
                                                    class="theme_btn d-block text-center height_50 mb_10">{{__('common.Add To Cart')}}</a>
+                                                @else
+                                                 <a href="#"
+                                                   class="theme_btn d-block text-center height_50 mb_10">Closed</a>
+                                                @endif
                                             @endif
                                         @else
                                             <a href=" {{route('addToCart',[@$course->id])}} "
@@ -1315,7 +1321,7 @@ $duration =secondsToHour($duration*60);
                                            class="theme_btn d-block text-center height_50 mb_20">{{__('frontend.Enroll Now')}}</a>
                                     @else
                                         <a href=" {{route('addToCart',[@$course->id])}} "
-                                           class="theme_btn d-block text-center height_50 mb_10">{{__('common.Add To Cart')}}</a>
+                                           class="theme_btn d-block text-center height_50 mb_10">{{__('common.Add To Cart')}}2</a>
                                         <a href="{{route('buyNow',[@$course->id])}}"
                                            class="theme_line_btn d-block text-center height_50 mb_20">{{__('common.Buy Now')}}</a>
                                     @endif

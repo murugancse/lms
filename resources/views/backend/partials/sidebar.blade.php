@@ -126,6 +126,9 @@
                         <li>
                             <a href="{{ route('communication.StudentMessage') }}">Student Messages</a>
                         </li>
+                        <li>
+                            <a href="{{ route('communication.StudentMails') }}">Send Email</a>
+                        </li>
                         @endif
                     @endif
                 </ul>

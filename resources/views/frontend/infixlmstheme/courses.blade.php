@@ -192,6 +192,10 @@
                                                            data-id="{{$course->id}}">
                                                             <i class="fas fa-shopping-cart"></i>
                                                         </a>
+                                                    @else
+                                                        @if(count($course->lessons)>0)
+                                                        <a href="{{ url('fullscreen-view/'.$course->id.'/'.$course->lessons[0]->id) }}" data-course="{{$course->id}}" data-lesson="{{$course->lessons[0]->id}}" class="theme_btn_lite goFullScreen" style="line-height:2;padding: 5px 22px;" >Start Lesson</a>
+                                                        @endif
                                                     @endif
                                                 @endauth
                                                 @guest()
@@ -205,6 +209,9 @@
 
                                             </div>
                                             <div class="course_less_students">
+                                                @php
+                                               // dd($course->lessons);
+                                                @endphp
                                                 <a> <i class="ti-agenda"></i> {{count($course->lessons)}}
                                                     {{__('frontend.Lessons')}}</a>
                                                 <a>

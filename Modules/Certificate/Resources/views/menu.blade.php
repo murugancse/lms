@@ -19,6 +19,9 @@
             <li>
                 <a href="{{ route('certificate.create') }}">{{ __('certificate.New Certificate') }}</a>
             </li>
+           <!--  <li>
+                <a href="{{ route('certificate.create') }}">Assign Certificate</a>
+            </li> -->
         @endif
     </ul>
 </li>

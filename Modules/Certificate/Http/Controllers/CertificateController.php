@@ -100,10 +100,7 @@ class CertificateController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (demoCheck()) {
-            return redirect()->back();
-        }
-
+       
         try {
             $certificate = Certificate::findOrFail($id);
             $input = $request->except(['image', 'signature', '_token', 'certificate_id', 'makeURL', 'uploadURL', 'bgImageInput', 'sigImageInput']);

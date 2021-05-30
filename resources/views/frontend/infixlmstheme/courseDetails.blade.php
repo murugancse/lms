@@ -1146,8 +1146,9 @@
 
                                 @if (Auth::check())
                                     @if ($isEnrolled)
-                                        <a href="#"
-                                           class="theme_btn d-block text-center height_50 mb_10">{{__('common.Already Enrolled')}}</a>
+                                        <!-- <a href="#"
+                                           class="theme_btn d-block text-center height_50 mb_10 d-none">{{__('common.Already Enrolled')}}</a> -->
+                                           <a href="#" data-course="{{$course->id}}" data-lesson="{{$lesson->id}}" class="theme_btn_lite goFullScreen" >Start Lesson</a>
                                     @else
                                         @if($isFree)
 

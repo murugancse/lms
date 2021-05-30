@@ -13,6 +13,7 @@ use Modules\CourseSetting\Entities\Notification;
 use Modules\CourseSetting\Entities\CourseComment;
 use Modules\CourseSetting\Entities\Course;
 use DB;
+use Mail;
 
 class CommunicationController extends Controller
 {
@@ -63,6 +64,15 @@ class CommunicationController extends Controller
         $courses = Course::get();
         // return $singleMessages;
         return view('backend.communication.student_messages', compact('messages', 'users', 'singleMessage','courses'));
+    }
+
+    public function StudentMails()
+    {
+        $users = User::where('id', '!=', Auth::id())->where('role_id',2)->get();
+        
+        $courses = Course::get();
+        // return $singleMessages;
+        return view('backend.communication.student_mails', compact('users','courses'));
     }
 
 
@@ -144,8 +154,6 @@ class CommunicationController extends Controller
                 $notification->save();
             }
 
-            
-
 
             Toastr::success('Message has been send successfully', 'Success');
 
@@ -156,6 +164,66 @@ class CommunicationController extends Controller
             Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
             return redirect()->back();
         }
+    }
+
+    public function SendStudentMail(Request $request)
+    {
+        //return $request->all();
+
+        $request->validate([
+            'subject' => 'required',
+            'message' => 'required',
+            'type' => 'required',
+            'instructor_id' => 'required_if:type,2',
+            'course_id' => 'required_if:type,1',
+        ]);
+       // try {
+            $type = $request->type;
+            $course_id = $request->course_id;
+            $student_id = $request->student_id;
+            $instructor_id = $request->instructor_id;
+            $messagedata = $request->message;
+            $subject = $request->subject;
+            if($type==1){
+                if(!isset($student_id)){
+                    $students = DB::table('course_enrolleds as e')
+                                ->leftjoin('users as u', 'u.id', 'e.user_id')
+                                ->where('e.course_id', '=', $course_id)
+                                ->whereNotNull('u.id')
+                                ->pluck('u.id')->toArray();
+                    $users = $students;
+                }else{
+                    $users = $student_id;
+                }
+            }else{
+                $users = $instructor_id;
+            }
+            $emails = DB::table('users')->whereIn('id',$users)->pluck('email')->toArray();
+            //dd($emails);
+            
+            //$emails = ['muruganaccetcse@gmail.com', 'murugancse1994@gmail.com'];
+
+            Mail::send('mail.bulk', ['data' => $messagedata], function($message) use ($emails,$subject)
+            {    
+                $message->to($emails)->subject($subject);    
+            });
+           
+
+            // foreach($users as $user){
+                
+            //     Mail::to('Cloudways@Cloudways.com')->send(new BulkMail($message));
+            // }
+
+
+            Toastr::success('Mail has been send successfully', 'Success');
+
+            return redirect()->back();
+
+        // } catch (\Exception $e) {
+
+        //     Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+        //     return redirect()->back();
+        // }
     }
 
     public function getMessage(Request $request)

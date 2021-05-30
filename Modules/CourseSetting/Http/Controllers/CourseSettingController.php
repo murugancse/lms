@@ -1154,6 +1154,7 @@ class CourseSettingController extends Controller
             $students = DB::table('course_enrolleds as e')
                         ->leftjoin('users as u', 'u.id', 'e.user_id')
                         ->where('e.course_id', '=', $request->id)
+                        ->whereNotNull('u.id')
                         ->select('u.*')
                         ->get();
 
