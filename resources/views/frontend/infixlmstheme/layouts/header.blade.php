@@ -140,5 +140,5 @@
 
 <body>
 <div class="preloader">
-    <h3 data-text="{{getSetting()->site_title}}...">{{getSetting()->site_title}}...</h3>
+    <img src="{{ asset('public/frontend/infixlmstheme') }}/img/Spinner.gif">
 </div>

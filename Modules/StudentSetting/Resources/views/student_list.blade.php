@@ -235,15 +235,17 @@
                                         </div>
                                     </div>
                                     <div class="row">
+
                                         <div class="col-xl-6">
-                                            <div class="primary_input mb-25">
-                                                <label class="primary_input_label" for="">{{__('common.Email')}} <strong
-                                                        class="text-danger">*</strong></label>
-                                                <input class="primary_input_field" name="email" placeholder="-"
-                                                       value="{{ old('email') }}" id="addEmail"
-                                                       {{$errors->first('email') ? 'autofocus' : ''}}
-                                                       type="email">
-                                            </div>
+                                            <label class="primary_input_label" for="grade">Grade</label>
+                                            <select class="primary_select" name="grade" id="grade">
+                                                <option data-display="{{__('common.Select')}} Grade"
+                                                        value="">{{__('common.Select')}} Grade</option>
+                                                @for($i=1;$i<=5;$i++)
+                                                <option value="{{$i}}">Form {{$i}}</option>
+                                                @endfor
+                                                
+                                            </select>
                                         </div>
                                         <div class="col-xl-6">
                                             <div class="primary_input mb-35">
@@ -263,7 +265,22 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <br>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-xl-12">
+                                            <div class="primary_input mb-25">
+                                                <label class="primary_input_label" for="">{{__('common.Email')}} <strong
+                                                        class="text-danger">*</strong></label>
+                                                <input class="primary_input_field" name="email" placeholder="-"
+                                                       value="{{ old('email') }}" id="addEmail"
+                                                       {{$errors->first('email') ? 'autofocus' : ''}}
+                                                       type="email">
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+
                                     <div class="row">
                                         <div class="col-xl-6">
                                             <div class="primary_input mb-25">
@@ -301,44 +318,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-
-                                        <div class="col-xl-6">
-                                            <div class="primary_input mb-25">
-                                                <label class="primary_input_label"
-                                                       for="">{{__('common.Facebook URL')}}</label>
-                                                <input class="primary_input_field" name="facebook" placeholder="-" id="addFacebook"
-                                                       type="text" value="{{ old('facebook') }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-6">
-                                            <div class="primary_input mb-25">
-                                                <label class="primary_input_label"
-                                                       for="">{{__('common.Twitter URL')}}</label>
-                                                <input class="primary_input_field" name="twitter" placeholder="-" id="addTwitter"
-                                                       type="text" value="{{ old('twitter') }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-
-                                        <div class="col-xl-6">
-                                            <div class="primary_input mb-25">
-                                                <label class="primary_input_label"
-                                                       for="">{{__('common.LinkedIn URL')}}</label>
-                                                <input class="primary_input_field" name="linkedin" placeholder="-" id="addLinked"
-                                                       type="text" value="{{ old('linkedin') }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-6">
-                                            <div class="primary_input mb-25">
-                                                <label class="primary_input_label"
-                                                       for="">{{__('common.Youtube URL')}}</label>
-                                                <input class="primary_input_field" name="youtube" placeholder="-" id="addYoutube"
-                                                       type="text" value="{{ old('youtube') }}">
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
+                                   
                                     <div class="col-lg-12 text-center pt_15">
                                         <div class="d-flex justify-content-center">
                                             <button class="primary-btn semi_large2  fix-gr-bg" id="save_button_parent"
@@ -454,16 +435,17 @@
                                     <div class="row">
 
                                         <div class="col-xl-6">
-                                            <div class="primary_input mb-25">
-                                                <label class="primary_input_label"
-                                                       for="">{{__('common.Email')}} <strong
-                                                        class="text-danger">*</strong></label>
-                                                <input class="primary_input_field"
-                                                       {{$errors->first('email') ? 'autofocus' : ''}}
-                                                       value="{{old('email')}}" name="email" id="studentEmail"
-                                                       placeholder="-" type="email">
-                                            </div>
+                                            <label class="primary_input_label" for="editgrade">Grade</label>
+                                            <select class="primary_select" name="grade" id="editgrade">
+                                                <option data-display="{{__('common.Select')}} Grade"
+                                                        value="">{{__('common.Select')}} Grade</option>
+                                                @for($i=1;$i<=5;$i++)
+                                                <option value="{{$i}}">Form {{$i}}</option>
+                                                @endfor
+                                                
+                                            </select>
                                         </div>
+
                                         <div class="col-xl-6">
                                             <div class="primary_input mb-35">
                                                 <label class="primary_input_label"
@@ -489,6 +471,21 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col-xl-12">
+                                            <div class="primary_input mb-25">
+                                                <label class="primary_input_label"
+                                                       for="">{{__('common.Email')}} <strong
+                                                        class="text-danger">*</strong></label>
+                                                <input class="primary_input_field"
+                                                       {{$errors->first('email') ? 'autofocus' : ''}}
+                                                       value="{{old('email')}}" name="email" id="studentEmail"
+                                                       placeholder="-" type="email">
+                                            </div>
+                                        </div>
+                                        
                                     </div>
                                     <div class="row">
 
@@ -533,54 +530,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-xl-6">
-                                            <div class="primary_input mb-25">
-                                                <label class="primary_input_label"
-                                                       for="">{{__('common.Facebook URL')}}</label>
-                                                <input class="primary_input_field"
-                                                       value='{{old('facebook')}}'
-                                                       id="studentFacebook"
-                                                       name="facebook" placeholder="-"
-                                                       type="text">
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-6">
-                                            <div class="primary_input mb-25">
-                                                <label class="primary_input_label"
-                                                       for="">{{__('common.Twitter URL')}}</label>
-                                                <input class="primary_input_field"
-                                                       id="studentTwitter"
-                                                       value="{{old('twitter')}}"
-                                                       name="twitter" placeholder="-"
-                                                       type="text">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xl-6">
-                                            <div class="primary_input mb-25">
-                                                <label class="primary_input_label"
-                                                       for="">{{__('common.LinkedIn URL')}}</label>
-                                                <input class="primary_input_field"
-                                                       id="studentLinkedin"
-                                                       value="{{old('linkedin')}}"
-                                                       name="linkedin" placeholder="-"
-                                                       type="text">
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-6">
-                                            <div class="primary_input mb-25">
-                                                <label class="primary_input_label"
-                                                       for="studentYoutube">{{__('common.Youtube URL')}}</label>
-                                                <input class="primary_input_field"
-                                                       value="{{old('youtube')}}"
-                                                       id="studentYoutube"
-                                                       name="youtube" placeholder="-"
-                                                       type="text">
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
+                                   
                                     <div class="col-lg-12 text-center pt_15">
                                         <div class="d-flex justify-content-center">
                                             <button class="primary-btn semi_large2  fix-gr-bg"

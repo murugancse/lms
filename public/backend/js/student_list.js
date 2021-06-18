@@ -32,6 +32,8 @@ $(document).on('click', '.editStudent', function () {
     $('#studentTwitter').val(student.twitter);
     $('#studentLinkedin').val(student.linkedin);
     $('#studentYoutube').val(student.youtube);
+    $('#editgrade').val(student.grade);
+    $('#editgrade').niceSelect('update');
     $("#editStudent").modal('show');
 
 });

@@ -83,6 +83,7 @@ class StudentSettingController extends Controller
             $user->username = $request->email;
             $user->password = bcrypt($request->password);
             $user->about = $request->about;
+            $user->grade = $request->grade;
 
             if (empty($request->phone)) {
                 $user->phone = null;
@@ -188,6 +189,7 @@ class StudentSettingController extends Controller
                 $user->linkedin = $request->linkedin;
                 $user->youtube = $request->youtube;
                 $user->about = $request->about;
+                $user->grade = $request->grade;
                 $user->email_verify = 1;
 
                 if ($request->password) {
