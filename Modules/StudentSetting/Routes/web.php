@@ -15,6 +15,19 @@ Route::group(['prefix' => 'admin/student', 'middleware' => ['auth', 'admin']], f
 	Route::post('import', 'StudentSettingController@import')->name('import');
 });
 
+Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function () {
+    Route::get('grade', 'StudentSettingController@gradeIndex')->name('grade');
+    Route::post('grade', 'StudentSettingController@gradeStore')->name('grade.store');
+    Route::get('grade/{id}', 'StudentSettingController@gradeShow')->name('grade-edit');
+    Route::put('grade/{id}', 'StudentSettingController@gradeUpdate')->name('grade-update');
+    Route::delete('grade/{id}', 'StudentSettingController@gradeDestroy')->name('grade-delete');
+
+    Route::get('subject', 'StudentSettingController@subjectIndex')->name('subject');
+    Route::post('subject', 'StudentSettingController@subjectStore')->name('subject.store');
+    Route::get('subject/{id}', 'StudentSettingController@subjectShow')->name('subject-edit');
+    Route::put('subject/{id}', 'StudentSettingController@subjectUpdate')->name('subject-update');
+    Route::delete('subject/{id}', 'StudentSettingController@subjectDestroy')->name('subject-delete');
+});
 
 Route::group(['prefix' => 'student/dashboard', 'middleware' => ['auth', 'student']], function () {
 

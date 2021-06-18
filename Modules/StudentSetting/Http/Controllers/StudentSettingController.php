@@ -15,6 +15,9 @@ use Modules\CourseSetting\Entities\Course;
 use Illuminate\Support\Facades\Validator;
 use Image;
 use Maatwebsite\Excel\Facades\Excel;
+use Modules\CourseSetting\Entities\Grade;
+use Modules\CourseSetting\Entities\Subject;
+use App\TableList;
 
 use App\Imports\StudentsImport;
 
@@ -341,5 +344,237 @@ class StudentSettingController extends Controller
          
         Toastr::success(trans('common.Operation successful'), trans('common.Success'));
         return redirect()->back();
+    }
+
+    public function gradeIndex()
+    {
+        try{
+            $grades = Grade::get();
+            return view('studentsetting::grade.index', compact('grades'));
+        }catch (\Exception $e) {
+           Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+           return redirect()->back();
+        }
+    }
+
+    public function gradeStore(Request $request)
+    {
+        if (demoCheck()) {
+            return redirect()->back();
+        }
+        $request->validate([
+            'title' => "required|unique:grades"
+        ]);
+        try{
+            $group = new Grade();
+            $group->title = $request->title;
+            $result = $group->save();
+            if ($result) {
+                Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+                return redirect()->back();
+            } else {
+                Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+                return redirect()->back();
+                // return redirect()->back()->with('message-danger', 'Something went wrong, please try again');
+            }
+        }catch (\Exception $e) {
+           Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+           return redirect()->back();
+        }
+    }
+
+     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function gradeShow($id)
+    {
+        try{
+            $grade = Grade::find($id);
+
+            $grades = Grade::get();
+            return view('studentsetting::grade.index', compact('grades', 'grade'));
+        }catch (\Exception $e) {
+            // dd($e);
+           Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+           return redirect()->back();
+        }
+    }
+
+    public function gradeUpdate(Request $request, $id)
+    {
+        if (demoCheck()) {
+            return redirect()->back();
+        }
+        $request->validate([
+            'title' => "required|unique:grades,title," . $request->id
+        ]);
+        try{
+
+            $group = Grade::find($request->id);
+
+            $group->title = $request->title;
+            $result = $group->save();
+            if ($result) {
+                Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+                return redirect('admin/grade');
+            } else {
+                Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+                return redirect()->back();
+            }
+        }catch (\Exception $e) {
+           Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+           return redirect()->back();
+        }
+    }
+    public function gradeDestroy($id)
+    {
+        if (demoCheck()) {
+            return redirect()->back();
+        }
+        $tables = TableList::getTableList('grade_id', $id);
+
+        try{
+            if ($tables==null) {
+                
+                $group = Grade::destroy($id);
+
+                if ($group) {
+                    Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+                    return redirect('admin/grade');
+                } else {
+                    Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+                    return redirect()->back();
+                }
+            } else {
+                $msg = 'This data already used in  : ' . $tables . ' Please remove those data first';
+                Toastr::error($msg, 'Failed');
+                return redirect()->back();
+            }
+
+
+        }catch (\Exception $e) {
+           $msg = 'This data already used in  : ' . $tables . ' Please remove those data first';
+            Toastr::error($msg, 'Failed');
+           return redirect()->back();
+        }
+    }
+
+    public function subjectIndex()
+    {
+        try{
+            $subjects = Subject::get();
+            return view('studentsetting::subject.index', compact('subjects'));
+        }catch (\Exception $e) {
+           Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+           return redirect()->back();
+        }
+    }
+
+    public function subjectStore(Request $request)
+    {
+        if (demoCheck()) {
+            return redirect()->back();
+        }
+        $request->validate([
+            'title' => "required|unique:subjects"
+        ]);
+        try{
+            $subject = new Subject();
+            $subject->title = $request->title;
+            $result = $subject->save();
+            if ($result) {
+                Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+                return redirect()->back();
+            } else {
+                Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+                return redirect()->back();
+                // return redirect()->back()->with('message-danger', 'Something went wrong, please try again');
+            }
+        }catch (\Exception $e) {
+           Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+           return redirect()->back();
+        }
+    }
+
+     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function subjectShow($id)
+    {
+        try{
+            $subject = Subject::find($id);
+
+            $subjects = Subject::get();
+            return view('studentsetting::subject.index', compact('subjects', 'subject'));
+        }catch (\Exception $e) {
+            // dd($e);
+           Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+           return redirect()->back();
+        }
+    }
+
+    public function subjectUpdate(Request $request, $id)
+    {
+        if (demoCheck()) {
+            return redirect()->back();
+        }
+        $request->validate([
+            'title' => "required|unique:subjects,title," . $request->id
+        ]);
+        try{
+
+            $subject = Subject::find($request->id);
+
+            $subject->title = $request->title;
+            $result = $subject->save();
+            if ($result) {
+                Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+                return redirect('admin/subject');
+            } else {
+                Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+                return redirect()->back();
+            }
+        }catch (\Exception $e) {
+           Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+           return redirect()->back();
+        }
+    }
+    public function subjectDestroy($id)
+    {
+        if (demoCheck()) {
+            return redirect()->back();
+        }
+        $tables = TableList::getTableList('subject_id', $id);
+
+        try{
+            if ($tables==null) {
+                
+                $subject = Subject::destroy($id);
+
+                if ($subject) {
+                    Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+                    return redirect('admin/subject');
+                } else {
+                    Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+                    return redirect()->back();
+                }
+            } else {
+                $msg = 'This data already used in  : ' . $tables . ' Please remove those data first';
+                Toastr::error($msg, 'Failed');
+                return redirect()->back();
+            }
+
+
+        }catch (\Exception $e) {
+           $msg = 'This data already used in  : ' . $tables . ' Please remove those data first';
+            Toastr::error($msg, 'Failed');
+           return redirect()->back();
+        }
     }
 }
