@@ -114,11 +114,17 @@
                                 /{{__('quiz.Quiz')}} {{__('courses.List')}}</h3>
                             @if (permissionCheck('course.store'))
                                 <ul class="d-flex">
-                                    <li><a class="primary-btn radius_30px mr-10 fix-gr-bg" data-toggle="modal"
-                                           id="add_course_btn"
-                                           data-target="#add_course" href="#"><i
-                                                class="ti-plus"></i>{{__('common.Add')}} {{__('courses.Course')}}
-                                            /{{__('quiz.Quiz')}}</a></li>
+                                    <li>
+                                        <a href="{{route('AddCourse')}}" title=" {{__('common.Add')}}"
+                                           class="primary-btn small updateBtn fix-gr-bg">
+                                            + {{__('common.Add')}} {{__('courses.Course')}}
+                                            /{{__('quiz.Quiz')}}
+                                        </a>
+                                        <!-- <a class="primary-btn radius_30px mr-10 fix-gr-bg" data-toggle="modal" id="add_course_btn" data-target="#add_course" href="#">
+                                           <i class="ti-plus"></i>{{__('common.Add')}} {{__('courses.Course')}}
+                                            /{{__('quiz.Quiz')}}
+                                        </a> -->
+                                    </li>
                                 </ul>
                             @endif
                         </div>

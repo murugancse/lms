@@ -224,6 +224,19 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-6">
+                                            <label class="primary_input_label" for="grade">Grade</label>
+                                            <select class="primary_select" name="grade" id="grade">
+                                                <option data-display="{{__('common.Select')}} Grade"
+                                                        value="">{{__('common.Select')}} Grade</option>
+                                                @foreach($grades as $grade)
+                                                <option value="{{$grade->id}}">{{$grade->title}}</option>
+                                                @endforeach
+                                                
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xl-6">
                                             <div class="primary_input mb-25">
                                                 <label class="primary_input_label"
                                                        for="">{{__('common.Phone')}} </label>
@@ -233,20 +246,7 @@
                                                        type="text" {{$errors->first('phone') ? 'autofocus' : ''}}>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-
-                                        <div class="col-xl-6">
-                                            <label class="primary_input_label" for="grade">Grade</label>
-                                            <select class="primary_select" name="grade" id="grade">
-                                                <option data-display="{{__('common.Select')}} Grade"
-                                                        value="">{{__('common.Select')}} Grade</option>
-                                                @for($i=1;$i<=5;$i++)
-                                                <option value="{{$i}}">Form {{$i}}</option>
-                                                @endfor
-                                                
-                                            </select>
-                                        </div>
+                                       
                                         <div class="col-xl-6">
                                             <div class="primary_input mb-35">
                                                 <label class="primary_input_label" for="">{{__('common.Image')}}
@@ -422,6 +422,21 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-6">
+                                            <label class="primary_input_label" for="editgrade">Grade</label>
+                                            <select class="primary_select" name="grade" id="editgrade">
+                                                <option data-display="{{__('common.Select')}} Grade"
+                                                        value="">{{__('common.Select')}} Grade</option>
+                                                @foreach($grades as $grade)
+                                                <option value="{{$grade->id}}">{{$grade->title}}</option>
+                                                @endforeach
+                                                
+                                            </select>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col-xl-6">
                                             <div class="primary_input mb-25">
                                                 <label class="primary_input_label"
                                                        for="">{{__('common.Phone')}}  </label>
@@ -430,20 +445,6 @@
                                                        value="{{old('phone')}}" name="phone"
                                                        placeholder="-" type="text">
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-
-                                        <div class="col-xl-6">
-                                            <label class="primary_input_label" for="editgrade">Grade</label>
-                                            <select class="primary_select" name="grade" id="editgrade">
-                                                <option data-display="{{__('common.Select')}} Grade"
-                                                        value="">{{__('common.Select')}} Grade</option>
-                                                @for($i=1;$i<=5;$i++)
-                                                <option value="{{$i}}">Form {{$i}}</option>
-                                                @endfor
-                                                
-                                            </select>
                                         </div>
 
                                         <div class="col-xl-6">

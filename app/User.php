@@ -37,7 +37,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected static $flushCacheOnUpdate = true;
 
     protected $fillable = [
-        'name', 'role_id', 'username', 'email', 'phone', 'country', 'password', 'email_verified_at', 'mobile_verified_at', 'avatar', 'subscribe'
+        'name', 'role_id', 'username', 'email', 'phone', 'country', 'password', 'email_verified_at', 'mobile_verified_at', 'avatar', 'subscribe','per_hour_charge','grade','subject'
     ];
 
     /**

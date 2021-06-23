@@ -20,11 +20,6 @@
                 <a href="{{ route('admin.enrollLogs') }}">{{__('student.Enrolled Student')}}</a>
             </li>
         @endif
-        <li>
-            <a href="{{ route('grade') }}">Grade List</a>
-        </li>
-        <li>
-            <a href="{{ route('subject') }}">Subject List</a>
-        </li>
+        
     </ul>
 </li>

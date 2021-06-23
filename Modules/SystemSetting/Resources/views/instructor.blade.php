@@ -258,6 +258,43 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                       
+                                        <div class="col-xl-6">
+                                            <label class="primary_input_label" for="grade">Grade</label>
+                                            <select class="primary_select" name="grade" id="grade">
+                                                <option data-display="{{__('common.Select')}} Grade"
+                                                        value="">{{__('common.Select')}} Grade</option>
+                                                @foreach($grades as $grade)
+                                                <option value="{{$grade->id}}">{{$grade->title}}</option>
+                                                @endforeach
+                                                
+                                            </select>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <label class="primary_input_label" for="subject">Subject</label>
+                                            <select class="primary_select" name="subject" id="subject">
+                                                <option data-display="{{__('common.Select')}} Subject"
+                                                        value="">{{__('common.Select')}} Subject</option>
+                                                @foreach($subjects as $subject)
+                                                <option value="{{$subject->id}}">{{$subject->title}}</option>
+                                                @endforeach
+                                                
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col-xl-6">
+                                            <div class="primary_input mb-25">
+                                                <label class="primary_input_label"
+                                                       for=""> Per Hour Charge</label>
+                                                <input class="primary_input_field" name="per_hour_charge" placeholder="-" id="per_hour_charge"
+                                                       type="text" value="{{ old('per_hour_charge') }}">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="row d-none">
 
                                         <div class="col-xl-6">
                                             <div class="primary_input mb-25">
@@ -276,7 +313,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row d-none">
 
                                         <div class="col-xl-6">
                                             <div class="primary_input mb-25">
@@ -478,6 +515,43 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                       
+                                        <div class="col-xl-6">
+                                            <label class="primary_input_label" for="editgrade">Grade</label>
+                                            <select class="primary_select" name="grade" id="editgrade">
+                                                <option data-display="{{__('common.Select')}} Grade"
+                                                        value="">{{__('common.Select')}} Grade</option>
+                                                @foreach($grades as $grade)
+                                                <option value="{{$grade->id}}">{{$grade->title}}</option>
+                                                @endforeach
+                                                
+                                            </select>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <label class="primary_input_label" for="editsubject">Subject</label>
+                                            <select class="primary_select" name="subject" id="editsubject">
+                                                <option data-display="{{__('common.Select')}} Subject"
+                                                        value="">{{__('common.Select')}} Subject</option>
+                                                @foreach($subjects as $subject)
+                                                <option value="{{$subject->id}}">{{$subject->title}}</option>
+                                                @endforeach
+                                                
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col-xl-6">
+                                            <div class="primary_input mb-25">
+                                                <label class="primary_input_label"
+                                                       for=""> Per Hour Charge</label>
+                                                <input class="primary_input_field" name="per_hour_charge" placeholder="-" id="insper_hour_charge"
+                                                       type="text" value="{{ old('per_hour_charge') }}">
+                                            </div>
+                                        </div>
+                                       
+                                    </div>
+                                    <div class="row d-none">
                                         <div class="col-xl-6">
                                             <div class="primary_input mb-25">
                                                 <label class="primary_input_label"
@@ -501,7 +575,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row d-none">
 
                                         <div class="col-xl-6">
                                             <div class="primary_input mb-25">

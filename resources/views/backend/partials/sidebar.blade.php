@@ -138,6 +138,26 @@
             @include('payment::menu')
         @endif
 
+        <li>
+            <a href="#" class="has-arrow" aria-expanded="false">
+                <div class="nav_icon_small">
+                    <span class="fas fa-list"></span>
+                </div>
+                <div class="nav_title">
+                    <span>Masters</span>
+                </div>
+            </a>
+            <ul>
+               
+                 <li>
+                    <a href="{{ route('grade') }}">Grade List</a>
+                </li>
+                <li>
+                    <a href="{{ route('subject') }}">Subject List</a>
+                </li>
+            </ul>
+        </li>
+
         @if (permissionCheck('reports'))
             <li>
                 <a href="#" class="has-arrow" aria-expanded="false">

@@ -32,6 +32,7 @@ class StudentSettingController extends Controller
     {
         try {
             $students = User::where('role_id', 3)->latest()->get();
+            $grades = Grade::where('status', 1)->orderBy('title', 'asc')->get();
             // $courses = $students[0]->enrollCourse;
             // foreach ($courses as $key => $course) {
             //     print_r($course->title);
@@ -39,7 +40,7 @@ class StudentSettingController extends Controller
             // }
             // dd('ok');
 
-            return view('studentsetting::student_list', compact('students'));
+            return view('studentsetting::student_list', compact('students','grades'));
 
         } catch (\Exception $e) {
             Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
@@ -368,6 +369,7 @@ class StudentSettingController extends Controller
         try{
             $group = new Grade();
             $group->title = $request->title;
+            $group->status = 1;
             $result = $group->save();
             if ($result) {
                 Toastr::success(trans('common.Operation successful'), trans('common.Success'));
@@ -416,6 +418,7 @@ class StudentSettingController extends Controller
             $group = Grade::find($request->id);
 
             $group->title = $request->title;
+            $group->status = 1;
             $result = $group->save();
             if ($result) {
                 Toastr::success(trans('common.Operation successful'), trans('common.Success'));
@@ -484,6 +487,7 @@ class StudentSettingController extends Controller
         try{
             $subject = new Subject();
             $subject->title = $request->title;
+            $subject->status = 1;
             $result = $subject->save();
             if ($result) {
                 Toastr::success(trans('common.Operation successful'), trans('common.Success'));
@@ -532,6 +536,7 @@ class StudentSettingController extends Controller
             $subject = Subject::find($request->id);
 
             $subject->title = $request->title;
+            $subject->status = 1;
             $result = $subject->save();
             if ($result) {
                 Toastr::success(trans('common.Operation successful'), trans('common.Success'));

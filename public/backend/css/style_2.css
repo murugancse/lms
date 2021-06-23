@@ -6206,7 +6206,7 @@ table.dataTable thead .sorting_desc::after {
 }
 
 .primary_input_field {
-    border: 1px solid #ECEEF4;
+    border: 1px solid #b0b2b9;
     font-size: 14px;
     color: #415094;
     padding-left: 20px;
@@ -6533,7 +6533,7 @@ table.dataTable thead .sorting_desc::after {
 }
 
 .primary_file_uploader input {
-    border: 1px solid #ECEEF4 !important;
+    border: 1px solid #b0b2b9 !important;
     font-size: 14px;
     color: #415094;
     padding-left: 20px;

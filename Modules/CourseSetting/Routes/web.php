@@ -47,6 +47,7 @@ Route::group(['prefix' => 'admin/course', 'middleware' => ['auth', 'admin']], fu
 
     //Manage course
     Route::get('/all/courses', 'CourseSettingController@getAllCourse')->name('getAllCourse')->middleware('RoutePermissionCheck:getAllCourse');
+    Route::get('/courses/new', 'CourseSettingController@AddCourse')->name('AddCourse')->middleware('RoutePermissionCheck:getAllCourse');
     Route::get('/active/courses', 'CourseSettingController@getActiveCourse')->name('getActiveCourse')->middleware('RoutePermissionCheck:getActiveCourse');
     Route::get('/pending/courses', 'CourseSettingController@getPendingCourse')->name('getPendingCourse')->middleware('RoutePermissionCheck:getPendingCourse');
     Route::get('/disable/courses', 'CourseSettingController@getDisableCourse')->name('getDisableCourse')->middleware('RoutePermissionCheck:getDisableCourse');

@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Image;
 use Modules\Newsletter\Entities\NewsletterSetting;
+use Modules\CourseSetting\Entities\Grade;
+use Modules\CourseSetting\Entities\Subject;
 
 
 class InstructorSettingController extends Controller
@@ -22,8 +24,10 @@ class InstructorSettingController extends Controller
 
         try {
             $instructors = User::where('role_id', 2)->latest()->with('courses', 'enrolls')->get();
+            $grades = Grade::where('status', 1)->orderBy('title', 'asc')->get();
+            $subjects = Subject::where('status', 1)->orderBy('title', 'asc')->get();
 
-            return view('systemsetting::instructor', compact('instructors'));
+            return view('systemsetting::instructor', compact('instructors','grades','subjects'));
 
         } catch (\Exception $e) {
             Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
@@ -70,6 +74,9 @@ class InstructorSettingController extends Controller
             $user->password = bcrypt($request->password);
             $user->about = $request->about;
             $user->dob = $request->dob;
+            $user->per_hour_charge = $request->per_hour_charge;
+            $user->grade = $request->grade;
+            $user->subject = $request->subject;
 
             if (empty($request->phone)) {
                 $user->phone = null;
@@ -215,6 +222,9 @@ class InstructorSettingController extends Controller
                 $user->about = $request->about;
                 $user->dob = $request->dob;
                 $user->phone = $request->phone;
+                $user->per_hour_charge = $request->per_hour_charge;
+                $user->grade = $request->grade;
+                $user->subject = $request->subject;
                 if ($request->password)
                     $user->password = bcrypt($request->password);
 

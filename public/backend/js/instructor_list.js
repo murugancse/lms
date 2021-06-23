@@ -30,6 +30,11 @@ $(document).on('click', '.editInstructor', function () {
     $('#instructorTwitter').val(instructor.twitter);
     $('#instructorLinkedin').val(instructor.linkedin);
     $('#instructorInstragram').val(instructor.instagram);
+    $('#insper_hour_charge').val(instructor.per_hour_charge);
+    $('#editgrade').val(instructor.grade);
+    $('#editgrade').niceSelect('update');
+    $('#editsubject').val(instructor.subject);
+    $('#editsubject').niceSelect('update');
     $("#editInstructor").modal('show');
 
 });

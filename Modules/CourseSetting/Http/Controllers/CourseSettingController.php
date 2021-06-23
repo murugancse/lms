@@ -136,6 +136,29 @@ class CourseSettingController extends Controller
         }
     }
 
+    public function AddCourse(){
+        $categories = Category::get();
+        $quizzes = OnlineQuiz::all();
+        $levels = CourseLevel::where('status', 1)->get();
+        $languages = Language::select('id', 'native', 'code')
+                ->where('status', '=', 1)
+                ->get();
+        try {
+            $vimeo_video_list = Vimeo::request('/me/videos', ['per_page' => 10], 'GET');
+        } catch (\Exception $e) {
+            $vimeo_video_list = [];
+        }
+        if (isset($vimeo_video_list['body']['data'])) {
+            $video_list = $vimeo_video_list['body']['data'];
+        } else {
+            $video_list = [];
+        }
+        $sub_lists = $this->getSubscriptionList();
+        $title = 'New Course';
+        // return $singleMessages;
+        return view('coursesetting::courses_new', compact('categories','quizzes','levels','languages','video_list','sub_lists'));
+    }
+
     public function courseSortBy(Request $request)
     {
         if (demoCheck()) {
@@ -303,9 +326,6 @@ class CourseSettingController extends Controller
 
         Session::flash('type', 'store');
 
-        if (demoCheck()) {
-            return redirect()->back();
-        }
         $this->validate($request, [
             'type' => 'required',
             'language' => 'required',
@@ -431,7 +451,7 @@ class CourseSettingController extends Controller
 
 
             Toastr::success(trans('common.Operation successful'), trans('common.Success'));
-            return redirect()->back();
+            return redirect(route('getAllCourse'));
 
         } catch (Exception $e) {
             Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
