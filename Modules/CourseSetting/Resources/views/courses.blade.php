@@ -226,10 +226,8 @@
                                                         @endif
 
                                                         @if (permissionCheck('course.edit'))
-                                                            <button data-toggle="modal"
-                                                                    data-target="#editCourse{{@$course->id}}"
-                                                                    class="dropdown-item"
-                                                                    type="button">{{__('common.Edit')}}</button>
+                                                            <a href="{{route('EditCourse',@$course->id)}}" class="dropdown-item">{{__('common.Edit')}}
+                                                            </a>
                                                         @endif
 
                                                         @if (permissionCheck('course.view'))

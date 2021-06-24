@@ -57,6 +57,7 @@ class VirtualClassController extends Controller
         
         $request->validate([
             'title' => 'required',
+            'class_type' => 'required',
             'hours' => 'required',
             'minutes' => 'required',
             'category' => 'required',
@@ -82,6 +83,7 @@ class VirtualClassController extends Controller
             $class->type = $request->type;
             $class->host = $request->host;
             $class->lang_id = $request->lang_id;
+            $class->class_type = $request->class_type;
             $class->user_id = auth()->user()->id;
 
             if($class->type==1){
@@ -121,6 +123,7 @@ class VirtualClassController extends Controller
             $course->lang_id = $request->lang_id;
             $course->price = $request->free ? 0 : $request->fees;
             $course->title = $request->title;
+            $course->class_type = $request->class_type;
             $course->slug = Str::slug($request->title) == "" ? str_replace(' ', '-', $request->title) : Str::slug($request->title);
             if ($request->file('image') != "") {
                 //dd('image');
@@ -232,6 +235,7 @@ class VirtualClassController extends Controller
 
     public function update(Request $request, $id)
     {
+       
         $request->validate([
             'title' => 'required',
             'hours' => 'required',
@@ -257,6 +261,7 @@ class VirtualClassController extends Controller
             $class->fees = $request->free ? 0 : $request->fees;
             $class->type = $request->type;
             $class->user_id = auth()->user()->id;
+            $class->class_type = $request->class_type;
 
             if($class->type==1){
                 if (!empty($request->start_date)) {
@@ -291,6 +296,7 @@ class VirtualClassController extends Controller
             $course->user_id = Auth::id();
             $course->lang_id = 1;
             $course->title = $request->title;
+            $course->class_type = $request->class_type;
             $course->slug = Str::slug($request->title) == "" ? str_replace(' ', '-', $request->title) : Str::slug($request->title);
             if ($request->file('image') != "") {
 

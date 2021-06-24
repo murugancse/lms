@@ -4,11 +4,11 @@
     <section class="sms-breadcrumb mb-40 white-box">
         <div class="container-fluid">
             <div class="row justify-content-between">
-                <h1> Subject</h1>
+                <h1> Subject List</h1>
                 <div class="bc-pages">
                     <a href="{{route('dashboard')}}">{{__('common.Dashboard')}}</a>
                     <a href="#">Subject</a>
-                    <a class="active" href="#">Subject</a>
+                    <a class="active" href="#">Subject List</a>
                 </div>
             </div>
         </div>
@@ -52,7 +52,7 @@
                                                 </div>
                                             @endif
                                             <div class="input-effect">
-                                                <label>{{__('coupons.Title')}} <span
+                                                <label>Subject Name <span
                                                         class="text-danger">*</span></label>
                                                 <input
                                                     class="primary_input_field{{ $errors->has('title') ? ' is-invalid' : '' }}"
@@ -107,7 +107,7 @@
                                     <thead>
                                     <tr>
                                         <th scope="col">{{ __('common.ID') }}</th>
-                                        <th scope="col">{{ __('coupons.Title') }}</th>
+                                        <th scope="col">Subject Name</th>
                                         <th scope="col">{{ __('common.Action') }}</th>
                                     </tr>
                                     </thead>

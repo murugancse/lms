@@ -51,13 +51,7 @@
                     </div>
                 </a>
                 <ul>
-                    @if (permissionCheck('course.category'))
-                        <li><a href="{{ route('course.category') }}">{{ __('courses.Categories') }}</a></li>
-                    @endif
-                    @if (permissionCheck('course.subcategory'))
-                        <li><a href="{{ route('course.subcategory') }}">{{ __('courses.Subcategories') }}</a></li>
-                    @endif
-
+                   
                     @if (permissionCheck('course-level.index'))
                         <li><a href="{{ route('course-level.index') }}">{{ __('courses.Course Level') }}</a></li>
                     @endif
@@ -89,14 +83,14 @@
             </li>
         @endif
 
-
-
-
-        @if (permissionCheck('coupons'))
-            @include('coupons::menu')
+        @if (auth()->check()) 
+            @if (auth()->user()->role_id == 1) 
+                @if (permissionCheck('virtual-class'))
+                    @include('virtualclass::menu')
+                @endif
+            @endif
         @endif
-
-
+   
         @if (permissionCheck('quiz'))
             @include('quiz::menu')
         @endif
@@ -148,8 +142,13 @@
                 </div>
             </a>
             <ul>
-               
-                 <li>
+                @if (permissionCheck('course.category'))
+                    <li><a href="{{ route('course.category') }}">{{ __('courses.Categories') }}</a></li>
+                @endif
+                @if (permissionCheck('course.subcategory'))
+                    <li><a href="{{ route('course.subcategory') }}">{{ __('courses.Subcategories') }}</a></li>
+                @endif
+                <li>
                     <a href="{{ route('grade') }}">Grade List</a>
                 </li>
                 <li>
@@ -223,18 +222,17 @@
             @endif
         @endif
 
-        @if (auth()->check()) 
-            @if (auth()->user()->role_id == 1) 
-                @if (permissionCheck('virtual-class'))
-                    @include('virtualclass::menu')
-                @endif
-            @endif
-        @endif
+        
 
 
         @if (permissionCheck('blog'))
             @include('blog::menu')
         @endif
+
+        @if (permissionCheck('coupons'))
+            @include('coupons::menu')
+        @endif
+
         @if(moduleStatusCheck('Subscription'))
             @if (permissionCheck('Subscription'))
                 @include('subscription::menu')

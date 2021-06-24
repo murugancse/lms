@@ -3010,6 +3010,7 @@ class WebsiteController extends Controller
 
     public function classes(Request $request)
     {
+        $type = $request->input('type');
         $data = $this->common();
         $query = Course::with('user', 'category', 'subCategory', 'enrolls', 'comments', 'reviews', 'lessons');
 
@@ -3074,6 +3075,10 @@ class WebsiteController extends Controller
 
 
         $query->where('type', 3)->where('status', 1);
+        $query->where('class_type', $type);
+        // if($type!=''){
+        //     $query->where('class_type', $type);
+        // }
        
 
         $order = $request->order;

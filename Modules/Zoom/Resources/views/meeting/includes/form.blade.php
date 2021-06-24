@@ -101,6 +101,27 @@
                         </div>
                     </div>
 
+                    <div class="row mt-25">
+                        <div class="col-lg-12">
+                            <label class="primary_input_label" for="">Class Type *</label>
+                            <select {{ $errors->has('class_type') ? ' autofocus' : '' }}
+                                    class="primary_select {{ $errors->has('class_type') ? ' is-invalid' : '' }}"
+                                    id="class_type" name="class_type">
+                                <option data-display=" Class Type "
+                                        value=""> Class Type 
+                                </option>
+                                <option {{isset($editdata) && $editdata->class_type==0 ? 'selected' : '' }}  value="0"> 1 and 1 class  </option>
+                                <option {{isset($editdata) && $editdata->class_type==1 ? 'selected' : '' }} value="1"> Group Class </option>
+                                
+                            </select>
+                            @if ($errors->has('class_type'))
+                                <span class="invalid-feedback invalid-select" role="alert">
+                            <strong>{{ $errors->first('class_type') }}</strong>
+                        </span>
+                            @endif
+                        </div>
+                    </div>
+
                     <div class="row mt-40">
                         <div class="col-lg-12">
                             <div class="input-effect">

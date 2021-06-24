@@ -209,6 +209,7 @@ $(document).ready(function () {
 $(document).ready(function () {
     $("#type1").on("click", function () {
         if ($('#type1').is(':checked')) {
+            $("#topic_id").text('Course Title');
             $(".courseBox").show();
             $(".quizBox").hide();
             $(".videoOption").show();
@@ -221,6 +222,7 @@ $(document).ready(function () {
 
     $("#type2").on("click", function () {
         if ($('#type2').is(':checked')) {
+            $("#topic_id").text('Quiz Title');
             $(".courseBox").hide();
             $(".quizBox").show();
             $(".videoOption").hide();
@@ -232,6 +234,7 @@ $(document).ready(function () {
 
     $(".type1").on("click", function () {
         if ($('.type1').is(':checked')) {
+            
             $(".courseBox").show();
             $(".quizBox").hide();
             $("#quiz_id").val('');

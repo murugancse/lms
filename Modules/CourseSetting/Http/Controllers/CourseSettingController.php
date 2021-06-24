@@ -36,6 +36,9 @@ use Modules\SystemSetting\Entities\GeneralSettings;
 use Vimeo\Laravel\Facades\Vimeo;
 use Illuminate\Support\Facades\Validator;
 
+use Modules\CourseSetting\Entities\Grade;
+use Modules\CourseSetting\Entities\Subject;
+
 
 class CourseSettingController extends Controller
 {
@@ -143,6 +146,10 @@ class CourseSettingController extends Controller
         $languages = Language::select('id', 'native', 'code')
                 ->where('status', '=', 1)
                 ->get();
+
+        $subjects = Subject::get();
+        $grades = Grade::get();
+
         try {
             $vimeo_video_list = Vimeo::request('/me/videos', ['per_page' => 10], 'GET');
         } catch (\Exception $e) {
@@ -156,7 +163,7 @@ class CourseSettingController extends Controller
         $sub_lists = $this->getSubscriptionList();
         $title = 'New Course';
         // return $singleMessages;
-        return view('coursesetting::courses_new', compact('categories','quizzes','levels','languages','video_list','sub_lists'));
+        return view('coursesetting::courses_new', compact('categories','quizzes','levels','languages','video_list','sub_lists','grades','subjects'));
     }
 
     public function courseSortBy(Request $request)
@@ -410,6 +417,9 @@ class CourseSettingController extends Controller
                 $course->host = $request->host;
                 $course->subscription_list = $request->subscription_list;
 
+                $course->grade = $request->grade;
+                $course->subject = $request->subject;
+
 
                 if ($request->get('host') == "Vimeo") {
                     $course->trailer_link = $request->vimeo;
@@ -464,9 +474,6 @@ class CourseSettingController extends Controller
         Session::flash('type', 'update');
         Session::flash('id', $request->id);
 
-        if (demoCheck()) {
-            return redirect()->back();
-        }
         Session::flash('type', 'courseDetails');
 
         $this->validate($request, [
@@ -532,6 +539,10 @@ class CourseSettingController extends Controller
             $course->slug = Str::slug($request->title) == "" ? str_replace(' ', '-', $request->title) : Str::slug($request->title);
             $course->duration = $duration;
             $course->subscription_list = $request->subscription_list;
+            $course->grade = $request->grade;
+            $course->subject = $request->subject;
+
+
             if ($request->price) {
                 $course->price = $request->price ? $request->price / $getsmSetting->conversion_rate : 0;
                 $course->discount_price = $request->discount_price ? $request->discount_price / $getsmSetting->conversion_rate : 0;
@@ -885,8 +896,10 @@ class CourseSettingController extends Controller
             $video_list = [];
         }
         $levels = CourseLevel::where('status', 1)->get();
+        $grades = Grade::get();
+        $subjects = Subject::get();
         // return $quizzes;
-        return view('coursesetting::course_details', compact('levels', 'video_list', 'vimeo_video_list', 'course', 'chapters', 'categories', 'getsmSetting', 'instructors', 'languages', 'course_exercises', 'quizzes'));
+        return view('coursesetting::course_details', compact('levels', 'video_list', 'vimeo_video_list', 'course', 'chapters', 'categories', 'getsmSetting', 'instructors', 'languages', 'course_exercises', 'quizzes','grades','subjects'));
     }
 
     public function setCourseDripContent(Request $request)
@@ -1298,5 +1311,41 @@ class CourseSettingController extends Controller
             return redirect()->back();
         }
 
+    }
+
+    public function EditCourse($id)
+    {
+        $course = Course::findOrFail($id);
+        if ($course->type == 1) {
+            $quizzes = OnlineQuiz::where('category_id', $course->category_id)->get();
+        } else {
+            $quizzes = OnlineQuiz::where('active_status', 1)->get();
+        }
+
+        $chapters = Chapter::where('course_id', $id)->orderBy('position', 'asc')->with('lessons')->get();
+
+        $getsmSetting = GeneralSetting::leftjoin('currencies', 'currencies.id', '=', 'general_settings.currency_id')->first();
+        $categories = Category::get();
+        $instructors = User::where('role_id', 2)->get();
+        $languages = Language::select('id', 'native', 'code')
+            ->where('status', '=', 1)
+            ->get();
+        $course_exercises = CourseExercise::where('course_id', $id)->get();
+
+        try {
+            $vimeo_video_list = Vimeo::request('/me/videos', ['per_page' => 10], 'GET');
+        } catch (\Exception $e) {
+            $vimeo_video_list = [];
+        }
+        if (isset($vimeo_video_list['body']['data'])) {
+            $video_list = $vimeo_video_list['body']['data'];
+        } else {
+            $video_list = [];
+        }
+        $levels = CourseLevel::where('status', 1)->get();
+        $grades = Grade::get();
+        $subjects = Subject::get();
+        // return $quizzes;
+        return view('coursesetting::course_details', compact('levels', 'video_list', 'vimeo_video_list', 'course', 'chapters', 'categories', 'getsmSetting', 'instructors', 'languages', 'course_exercises', 'quizzes','grades','subjects'));
     }
 }

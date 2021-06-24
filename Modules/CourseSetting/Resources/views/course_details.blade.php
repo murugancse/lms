@@ -232,6 +232,7 @@
                                                                 @endif
                                                             </div>
                                                         </div>
+
                                                         <div class="col-lg-12">
 
                                                             <div class="input-effect mt-2 pt-1">
@@ -881,42 +882,7 @@
                                                     </div>
 
                                                 </div>
-                                                <input type="hidden" name="id" class="course_id"
-                                                       value="{{@$course->id}}">
-                                                <div class="col-xl-12 p-0">
-                                                    <div class="row">
-                                                        <div class="col-xl-12">
-                                                            <div class="primary_input mb-35">
-                                                                <label class="primary_input_label"
-                                                                       for="about">{{__('courses.Course')}} {{__('courses.Requirements')}}  </label>
-                                                                <textarea class="lms_summernote" name="requirements"
-
-                                                                          id="about" cols="30"
-                                                                          rows="10">{!!@$course->requirements!!}</textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="primary_input mb-35">
-                                                        <label class="primary_input_label mt-1"
-                                                               for="">{{__('courses.Course')}} {{__('courses.Description')}}  </label>
-                                                        <textarea class="lms_summernote" name="about" name="" id=""
-                                                                  cols="30" rows="10">{!!@$course->about!!}</textarea>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col-xl-12">
-                                                            <div class="primary_input mb-35">
-                                                                <label class="primary_input_label"
-                                                                       for="about">{{__('courses.Course')}} {{__('courses.Outcomes')}}  </label>
-                                                                <textarea class="lms_summernote" name="outcomes"
-
-                                                                          id="about" cols="30"
-                                                                          rows="10">{!!@$course->outcomes!!}</textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
+                                                <div class="row">
 
                                                         <div class="col-xl-6 courseBox">
                                                             <select class="primary_select edit_category_id"
@@ -966,7 +932,7 @@
                                                             </select>
                                                         </div>
 
-                                                        <div class="col-xl-4 mt-30 makeResize">
+                                                        <div class="col-xl-6 mt-30 makeResize">
                                                             <select class="primary_select" name="level">
                                                                 <option
                                                                     data-display="{{__('common.Select')}} {{__('courses.Level')}}"
@@ -979,7 +945,7 @@
                                                                 @endforeach
                                                             </select>
                                                         </div>
-                                                        <div class="col-xl-4 mt-30 makeResize" id="">
+                                                        <div class="col-xl-6 mt-30 makeResize" id="">
                                                             <select class="primary_select" name="language"
                                                                     id="">
                                                                 <option
@@ -991,7 +957,7 @@
                                                                 @endforeach
                                                             </select>
                                                         </div>
-                                                        <div class="col-xl-4 makeResize">
+                                                        <div class="col-xl-4 makeResize d-none">
                                                             <div class="primary_input mb-25">
                                                                 <label
                                                                     class="primary_input_label mt-1 primary_input_label"
@@ -1003,6 +969,75 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                <input type="hidden" name="id" class="course_id"
+                                                       value="{{@$course->id}}">
+                                                <div class="col-xl-12 p-0">
+                                                    <div class="row">
+                                                        <div class="col-xl-12">
+                                                            <div class="primary_input mb-35">
+                                                                <label class="primary_input_label"
+                                                                       for="about">{{__('courses.Course')}} {{__('courses.Requirements')}}  </label>
+                                                                <textarea class="lms_summernote" name="requirements"
+
+                                                                          id="about" cols="30"
+                                                                          rows="10">{!!@$course->requirements!!}</textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="primary_input mb-35">
+                                                        <label class="primary_input_label mt-1"
+                                                               for="">{{__('courses.Course')}} {{__('courses.Description')}}  </label>
+                                                        <textarea class="lms_summernote" name="about" name="" id=""
+                                                                  cols="30" rows="10">{!!@$course->about!!}</textarea>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-xl-12">
+                                                            <div class="primary_input mb-35">
+                                                                <label class="primary_input_label"
+                                                                       for="about">{{__('courses.Course')}} {{__('courses.Outcomes')}}  </label>
+                                                                <textarea class="lms_summernote" name="outcomes"
+
+                                                                          id="about" cols="30"
+                                                                          rows="10">{!!@$course->outcomes!!}</textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                     <div class="col-lg-12">
+                                                        <br>
+                                                            @php
+                                                                $hours = 0;
+                                                                $minutes = 0;
+                                                                
+                                                                if(isset($course)){
+                                                                    $duration = (int) $course->duration;
+                                                                    $hours = floor($duration / 60);
+                                                                    $minutes = ($duration % 60);
+                                                                }
+                                                            @endphp
+                                                            <div class="row">
+                                                                <div class="col-lg-6">
+                                                                    <label> Hours *</label>
+                                                                    <select class="primary_select" id="edithours" name="hours">
+                                                                        <option value="">Select</option>
+                                                                        @for($i=0;$i<=100;$i++)
+                                                                        <option {{ $hours==$i ? 'selected' : '' }} value="{{$i}}">{{$i}}</option>
+                                                                        @endfor
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-lg-6">
+                                                                    <label> Minutes *</label>
+                                                                    <select class="primary_select" id="editminutes" name="minutes">
+                                                                        <option value="">Select</option>
+                                                                        @for($i=0;$i<=60;$i++)
+                                                                        <option {{ $minutes==$i ? 'selected' : '' }} value="{{$i}}">{{$i}}</option>
+                                                                        @endfor
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     <div class="row d-none">
                                                         <div class="col-lg-6">
                                                             <div class="checkbox_wrap d-flex align-items-center">
@@ -1014,6 +1049,32 @@
                                                                 <label
                                                                     class="mb-0">{{__('courses.This course is a top course')}}</label>
                                                             </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row mt-20">
+                                       
+                                                        <div class="col-xl-6">
+                                                            <label class="primary_input_label" for="editgrade">Grade</label>
+                                                            <select class="primary_select" name="grade" id="editgrade">
+                                                                <option data-display="{{__('common.Select')}} Grade"
+                                                                        value="">{{__('common.Select')}} Grade</option>
+                                                                @foreach($grades as $grade)
+                                                                <option @if($course->grade==$grade->id) selected @endif value="{{$grade->id}}">{{$grade->title}}</option>
+                                                                @endforeach
+                                                                
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-xl-6">
+                                                            <label class="primary_input_label" for="editsubject">Subject</label>
+                                                            <select class="primary_select" name="subject" id="editsubject">
+                                                                <option data-display="{{__('common.Select')}} Subject"
+                                                                        value="">{{__('common.Select')}} Subject</option>
+                                                                @foreach($subjects as $subject)
+                                                                <option @if($course->subject==$subject->id) selected @endif value="{{$subject->id}}">{{$subject->title}}</option>
+                                                                @endforeach
+                                                                
+                                                            </select>
                                                         </div>
                                                     </div>
                                                     <div class="row mt-20">

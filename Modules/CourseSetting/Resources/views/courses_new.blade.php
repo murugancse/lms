@@ -74,8 +74,8 @@
                                         </div>
                                         <div class="col-xl-12">
                                             <div class="primary_input mb-25">
-                                                <label class="primary_input_label"
-                                                       for="">{{__('quiz.Topic')}} {{__('common.Title')}} *</label>
+                                                <label id="topic_id" class="primary_input_label"
+                                                       for="">Course {{__('common.Title')}} *</label>
                                                 <input class="primary_input_field" required="" name="title" placeholder="-"
                                                        id="addTitle"
                                                        type="text" {{$errors->has('title') ? 'autofocus' : ''}}
@@ -84,43 +84,6 @@
                                         </div>
 
 
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-xl-12">
-                                            <div class="primary_input mb-35">
-                                                <label class="primary_input_label"
-                                                       for="">{{__('courses.Course')}} {{__('courses.Requirements')}}
-                                                </label>
-                                                <textarea class="lms_summernote" name="requirements"
-                                                          id="addRequirements" cols="30"
-                                                          rows="10">{{old('requirements')}}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-xl-12">
-                                            <div class="primary_input mb-35">
-                                                <label class="primary_input_label"
-                                                       for="">{{__('courses.Course')}} {{__('courses.Description')}}
-                                                </label>
-                                                <textarea class="lms_summernote" name="about" id="addAbout" cols="30"
-                                                          rows="10">{{old('about')}}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xl-12">
-                                            <div class="primary_input mb-35">
-                                                <label class="primary_input_label"
-                                                       for="">{{__('courses.Course')}} {{__('courses.Outcomes')}}
-                                                </label>
-                                                <textarea class="lms_summernote" name="outcomes" id="addOutcomes"
-                                                          cols="30"
-                                                          rows="10">{{old('outcomes')}}</textarea>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-xl-6 courseBox mb_30">
@@ -192,6 +155,43 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-xl-12">
+                                            <div class="primary_input mb-35">
+                                                <label class="primary_input_label"
+                                                       for="">{{__('courses.Course')}} {{__('courses.Requirements')}}
+                                                </label>
+                                                <textarea class="lms_summernote" name="requirements"
+                                                          id="addRequirements" cols="30"
+                                                          rows="10">{{old('requirements')}}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-xl-12">
+                                            <div class="primary_input mb-35">
+                                                <label class="primary_input_label"
+                                                       for="">{{__('courses.Course')}} {{__('courses.Description')}}
+                                                </label>
+                                                <textarea class="lms_summernote" name="about" id="addAbout" cols="30"
+                                                          rows="10">{{old('about')}}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xl-12">
+                                            <div class="primary_input mb-35">
+                                                <label class="primary_input_label"
+                                                       for="">{{__('courses.Course')}} {{__('courses.Outcomes')}}
+                                                </label>
+                                                <textarea class="lms_summernote" name="outcomes" id="addOutcomes"
+                                                          cols="30"
+                                                          rows="10">{{old('outcomes')}}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                     <div class="row d-none">
                                         <div class="col-lg-6">
                                             <div class="checkbox_wrap d-flex align-items-center">
@@ -406,7 +406,31 @@
                                             </select>
                                         </div>
                                     </div>
-
+                                    <div class="row">
+                                       
+                                        <div class="col-xl-6">
+                                            <label class="primary_input_label" for="editgrade">Grade</label>
+                                            <select class="primary_select" name="grade" id="editgrade">
+                                                <option data-display="{{__('common.Select')}} Grade"
+                                                        value="">{{__('common.Select')}} Grade</option>
+                                                @foreach($grades as $grade)
+                                                <option value="{{$grade->id}}">{{$grade->title}}</option>
+                                                @endforeach
+                                                
+                                            </select>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <label class="primary_input_label" for="editsubject">Subject</label>
+                                            <select class="primary_select" name="subject" id="editsubject">
+                                                <option data-display="{{__('common.Select')}} Subject"
+                                                        value="">{{__('common.Select')}} Subject</option>
+                                                @foreach($subjects as $subject)
+                                                <option value="{{$subject->id}}">{{$subject->title}}</option>
+                                                @endforeach
+                                                
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="row">
 
                                         <div class="col-xl-12">

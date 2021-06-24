@@ -22,7 +22,7 @@
 
                             <div class="category_search d-flex category_box_iner">
 
-                                <div class="input-group-prepend2">
+                                <div class="input-group-prepend2 d-none">
                                     <a href="#" class="categories_menu">
                                         <i class="fas fa-th"></i>
                                         {{__('courses.Category')}}
@@ -85,9 +85,11 @@
 
                         <!-- main_menu_start  -->
                         <div class="main_menu text-right d-none d-lg-block category_box_iner">
+                           
                             <nav>
                                 <div class="menu_dropdown">
                                     <ul>
+
                                         @if(isset($categories))
                                             @foreach($categories as $category)
                                                 <li class="mega_menu_dropdown active_menu_item">
@@ -128,8 +130,16 @@
                                         @if(isset($menus))
                                             @foreach($menus->where('parent_id',null) as $menu)
                                                 <li class="@if($menu->show==1) right_control_submenu @endif">
+                                                    
+                                                    @if($menu->id==3)
+                                                    <a @if($menu->is_newtab==1) target="_blank"
+                                                       @endif href="{{getMenuLink($menu->id)}}?type=0">1 and 1 class</a>
+                                                    <a @if($menu->is_newtab==1) target="_blank"
+                                                       @endif href="{{getMenuLink($menu->id)}}?type=1">Group Class</a>
+                                                    @else
                                                     <a @if($menu->is_newtab==1) target="_blank"
                                                        @endif href="{{getMenuLink($menu->id)}}">{{$menu->title}}</a>
+                                                    @endif
                                                     @if(isset($menu->childs))
                                                         @if(count($menu->childs)!=0)
                                                             @if(isset($menu->childs))
