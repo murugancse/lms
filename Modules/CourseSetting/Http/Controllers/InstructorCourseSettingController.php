@@ -24,6 +24,8 @@ use Modules\SCORM\Http\Controllers\SCORMController;
 use Modules\Setting\Model\GeneralSetting;
 use Throwable;
 use Vimeo\Laravel\Facades\Vimeo;
+use Modules\CourseSetting\Entities\Grade;
+use Modules\CourseSetting\Entities\Subject;
 
 
 class InstructorCourseSettingController extends Controller
@@ -524,8 +526,10 @@ class InstructorCourseSettingController extends Controller
             $quizzes = OnlineQuiz::where('category_id', $course->category_id)->get();
             $course_exercises = CourseExercise::where('course_id', $course_id)->get();
             $levels = CourseLevel::where('status', 1)->get();
+            $grades = Grade::get();
+            $subjects = Subject::get();
             // return $course;
-            return view('coursesetting::course_details', compact('levels','course', 'chapters', 'categories', 'getsmSetting', 'instructors', 'languages', 'course_exercises', 'editChapter', 'quizzes', 'video_list'));
+            return view('coursesetting::course_details', compact('levels','course', 'chapters', 'categories', 'getsmSetting', 'instructors', 'languages', 'course_exercises', 'editChapter', 'quizzes', 'video_list','grades','subjects'));
 
         } catch (Exception $e) {
             Toastr::error(trans('common.Operation failed'), trans('common.Failed'));

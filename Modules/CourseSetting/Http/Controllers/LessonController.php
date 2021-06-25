@@ -20,6 +20,8 @@ use Modules\Localization\Entities\Language;
 use Modules\Quiz\Entities\OnlineQuiz;
 use Modules\Setting\Model\GeneralSetting;
 use Vimeo\Laravel\Facades\Vimeo;
+use Modules\CourseSetting\Entities\Grade;
+use Modules\CourseSetting\Entities\Subject;
 
 class LessonController extends Controller
 {
@@ -112,8 +114,10 @@ class LessonController extends Controller
             $quizzes = OnlineQuiz::where('category_id', $course->category_id)->get();
             $course_exercises = CourseExercise::where('course_id', $editLesson->course_id)->get();
             $levels = CourseLevel::where('status', 1)->get();
+            $grades = Grade::get();
+            $subjects = Subject::get();
             // return $course_exercises;
-            return view('coursesetting::course_details', compact('levels', 'course', 'chapters', 'categories', 'getsmSetting', 'instructors', 'languages', 'course_exercises', 'editLesson', 'quizzes', 'video_list'));
+            return view('coursesetting::course_details', compact('levels', 'course', 'chapters', 'categories', 'getsmSetting', 'instructors', 'languages', 'course_exercises', 'editLesson', 'quizzes', 'video_list','grades','subjects'));
         } catch (Exception $e) {
             Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
             return redirect()->back();

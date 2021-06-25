@@ -133,7 +133,7 @@
                                                     
                                                     @if($menu->id==3)
                                                     <a @if($menu->is_newtab==1) target="_blank"
-                                                       @endif href="{{getMenuLink($menu->id)}}?type=0">1 and 1 class</a>
+                                                       @endif href="{{getMenuLink($menu->id)}}?type=0">1 on 1 class</a>
                                                     <a @if($menu->is_newtab==1) target="_blank"
                                                        @endif href="{{getMenuLink($menu->id)}}?type=1">Group Class</a>
                                                     @else

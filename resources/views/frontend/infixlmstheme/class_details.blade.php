@@ -272,7 +272,7 @@ $duration =secondsToTime($duration*60);
 
                                             </p>
 
-                                            <div class="social_btns">
+                                            <div class="social_btns d-none">
                                                 <a target="_blank"
                                                    href="https://www.facebook.com/sharer/sharer.php?u={{URL::current()}}"
                                                    class="social_btn fb_bg"> <i class="fab fa-facebook-f"></i>

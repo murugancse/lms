@@ -577,7 +577,8 @@
                     @else
                         @php
                             if($course->type==1){
-                                    $type ='courses';
+                                $type ='courseDetails';
+                                   // $type ='courses';
 
 }else{
                                     $type ='courseDetails';
@@ -585,20 +586,23 @@
 }
                         @endphp
                     @endif
+                     
                     <div class="row pt-0">
                         <ul class="nav nav-tabs no-bottom-border  mt-sm-md-20 mb-10 ml-3" role="tablist">
                             @if($course->type==1)
-                                <li class="nav-item">
-                                    <a class="nav-link @if($type=="courses") active @endif" href="#group_email_sms"
-                                       role="tab"
-                                       data-toggle="tab">{{__('courses.Course')}} {{__('common.Name')}}  </a>
-                                </li>
-
                                 <li class="nav-item">
                                     <a class="nav-link  @if($type=="courseDetails") active @endif "
                                        href="#indivitual_email_sms" role="tab"
                                        data-toggle="tab">{{__('courses.Course')}} {{__('common.Details')}}</a>
                                 </li>
+
+
+                                <li class="nav-item">
+                                    <a class="nav-link @if($type=="courses") active @endif" href="#group_email_sms"
+                                       role="tab"
+                                       data-toggle="tab">{{__('courses.Course')}} CHAPTER / LESSON  </a>
+                                </li>
+                                
 
                                 <li class="nav-item">
                                     <a class="nav-link  @if($type=="files") active @endif" href="#file_list" role="tab"
@@ -624,195 +628,6 @@
                                 <!-- Tab panes -->
                                 <div class="tab-content">
                                     <input type="hidden" name="selectTab" id="selectTab">
-                                    <div role="tabpanel"
-                                         class="tab-pane fade  @if( ($type=="courses")) show active  @endif "
-                                         id="group_email_sms">
-
-                                        <div class="QA_section QA_section_heading_custom check_box_table   ">
-                                            <div class="QA_table ">
-                                                <!-- table-responsive -->
-
-
-                                                @if(count($chapters)==0)
-                                                    <div class="text-center">
-                                                        {{__('courses.No Data Found')}}
-                                                    </div>
-
-                                                @endif
-
-                                                <div class="nastable">
-                                                    @foreach($chapters as $chapter)
-
-                                                        <div class="parent" data-id="{{$chapter->id}}">
-                                                            <div class="table_capter_list">
-                                                                <div
-                                                                    class="single_capter_list d-flex align-items-center justify-content-between flex-wrap mt-10">
-                                                                    <h4>{{@$chapter->name}}</h4>
-
-                                                                    <div class="dropdown CRM_dropdown">
-                                                                        <button
-                                                                            class="btn btn-secondary dropdown-toggle"
-                                                                            type="button" id="dropdownMenu2"
-                                                                            data-toggle="dropdown"
-                                                                            aria-haspopup="true"
-                                                                            aria-expanded="false">
-                                                                            {{__('common.Action')}}
-                                                                        </button>
-                                                                        <div
-                                                                            class="dropdown-menu dropdown-menu-right">
-                                                                            <a href="{{route('editChapter',[$chapter->id,$chapter->course_id])}}"
-                                                                               class="dropdown-item">{{__('common.Edit')}} {{__('courses.Chapter')}}</a>
-                                                                            <a href="#" data-toggle="modal"
-                                                                               data-target="#deleteChapter{{@$chapter->id}}"
-                                                                               class="dropdown-item"
-                                                                               type="button">{{__('common.Delete')}} {{__('courses.Chapter')}}</a>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="nastable2">
-                                                                    @foreach ($chapter->lessons as $key => $lesson)
-
-                                                                        <div class="child" data-id="{{$lesson->id}}">
-                                                                            <div
-                                                                                class="single_capter_list d-flex align-items-center justify-content-between flex-wrap mt-10">
-                                                                                @if ($lesson->is_quiz==1)
-                                                                                    @foreach ($lesson->quiz as $quiz)
-
-                                                                                        <span> <i
-                                                                                                class="ti-check-box"></i>   {{$key+1}}. {{@$quiz->title}} </span>
-                                                                                    @endforeach
-                                                                                @else
-
-                                                                                    <span> <i
-                                                                                            class="ti-control-play"></i>  {{$key+1}}. {{$lesson['name']}} [{{$lesson['duration']}}] [{{$lesson->is_lock==0?'unlock':'Lock'}}]</span>
-                                                                                @endif
-
-                                                                                <div class="dropdown CRM_dropdown">
-                                                                                    <button
-                                                                                        class="btn btn-secondary dropdown-toggle"
-                                                                                        type="button" id="dropdownMenu2"
-                                                                                        data-toggle="dropdown"
-                                                                                        aria-haspopup="true"
-                                                                                        aria-expanded="false">
-                                                                                        {{__('common.Action')}}
-                                                                                    </button>
-                                                                                    <div
-                                                                                        class="dropdown-menu dropdown-menu-right">
-                                                                                        <a target="_blank"
-                                                                                           href="{{$lesson->is_quiz==0?route('fullScreenView',[$course->id,$lesson->id]):route('quizStart',[$course->id,$lesson->quiz_id,$lesson->lessonQuiz->title])}}"
-                                                                                           class="dropdown-item">{{__('common.View')}}</a>
-                                                                                        <a href="{{route('editLesson',[$lesson->id])}}"
-                                                                                           class="dropdown-item">{{__('common.Edit')}}</a>
-                                                                                        <a href="#" data-toggle="modal"
-                                                                                           data-target="#deleteLesson{{@$lesson->id}}"
-                                                                                           class="dropdown-item"
-                                                                                           type="button">{{__('common.Delete')}}</a>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-
-                                                                            <div class="modal fade admin-query"
-                                                                                 id="deleteLesson{{$lesson->id}}">
-                                                                                <div
-                                                                                    class="modal-dialog modal-dialog-centered">
-                                                                                    <div class="modal-content">
-                                                                                        <div class="modal-header">
-                                                                                            <h4 class="modal-title">{{__('common.Delete')}}  {{__('courses.Lesson')}}</h4>
-                                                                                            <button type="button"
-                                                                                                    class="close"
-                                                                                                    data-dismiss="modal">
-                                                                                                <i
-                                                                                                    class="ti-close "></i>
-                                                                                            </button>
-                                                                                        </div>
-
-                                                                                        <div class="modal-body">
-                                                                                            <div class="text-center">
-                                                                                                <h4> {{__('common.Are you sure to delete ?')}}</h4>
-                                                                                            </div>
-
-                                                                                            <div
-                                                                                                class="mt-40 d-flex justify-content-between">
-                                                                                                <button type="button"
-                                                                                                        class="primary-btn tr-bg"
-                                                                                                        data-dismiss="modal">{{__('common.Cancel')}}</button>
-                                                                                                <form
-                                                                                                    action="{{route('deleteLesson')}}"
-                                                                                                    method="post">
-                                                                                                    @csrf
-                                                                                                    <input type="hidden"
-                                                                                                           name="id"
-                                                                                                           value="{{$lesson->id}}">
-                                                                                                    <button
-                                                                                                        class="primary-btn fix-gr-bg"
-                                                                                                        type="submit">{{__('common.Delete')}}</button>
-                                                                                                </form>
-                                                                                            </div>
-                                                                                        </div>
-
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-
-                                                                    @endforeach
-                                                                </div>
-                                                            </div>
-
-
-                                                            <div class="modal fade admin-query"
-                                                                 id="deleteChapter{{$chapter->id}}">
-                                                                <div class="modal-dialog modal-dialog-centered">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h4 class="modal-title">{{__('common.Delete')}}  {{__('courses.Chapter')}}</h4>
-                                                                            <button type="button" class="close"
-                                                                                    data-dismiss="modal"><i
-                                                                                    class="ti-close "></i></button>
-                                                                        </div>
-
-                                                                        <div class="modal-body">
-                                                                            <div class="text-center">
-                                                                                <h4> {{__('common.Are you sure to delete ?')}}</h4>
-                                                                            </div>
-
-                                                                            <div
-                                                                                class="mt-40 d-flex justify-content-between">
-                                                                                <button type="button"
-                                                                                        class="primary-btn tr-bg"
-                                                                                        data-dismiss="modal">{{__('common.Cancel')}}</button>
-                                                                                <form
-                                                                                    action="{{route('deleteChapter',[$chapter->id,$chapter->course_id])}}"
-                                                                                    method="get">
-                                                                                    @csrf
-                                                                                    <button
-                                                                                        class="primary-btn fix-gr-bg"
-                                                                                        type="submit">{{__('common.Delete')}}</button>
-                                                                                </form>
-                                                                            </div>
-                                                                        </div>
-
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-
-
-
-
-
-
-                                                    @endforeach
-                                                </div>
-
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
                                     <div role="tabpanel"
                                          class="tab-pane fade
 @if($type=="courseDetails") show active @endif
@@ -1353,6 +1168,195 @@
 
 
                                     </div>
+                                    <div role="tabpanel"
+                                         class="tab-pane fade  @if( ($type=="courses")) show active  @endif "
+                                         id="group_email_sms">
+
+                                        <div class="QA_section QA_section_heading_custom check_box_table   ">
+                                            <div class="QA_table ">
+                                                <!-- table-responsive -->
+
+
+                                                @if(count($chapters)==0)
+                                                    <div class="text-center">
+                                                        {{__('courses.No Data Found')}}
+                                                    </div>
+
+                                                @endif
+
+                                                <div class="nastable">
+                                                    @foreach($chapters as $chapter)
+
+                                                        <div class="parent" data-id="{{$chapter->id}}">
+                                                            <div class="table_capter_list">
+                                                                <div
+                                                                    class="single_capter_list d-flex align-items-center justify-content-between flex-wrap mt-10">
+                                                                    <h4>{{@$chapter->name}}</h4>
+
+                                                                    <div class="dropdown CRM_dropdown">
+                                                                        <button
+                                                                            class="btn btn-secondary dropdown-toggle"
+                                                                            type="button" id="dropdownMenu2"
+                                                                            data-toggle="dropdown"
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded="false">
+                                                                            {{__('common.Action')}}
+                                                                        </button>
+                                                                        <div
+                                                                            class="dropdown-menu dropdown-menu-right">
+                                                                            <a href="{{route('editChapter',[$chapter->id,$chapter->course_id])}}"
+                                                                               class="dropdown-item">{{__('common.Edit')}} {{__('courses.Chapter')}}</a>
+                                                                            <a href="#" data-toggle="modal"
+                                                                               data-target="#deleteChapter{{@$chapter->id}}"
+                                                                               class="dropdown-item"
+                                                                               type="button">{{__('common.Delete')}} {{__('courses.Chapter')}}</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="nastable2">
+                                                                    @foreach ($chapter->lessons as $key => $lesson)
+
+                                                                        <div class="child" data-id="{{$lesson->id}}">
+                                                                            <div
+                                                                                class="single_capter_list d-flex align-items-center justify-content-between flex-wrap mt-10">
+                                                                                @if ($lesson->is_quiz==1)
+                                                                                    @foreach ($lesson->quiz as $quiz)
+
+                                                                                        <span> <i
+                                                                                                class="ti-check-box"></i>   {{$key+1}}. {{@$quiz->title}} </span>
+                                                                                    @endforeach
+                                                                                @else
+
+                                                                                    <span> <i
+                                                                                            class="ti-control-play"></i>  {{$key+1}}. {{$lesson['name']}} [{{$lesson['duration']}}] [{{$lesson->is_lock==0?'unlock':'Lock'}}]</span>
+                                                                                @endif
+
+                                                                                <div class="dropdown CRM_dropdown">
+                                                                                    <button
+                                                                                        class="btn btn-secondary dropdown-toggle"
+                                                                                        type="button" id="dropdownMenu2"
+                                                                                        data-toggle="dropdown"
+                                                                                        aria-haspopup="true"
+                                                                                        aria-expanded="false">
+                                                                                        {{__('common.Action')}}
+                                                                                    </button>
+                                                                                    <div
+                                                                                        class="dropdown-menu dropdown-menu-right">
+                                                                                        <a target="_blank"
+                                                                                           href="{{$lesson->is_quiz==0?route('fullScreenView',[$course->id,$lesson->id]):route('quizStart',[$course->id,$lesson->quiz_id,$lesson->lessonQuiz->title])}}"
+                                                                                           class="dropdown-item">{{__('common.View')}}</a>
+                                                                                        <a href="{{route('editLesson',[$lesson->id])}}"
+                                                                                           class="dropdown-item">{{__('common.Edit')}}</a>
+                                                                                        <a href="#" data-toggle="modal"
+                                                                                           data-target="#deleteLesson{{@$lesson->id}}"
+                                                                                           class="dropdown-item"
+                                                                                           type="button">{{__('common.Delete')}}</a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="modal fade admin-query"
+                                                                                 id="deleteLesson{{$lesson->id}}">
+                                                                                <div
+                                                                                    class="modal-dialog modal-dialog-centered">
+                                                                                    <div class="modal-content">
+                                                                                        <div class="modal-header">
+                                                                                            <h4 class="modal-title">{{__('common.Delete')}}  {{__('courses.Lesson')}}</h4>
+                                                                                            <button type="button"
+                                                                                                    class="close"
+                                                                                                    data-dismiss="modal">
+                                                                                                <i
+                                                                                                    class="ti-close "></i>
+                                                                                            </button>
+                                                                                        </div>
+
+                                                                                        <div class="modal-body">
+                                                                                            <div class="text-center">
+                                                                                                <h4> {{__('common.Are you sure to delete ?')}}</h4>
+                                                                                            </div>
+
+                                                                                            <div
+                                                                                                class="mt-40 d-flex justify-content-between">
+                                                                                                <button type="button"
+                                                                                                        class="primary-btn tr-bg"
+                                                                                                        data-dismiss="modal">{{__('common.Cancel')}}</button>
+                                                                                                <form
+                                                                                                    action="{{route('deleteLesson')}}"
+                                                                                                    method="post">
+                                                                                                    @csrf
+                                                                                                    <input type="hidden"
+                                                                                                           name="id"
+                                                                                                           value="{{$lesson->id}}">
+                                                                                                    <button
+                                                                                                        class="primary-btn fix-gr-bg"
+                                                                                                        type="submit">{{__('common.Delete')}}</button>
+                                                                                                </form>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    @endforeach
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="modal fade admin-query"
+                                                                 id="deleteChapter{{$chapter->id}}">
+                                                                <div class="modal-dialog modal-dialog-centered">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h4 class="modal-title">{{__('common.Delete')}}  {{__('courses.Chapter')}}</h4>
+                                                                            <button type="button" class="close"
+                                                                                    data-dismiss="modal"><i
+                                                                                    class="ti-close "></i></button>
+                                                                        </div>
+
+                                                                        <div class="modal-body">
+                                                                            <div class="text-center">
+                                                                                <h4> {{__('common.Are you sure to delete ?')}}</h4>
+                                                                            </div>
+
+                                                                            <div
+                                                                                class="mt-40 d-flex justify-content-between">
+                                                                                <button type="button"
+                                                                                        class="primary-btn tr-bg"
+                                                                                        data-dismiss="modal">{{__('common.Cancel')}}</button>
+                                                                                <form
+                                                                                    action="{{route('deleteChapter',[$chapter->id,$chapter->course_id])}}"
+                                                                                    method="get">
+                                                                                    @csrf
+                                                                                    <button
+                                                                                        class="primary-btn fix-gr-bg"
+                                                                                        type="submit">{{__('common.Delete')}}</button>
+                                                                                </form>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+
+
+
+
+
+                                                    @endforeach
+                                                </div>
+
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                    
                                     <!-- End Individual Tab -->
                                     <div role="tabpanel" class="tab-pane fade  @if($type=="files") show active @endif "
                                          id="file_list">
