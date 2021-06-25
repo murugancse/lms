@@ -64,9 +64,10 @@ Route::group(['prefix' => 'admin/systemsetting', 'middleware' => ['auth', 'admin
 
 //Instructor Manage
     Route::get('/allInstructor', 'InstructorSettingController@index')->name('allInstructor')->middleware('RoutePermissionCheck:allInstructor');
+    Route::get('/newInstructor', 'InstructorSettingController@AddInstructor')->name('AddInstructor')->middleware('RoutePermissionCheck:allInstructor');
     Route::post('/store', 'InstructorSettingController@store')->name('instructor.store')->middleware('RoutePermissionCheck:instructor.store');
     Route::get('/searchInstructor', 'InstructorSettingController@searchInstructor');
-    Route::get('/edit/{id}', 'InstructorSettingController@edit')->middleware('RoutePermissionCheck:instructor.edit');
+    Route::get('/edit/{id}', 'InstructorSettingController@edit')->name('editInstructor')->middleware('RoutePermissionCheck:instructor.edit');
     Route::post('/update', 'InstructorSettingController@update')->name('instructor.update')->middleware('RoutePermissionCheck:instructor.edit');
     Route::post('/destroy', 'InstructorSettingController@destroy')->name('instructor.delete')->middleware('RoutePermissionCheck:instructor.delete');
     Route::get('/status/{id}', 'InstructorSettingController@status')->name('instructor.change_status')->middleware('RoutePermissionCheck:instructor.change_status');

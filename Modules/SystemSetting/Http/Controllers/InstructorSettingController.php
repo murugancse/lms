@@ -45,6 +45,16 @@ class InstructorSettingController extends Controller
         return view('systemsetting::create');
     }
 
+    public function AddInstructor(){
+
+        $subjects = Subject::get();
+        $grades = Grade::get();
+
+        $title = 'New Instructor';
+        // return $singleMessages;
+        return view('systemsetting::instructor_new', compact('grades','subjects'));
+    }
+
     /**
      * Store a newly created resource in storage.
      * @param Request $request
@@ -160,7 +170,7 @@ class InstructorSettingController extends Controller
 
 
             Toastr::success(trans('common.Operation successful'), trans('common.Success'));
-            return redirect()->back();
+            return redirect(route('allInstructor'));
 
         } catch (\Exception $e) {
             Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
@@ -185,7 +195,11 @@ class InstructorSettingController extends Controller
      */
     public function edit($id)
     {
+        $instructor = User::where('role_id', 2)->where('id',$id)->with('courses', 'enrolls')->first();
+        $grades = Grade::where('status', 1)->orderBy('title', 'asc')->get();
+        $subjects = Subject::where('status', 1)->orderBy('title', 'asc')->get();
 
+        return view('systemsetting::instructor_edit', compact('instructor','grades','subjects'));
     }
 
     public function update(Request $request)
@@ -244,7 +258,7 @@ class InstructorSettingController extends Controller
             }
 
             Toastr::success(trans('common.Operation successful'), trans('common.Success'));
-            return redirect()->back();
+            return redirect(route('allInstructor'));
 
         } catch (\Exception $e) {
             Toastr::error(trans('common.Operation failed'), trans('common.Failed'));

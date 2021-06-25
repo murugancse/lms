@@ -32,9 +32,14 @@
                             <h3 class="mb-0 mr-30 mb_xs_15px mb_sm_20px">{{__('quiz.Instructor')}} {{__('common.List')}}</h3>
                             @if (permissionCheck('instructor.store'))
                                 <ul class="d-flex">
-                                    <li><a class="primary-btn radius_30px mr-10 fix-gr-bg" data-toggle="modal" id="add_instructor_btn"
+                                    <li>
+                                        <a href="{{route('AddInstructor')}}" title=" {{__('common.Add')}}"
+                                           class="primary-btn small updateBtn fix-gr-bg"> {{__('instructor.Add Instructor')}}
+                                        </a>
+                                    </li>
+                                    <!-- <li><a class="primary-btn radius_30px mr-10 fix-gr-bg" data-toggle="modal" id="add_instructor_btn"
                                            data-target="#add_instructor" href="#"><i
-                                                class="ti-plus"></i>{{__('instructor.Add Instructor')}}</a></li>
+                                                class="ti-plus"></i>{{__('instructor.Add Instructor')}}</a></li> -->
                                 </ul>
                             @endif
 
@@ -94,9 +99,10 @@
                                                     <div class="dropdown-menu dropdown-menu-right"
                                                          aria-labelledby="dropdownMenu2">
                                                         @if (permissionCheck('instructor.edit'))
-                                                            <button data-item="{{$instructor}}"
-                                                                    class="editInstructor dropdown-item"
-                                                                    type="button">{{__('common.Edit')}}</button>
+                                                        <a href="{{route('editInstructor',@$instructor->id )}}" title=" {{__('common.Add')}}"
+                                                           class="editInstructor dropdown-item"> {{__('common.Edit')}}
+                                                        </a>
+                                                        
                                                         @endif
 
                                                         @if (permissionCheck('instructor.delete'))
