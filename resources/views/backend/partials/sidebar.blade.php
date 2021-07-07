@@ -1,4 +1,7 @@
 <!-- sidebar part here -->
+ @php
+    //dd(auth()->user()->email);
+ @endphp
 <nav id="sidebar" class="sidebar ">
 
     <div class="sidebar-header update_sidebar">
@@ -184,9 +187,10 @@
         @endif
 
 
-
+        @if(auth()->user()->email=='developer@gmail.com')
         @if (permissionCheck('frontend_CMS'))
             @include('frontendmanage::menu')
+        @endif
         @endif
 
 
@@ -223,9 +227,11 @@
         @if (permissionCheck('blog'))
             @include('blog::menu')
         @endif
+        @if(auth()->user()->email=='developer@gmail.com')
 
-        @if (permissionCheck('coupons'))
-            @include('coupons::menu')
+            @if (permissionCheck('coupons'))
+                @include('coupons::menu')
+            @endif
         @endif
 
         @if(moduleStatusCheck('Subscription'))
@@ -236,7 +242,7 @@
 
 
         @include('newsletter::menu')
-
+        @if(auth()->user()->email=='developer@gmail.com')
         @if(permissionCheck('appearance.themes.index'))
             <li>
                 <a href="#" class="has-arrow" aria-expanded="false">
@@ -254,6 +260,7 @@
                 </ul>
             </li>
         @endif
+        
         @if (permissionCheck('settings'))
             <li>
                 <a href="#" class="has-arrow" aria-expanded="false">
@@ -390,6 +397,7 @@
                     @endif
                 </ul>
             </li>
+        @endif
         @endif
     </ul>
 

@@ -7,6 +7,8 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Modules\CourseSetting\Entities\Category;
 use Modules\CourseSetting\Entities\Course;
+use Modules\CourseSetting\Entities\Subject;
+use Modules\CourseSetting\Entities\Grade;
 
 
 /**
@@ -761,6 +763,66 @@ class CourseApiController extends Controller
                 'success' => true,
                 'data' => $categories,
                 'message' => 'Getting Top Categories',
+            ];
+        } else {
+            $response = [
+                'success' => false,
+                'message' => 'No Category Found',
+            ];
+        }
+
+        return response()->json($response, 200);
+    }
+
+    public function getCategories()
+    {
+        $categories = Category::all();
+
+        if ($categories) {
+            $response = [
+                'success' => true,
+                'data' => $categories,
+                'message' => 'Getting Categories',
+            ];
+        } else {
+            $response = [
+                'success' => false,
+                'message' => 'No Category Found',
+            ];
+        }
+
+        return response()->json($response, 200);
+    }
+
+    public function getSubjects()
+    {
+        $subjects = Subject::all();
+
+        if ($subjects) {
+            $response = [
+                'success' => true,
+                'data' => $subjects,
+                'message' => 'Getting Subjects',
+            ];
+        } else {
+            $response = [
+                'success' => false,
+                'message' => 'No Category Found',
+            ];
+        }
+
+        return response()->json($response, 200);
+    }
+
+    public function getGrades()
+    {
+        $subjects = Grade::all();
+
+        if ($subjects) {
+            $response = [
+                'success' => true,
+                'data' => $subjects,
+                'message' => 'Getting Grades',
             ];
         } else {
             $response = [

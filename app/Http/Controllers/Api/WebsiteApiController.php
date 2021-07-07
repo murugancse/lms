@@ -24,6 +24,8 @@ use Modules\Payment\Entities\Checkout;
 use Modules\Payment\Entities\InstructorPayout;
 use Modules\PaymentMethodSetting\Entities\PaymentMethod;
 use Modules\SystemSetting\Entities\GeneralSettings;
+use Illuminate\Support\Facades\Validator;
+
 
 /**
  * @group  Frontend Api
@@ -550,7 +552,10 @@ class WebsiteApiController extends Controller
                    'zip' => 'required',
                ]);
            }*/
-
+           $validator = Validator::make($request->all(),['name' => 'required','email' => 'required|email','phone' => 'required']);
+           if ($validator->fails()) {    
+                return response()->json( ['success' => false,'message' => $validator->messages() ]);
+            }
 
         try {
 

@@ -37,12 +37,18 @@ class AuthController extends Controller
 }*/
     public function signup(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:255|digits:11|digits:11|regex:/(01)[0-9]{9}/',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|confirmed|min:6'
-        ]);
+
+        // $request->validate([
+        //     'name' => 'required|string|max:255',
+        //     'phone' => 'required',
+        //     'email' => 'required|string|email|unique:users',
+        //     'password' => 'required|string|confirmed|min:6'
+        // ]);
+        $validator = Validator::make($request->all(),['name' => 'required','email' => 'required|email|unique:users','phone' => 'required',  'password' => 'required|string|confirmed|min:6']);
+           if ($validator->fails()) {    
+                return response()->json( ['success' => false,'message' => $validator->messages() ]);
+            }
+        
         $user = new User([
             'name' => $request->name,
             'email' => $request->email,
@@ -50,6 +56,7 @@ class AuthController extends Controller
             'username' => $request->email,
             'password' => bcrypt($request->password)
         ]);
+        
         $result = $user->save();
         if ($result) {
             $response = [
@@ -86,12 +93,17 @@ class AuthController extends Controller
         }*/
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-            'remember_me' => 'boolean'
-        ]);
-        $credentials = request(['email', 'password']);
+        $validator = Validator::make($request->all(),['phone' => 'required','password' => 'required|string']);
+           if ($validator->fails()) {    
+                return response()->json( ['success' => false,'message' => $validator->messages() ]);
+            }
+        // $request->validate([
+        //     'phone' => 'required',
+        //     'password' => 'required|string',
+        //     //'remember_me' => 'boolean'
+        // ]);
+        $credentials = request(['phone', 'password']);
+        //dd($credentials);
 
         try {
             if (!Auth::attempt($credentials))

@@ -32,9 +32,12 @@ Route::group([
     Route::get('/get-popular-courses', 'CourseApiController@getPopularCourses');
     Route::get('/get-course-details/{id}', 'CourseApiController@getCourseDetails');
     Route::get('/top-categories', 'CourseApiController@topCategories');
+    Route::get('/get-categories', 'CourseApiController@getCategories');
     Route::get('/search-course', 'CourseApiController@searchCourse');
     Route::get('/filter-course', 'CourseApiController@filterCourse');
     Route::get('/payment-gateways', 'WebsiteApiController@paymentGateways');
+    Route::get('/get-subjects', 'CourseApiController@getSubjects');
+    Route::get('/get-grades', 'CourseApiController@getGrades');
 
 
     Route::group([
