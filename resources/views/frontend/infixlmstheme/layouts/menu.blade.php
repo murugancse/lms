@@ -15,7 +15,7 @@
                         <div class="header__left d-flex align-items-center">
                             <div class="logo_img">
                                 <a href="{{url('/')}}">
-                                    <img class="p-2" style="width: 108px" src="{{getCourseImage(getSetting()->logo)}}"
+                                    <img class="p-2" style="width: 70px" src="{{getCourseImage(getSetting()->logo)}}"
                                          alt="{{ getSetting()->site_name }}">
                                 </a>
                             </div>
@@ -134,6 +134,8 @@
                                                     @if($menu->id==3)
                                                     <a @if($menu->is_newtab==1) target="_blank"
                                                        @endif href="{{getMenuLink($menu->id)}}?type=0">1 on 1 class</a>
+                                                    </li>
+                                                    <li class="@if($menu->show==1) right_control_submenu @endif">
                                                     <a @if($menu->is_newtab==1) target="_blank"
                                                        @endif href="{{getMenuLink($menu->id)}}?type=1">Group Class</a>
                                                     @else

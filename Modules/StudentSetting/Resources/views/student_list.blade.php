@@ -61,7 +61,7 @@
                                         <th scope="col">{{__('common.SL')}}</th>
                                         <!-- <th scope="col">{{__('common.Image')}}</th> -->
                                         <th scope="col">{{__('common.Name')}}*</th>
-                                        <th scope="col">RollNo*</th>
+                                        <th scope="col">Enrollment No*</th>
                                         <th scope="col">{{__('common.Email')}}*</th>
                                         <!-- <th scope="col">NRIC*</th> -->
                                         <th width="30%" scope="col">Courses</th>
@@ -183,7 +183,7 @@
                                         </div>
                                         <div class="col-xl-6">
                                             <div class="primary_input mb-25">
-                                                <label class="primary_input_label" for="">{{__('RollNo')}} <strong
+                                                <label class="primary_input_label" for="">{{__('Enrollment No')}} <strong
                                                         class="text-danger">*</strong></label>
                                                 <input class="primary_input_field" name="roll_number" placeholder="-"
                                                        type="text" id="roll_number" value="{{ old('roll_number') }}" {{$errors->first('roll_number') ? 'autofocus' : ''}}>
@@ -191,7 +191,7 @@
                                         </div>
 
                                     </div>
-                                    <div class="row">
+                                    <div class="row d-none">
                                         <div class="col-xl-12">
                                             <div class="primary_input mb-35">
                                                 <label class="primary_input_label" for="">{{__('common.About')}}</label>
@@ -376,7 +376,7 @@
                                         </div>
                                         <div class="col-xl-6">
                                             <div class="primary_input mb-25">
-                                                <label class="primary_input_label" for="">{{__('RollNo')}} <strong
+                                                <label class="primary_input_label" for="">{{__('Enrollment No')}} <strong
                                                         class="text-danger">*</strong></label>
                                                 <input class="primary_input_field" name="roll_number" placeholder="-"
                                                        type="text" id="editroll_number" value="{{ old('roll_number') }}" {{$errors->first('roll_number') ? 'autofocus' : ''}}>
@@ -384,7 +384,7 @@
                                         </div>
 
                                     </div>
-                                    <div class="row">
+                                    <div class="row  d-none">
                                         <div class="col-xl-12">
                                             <div class="primary_input mb-35">
                                                 <label class="primary_input_label"

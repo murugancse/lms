@@ -33,13 +33,7 @@ class StudentSettingController extends Controller
         try {
             $students = User::where('role_id', 3)->latest()->get();
             $grades = Grade::where('status', 1)->orderBy('title', 'asc')->get();
-            // $courses = $students[0]->enrollCourse;
-            // foreach ($courses as $key => $course) {
-            //     print_r($course->title);
-            //     echo '<br>';
-            // }
-            // dd('ok');
-
+           
             return view('studentsetting::student_list', compact('students','grades'));
 
         } catch (\Exception $e) {

@@ -183,11 +183,6 @@
             </li>
         @endif
 
-        @if (permissionCheck('certificate.index'))
-            @include('certificate::menu')
-        @endif
-
-
 
 
         @if (permissionCheck('frontend_CMS'))
