@@ -574,6 +574,7 @@ class WebsiteApiController extends Controller
             $user->linkedin = $request->linkedin;
             $user->instagram = $request->instagram;
             $user->about = $request->about;
+            $user->gender = $request->gender;
             $fileName = "";
             if ($request->file('image') != "") {
                 $file = $request->file('image');

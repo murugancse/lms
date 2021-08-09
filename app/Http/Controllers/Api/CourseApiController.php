@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Modules\CourseSetting\Entities\Category;
 use Modules\CourseSetting\Entities\Course;
+use Modules\CourseSetting\Entities\Chapter;
 use Modules\CourseSetting\Entities\Subject;
 use Modules\CourseSetting\Entities\Grade;
 
@@ -206,9 +207,10 @@ class CourseApiController extends Controller
      * }
      *
      */
-    public function getCourseDetails($id)
+    public function getCourseDetails(Request $request,$id=false)
     {
-        $course = Course::with('user','chapters','lessons','files','comments')->find($id);
+        if($id==false) $id=$request->id;
+        $course = Course::with('user','chapters','lessons','files','comments')->withCount('chapters','lessons')->find($id);
 
         $reviews = DB::table('course_reveiws')
             ->select(
@@ -236,6 +238,43 @@ class CourseApiController extends Controller
             $response = [
                 'success' => false,
                 'message' => 'No Course Found',
+            ];
+        }
+
+        return response()->json($response, 200);
+    }
+
+    public function getChapterDetails(Request $request){
+        $course_id=$request->course_id;
+        $id=$request->chapter_id;
+        $chapter = Chapter::with('lessons','course')->withCount('lessons')->find($id);
+
+        $reviews = DB::table('course_reveiws')
+            ->select(
+                'course_reveiws.id',
+                'course_reveiws.star',
+                'course_reveiws.comment',
+                'course_reveiws.created_at',
+                'users.id as userId',
+                'users.name as userName',
+                'users.image as userImage',
+            )
+            ->join('users', 'users.id', '=', 'course_reveiws.user_id')
+            ->where('course_reveiws.course_id', $course_id)->get();
+
+        $chapter->reviews=$reviews;
+
+
+        if ($chapter) {
+            $response = [
+                'success' => true,
+                'data' => $chapter,
+                'message' => 'Getting Chapter Data',
+            ];
+        } else {
+            $response = [
+                'success' => false,
+                'message' => 'No Chapter Found',
             ];
         }
 
@@ -1160,6 +1199,7 @@ class CourseApiController extends Controller
         $language = $request->get('language');
         $min_price = $request->get('min_price');
         $max_price = $request->get('max_price');
+        $virtualclasstype = $request->get('type');
         $query = Course::where('status', 1)->where('type', 1);
 
         if (!empty($category)) {
@@ -1181,6 +1221,11 @@ class CourseApiController extends Controller
         }
         if (!empty($min_price)) {
             $query->where('price  ', '>=', $max_price);
+        }
+        if(!empty($virtualclasstype)){
+            if($virtualclasstype==1){
+                $query->where('class_type', $type);
+            }
         }
         $courses = $query->get();
         if ($courses) {

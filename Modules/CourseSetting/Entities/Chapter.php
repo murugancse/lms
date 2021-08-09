@@ -17,4 +17,9 @@ class Chapter extends Model
     {
         return $this->hasMany(Lesson::class, 'chapter_id', 'id')->orderBy('position');
     }
+
+     public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
 }

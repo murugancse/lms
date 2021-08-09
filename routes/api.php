@@ -31,6 +31,9 @@ Route::group([
     Route::get('/get-all-courses', 'CourseApiController@getAllCourses');
     Route::get('/get-popular-courses', 'CourseApiController@getPopularCourses');
     Route::get('/get-course-details/{id}', 'CourseApiController@getCourseDetails');
+    Route::post('/get-course-details', 'CourseApiController@getCourseDetails');
+    Route::post('/get-chapter-details', 'CourseApiController@getChapterDetails');
+
     Route::get('/top-categories', 'CourseApiController@topCategories');
     Route::get('/get-categories', 'CourseApiController@getCategories');
     Route::get('/search-course', 'CourseApiController@searchCourse');
@@ -39,12 +42,14 @@ Route::group([
     Route::get('/get-subjects', 'CourseApiController@getSubjects');
     Route::get('/get-grades', 'CourseApiController@getGrades');
 
+    Route::get('/filter-class', 'CourseApiController@filterClass');
+
 
     Route::group([
         'middleware' => 'auth:api'
     ], function () {
         //with login routes
-
+        Route::post('/pay-course', 'CourseApiController@PaymentCourse');
         Route::get('/cart-list', 'WebsiteApiController@cartList');
         Route::get('/add-to-cart/{id}', 'WebsiteApiController@addToCart');
         Route::get('/remove-to-cart/{id}', 'WebsiteApiController@removeCart');
@@ -53,6 +58,7 @@ Route::group([
         //AuthController
         Route::get('logout', 'AuthController@logout');
         Route::get('user', 'AuthController@user');
+        Route::get('get-user/{id}', 'AuthController@getusers');
         Route::post('change-password', 'AuthController@changePassword');
         Route::post('/update-profile', 'WebsiteApiController@updateProfile');
 

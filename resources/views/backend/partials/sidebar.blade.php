@@ -55,10 +55,6 @@
                 </a>
                 <ul>
                    
-                    @if (permissionCheck('course-level.index'))
-                        <li><a href="{{ route('course-level.index') }}">{{ __('courses.Course Level') }}</a></li>
-                    @endif
-
                     @if (permissionCheck('getAllCourse'))
                         <li>
                             <a href="{{ route('getAllCourse') }}">{{ __('courses.All') }} {{ __('courses.Courses') }}</a>
@@ -75,12 +71,12 @@
                         </li>
                     @endif
                     @if (auth()->user()->role_id==1)
-                    <li>
+                   <!--  <li>
                         <a href="{{ route('getAllBatch') }}">Batches</a>
                     </li>
                     <li>
                         <a href="{{ route('getAllExam') }}">Exams</a>
-                    </li>
+                    </li> -->
                     @endif
                 </ul>
             </li>
@@ -150,6 +146,9 @@
                 @endif
                 @if (permissionCheck('course.subcategory'))
                     <li><a href="{{ route('course.subcategory') }}">{{ __('courses.Subcategories') }}</a></li>
+                @endif
+                @if (permissionCheck('course-level.index'))
+                    <li><a href="{{ route('course-level.index') }}">{{ __('courses.Course Level') }}</a></li>
                 @endif
                 <li>
                     <a href="{{ route('grade') }}">Grade List</a>
@@ -241,7 +240,6 @@
         @endif
 
 
-        @include('newsletter::menu')
         @if(auth()->user()->email=='developer@gmail.com')
         @if(permissionCheck('appearance.themes.index'))
             <li>

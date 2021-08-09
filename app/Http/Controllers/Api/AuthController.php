@@ -54,7 +54,8 @@ class AuthController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'username' => $request->email,
-            'password' => bcrypt($request->password)
+            'password' => bcrypt($request->password),
+            'grade' => $request->grade,
         ]);
         
         $result = $user->save();
@@ -230,6 +231,26 @@ class AuthController extends Controller
     {
         try {
             $data = $request->user();
+            $response = [
+                'success' => true,
+                'data' => $data,
+                'message' => 'Getting user info',
+            ];
+
+            return response()->json($response, 200);
+        } catch (\Exception $exception) {
+            $response = [
+                'success' => false,
+                'message' => $exception->getMessage()
+            ];
+            return response()->json($response, 500);
+        }
+    }  
+
+    public function getusers($id,Request $request)
+    {
+        try {
+            $data = User::find($id);
             $response = [
                 'success' => true,
                 'data' => $data,
