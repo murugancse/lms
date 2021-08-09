@@ -3576,6 +3576,8 @@ class WebsiteController extends Controller
             $quiz->course_id = $courseId;
             $quiz->quiz_id = $quizId;
             $quiz->save();
+
+            //dd($allAns);
             
             if(count($allAns)>0){
                 foreach ($allAns as $itemArr) {

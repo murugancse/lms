@@ -163,12 +163,12 @@
                                                     value="M" {{isset($bank)? $bank->type == "M"? 'selected': '' : ''}}> {{__('Multiple Choice Single Answer')}}</option>
                                                 <option
                                                     value="T" {{isset($bank)? $bank->type == "T"? 'selected': '' : ''}}> {{__('True/False')}}</option>
-                                                <option
+                                                <!-- <option
                                                     value="MM" {{isset($bank)? $bank->type == "MM"? 'selected': '' : ''}}> {{__('Multiple Choice Multiple Answer')}}</option>
                                                 <option
                                                     value="SA" {{isset($bank)? $bank->type == "SA"? 'selected': '' : ''}}> {{__('Short Answer')}}</option>
                                                 <option
-                                                    value="LA" {{isset($bank)? $bank->type == "LA"? 'selected': '' : ''}}> {{__('Long Answer')}}</option>
+                                                    value="LA" {{isset($bank)? $bank->type == "LA"? 'selected': '' : ''}}> {{__('Long Answer')}}</option> -->
                                                 <option
                                                     value="IA" {{isset($bank)? $bank->type == "IA"? 'selected': '' : ''}}> {{__('Short Answer With Image')}}</option>
                                             </select>

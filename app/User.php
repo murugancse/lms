@@ -13,6 +13,7 @@ use Laravel\Passport\HasApiTokens;
 use Modules\CourseSetting\Entities\Course;
 use Modules\CourseSetting\Entities\CourseEnrolled;
 use Modules\CourseSetting\Entities\CourseReveiw;
+use Modules\CourseSetting\Entities\Grade;
 use Modules\Localization\Entities\Language;
 use Modules\OfflinePayment\Entities\OfflinePayment;
 use Modules\Payment\Entities\InstructorPayout;
@@ -37,7 +38,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected static $flushCacheOnUpdate = true;
 
     protected $fillable = [
-        'name', 'role_id', 'username', 'email', 'phone', 'country', 'password', 'email_verified_at', 'mobile_verified_at', 'avatar', 'subscribe','per_hour_charge','grade','subject','gender'
+        'name', 'role_id', 'username', 'email', 'phone', 'country', 'password', 'email_verified_at', 'mobile_verified_at', 'avatar', 'subscribe','per_hour_charge','grade','subject','gender','player_id'
     ];
 
     /**
@@ -62,6 +63,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function gradeDetail()
+    {
+        return $this->belongsTo(Grade::class,'grade','id');
     }
 
     public function currency()

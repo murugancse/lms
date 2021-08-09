@@ -33,7 +33,7 @@ class StudentSettingController extends Controller
         try {
             $students = User::where('role_id', 3)->latest()->get();
             $grades = Grade::where('status', 1)->orderBy('title', 'asc')->get();
-           
+
             return view('studentsetting::student_list', compact('students','grades'));
 
         } catch (\Exception $e) {
@@ -159,7 +159,7 @@ class StudentSettingController extends Controller
         $request->validate([
             'name' => 'required',
             'nric' => 'required',
-            'phone' => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:11|unique:users,phone,' . $request->id,
+            'phone' => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|unique:users,phone,' . $request->id,
             'roll_number' => 'required|unique:users,roll_number,' . $request->id,
             'email' => 'required|email|unique:users,email,' . $request->id,
             'password' => 'bail|nullable|min:8|confirmed',
@@ -169,7 +169,7 @@ class StudentSettingController extends Controller
 
         try {
             if (Config::get('app.app_sync')) {
-                Toastr::error('For demo version you can not change this !', 'Failed');
+                //Toastr::error('For demo version you can not change this !', 'Failed');
                 return redirect()->back();
             } else {
                 // $success = trans('lang.Student') .' '.trans('lang.Updated').' '.trans('lang.Successfully');
@@ -205,6 +205,11 @@ class StudentSettingController extends Controller
 
                 $user->role_id = 3;
                 $user->save();
+
+                $fields['include_player_ids'] = [$user->player_id];
+                $message = 'hey!! Your profile has been updated from admin';
+
+                \OneSignal::sendPush($fields, $message);
 
 
             }
@@ -307,7 +312,7 @@ class StudentSettingController extends Controller
             DB::beginTransaction();
 
             $course = Course::find($request->course_id);
-           
+
             $enroll = CourseEnrolled::find($request->auto_id);
             //$instractor = User::find($cart->instructor_id);
             $enroll->user_id = $request->edituser_id;
@@ -333,10 +338,10 @@ class StudentSettingController extends Controller
     /**
     * @return \Illuminate\Support\Collection
     */
-    public function import() 
+    public function import()
     {
         Excel::import(new StudentsImport,request()->file('file'));
-         
+
         Toastr::success(trans('common.Operation successful'), trans('common.Success'));
         return redirect()->back();
     }
@@ -435,7 +440,7 @@ class StudentSettingController extends Controller
 
         try{
             if ($tables==null) {
-                
+
                 $group = Grade::destroy($id);
 
                 if ($group) {
@@ -553,7 +558,7 @@ class StudentSettingController extends Controller
 
         try{
             if ($tables==null) {
-                
+
                 $subject = Subject::destroy($id);
 
                 if ($subject) {

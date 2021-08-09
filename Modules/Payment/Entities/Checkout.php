@@ -51,6 +51,18 @@ class Checkout extends Model
         return $this->hasMany(CourseEnrolled::class, 'tracking', 'tracking');
     }
 
+    //
+    public function course()
+    {
+        return $this->hasManyThrough(Course::class, CourseEnrolled::class);
+        // return $this->hasOneThrough(
+        //     Course::class,
+        //     CourseEnrolled::class,
+        //     'course_id', // Foreign key on products table...
+        //     'tracking', // Foreign key on orders table...
+        // );
+    }
+
     public function bill()
     {
         return $this->belongsTo(BillingDetails::class, 'tracking', 'tracking_id')->withDefault();

@@ -31,29 +31,32 @@ Route::group([
     Route::get('/get-all-courses', 'CourseApiController@getAllCourses');
     Route::get('/get-popular-courses', 'CourseApiController@getPopularCourses');
     Route::get('/get-course-details/{id}', 'CourseApiController@getCourseDetails');
-    Route::post('/get-course-details', 'CourseApiController@getCourseDetails');
-    Route::post('/get-chapter-details', 'CourseApiController@getChapterDetails');
+    
+    
 
     Route::get('/top-categories', 'CourseApiController@topCategories');
     Route::get('/get-categories', 'CourseApiController@getCategories');
     Route::get('/search-course', 'CourseApiController@searchCourse');
-    Route::get('/filter-course', 'CourseApiController@filterCourse');
+    
     Route::get('/payment-gateways', 'WebsiteApiController@paymentGateways');
     Route::get('/get-subjects', 'CourseApiController@getSubjects');
     Route::get('/get-grades', 'CourseApiController@getGrades');
 
     Route::get('/filter-class', 'CourseApiController@filterClass');
-
+ //Route::post('quizSubmit', 'WebsiteApiController@quizSubmit');
 
     Route::group([
         'middleware' => 'auth:api'
     ], function () {
         //with login routes
+        Route::get('/filter-course', 'CourseApiController@filterCourse');
         Route::post('/pay-course', 'CourseApiController@PaymentCourse');
         Route::get('/cart-list', 'WebsiteApiController@cartList');
         Route::get('/add-to-cart/{id}', 'WebsiteApiController@addToCart');
         Route::get('/remove-to-cart/{id}', 'WebsiteApiController@removeCart');
         Route::get('/apply-coupon', 'WebsiteApiController@applyCoupon');
+        Route::post('/get-course-details', 'CourseApiController@getCourseDetails');
+        Route::post('/get-chapter-details', 'CourseApiController@getChapterDetails');
 
         //AuthController
         Route::get('logout', 'AuthController@logout');
@@ -61,6 +64,12 @@ Route::group([
         Route::get('get-user/{id}', 'AuthController@getusers');
         Route::post('change-password', 'AuthController@changePassword');
         Route::post('/update-profile', 'WebsiteApiController@updateProfile');
+        Route::post('/upload-photo', 'WebsiteApiController@updatePhoto');
+
+        Route::get('my-purchases', 'WebsiteApiController@myPurchases');
+
+        Route::post('quizStart', 'WebsiteApiController@quizStart');
+        Route::post('quizSubmit', 'WebsiteApiController@quizSubmit');
 
 
         //WebsiteApiController
@@ -77,6 +86,8 @@ Route::group([
         Route::post('/make-payment/{response}/{gateWayName}', 'WebsiteApiController@payWithGateWay');
 
         Route::get('/my-billing-address', 'WebsiteApiController@myBilling');
+
+        Route::post('lession-view', 'WebsiteApiController@fullScreenView');
 
     });
 });

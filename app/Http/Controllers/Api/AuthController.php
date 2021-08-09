@@ -45,10 +45,10 @@ class AuthController extends Controller
         //     'password' => 'required|string|confirmed|min:6'
         // ]);
         $validator = Validator::make($request->all(),['name' => 'required','email' => 'required|email|unique:users','phone' => 'required',  'password' => 'required|string|confirmed|min:6']);
-           if ($validator->fails()) {    
+           if ($validator->fails()) {
                 return response()->json( ['success' => false,'message' => $validator->messages() ]);
             }
-        
+
         $user = new User([
             'name' => $request->name,
             'email' => $request->email,
@@ -57,7 +57,7 @@ class AuthController extends Controller
             'password' => bcrypt($request->password),
             'grade' => $request->grade,
         ]);
-        
+
         $result = $user->save();
         if ($result) {
             $response = [
@@ -95,7 +95,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(),['phone' => 'required','password' => 'required|string']);
-           if ($validator->fails()) {    
+           if ($validator->fails()) {
                 return response()->json( ['success' => false,'message' => $validator->messages() ]);
             }
         // $request->validate([
@@ -119,6 +119,8 @@ class AuthController extends Controller
             if ($request->remember_me)
                 $token->expires_at = Carbon::now()->addWeeks(1);
             $result = $token->save();
+            $user->player_id = $request->player_id;
+            $user->save();
 
             $data = [
                 'access_token' => $tokenResult->accessToken,
@@ -231,9 +233,10 @@ class AuthController extends Controller
     {
         try {
             $data = $request->user();
+            $userdata = User::where('id',$data->id)->with('gradeDetail')->first();
             $response = [
                 'success' => true,
-                'data' => $data,
+                'data' => $userdata,
                 'message' => 'Getting user info',
             ];
 
@@ -245,7 +248,7 @@ class AuthController extends Controller
             ];
             return response()->json($response, 500);
         }
-    }  
+    }
 
     public function getusers($id,Request $request)
     {

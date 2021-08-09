@@ -39,7 +39,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $table = 'users';
 
     protected $fillable = [
-        'name', 'role_id', 'username', 'email', 'phone', 'password', 'email_verified_at', 'mobile_verified_at', 'avatar', 'subscribe','roll_number','dob','nric','grade',
+        'name', 'role_id', 'username', 'email', 'phone', 'password', 'email_verified_at', 'mobile_verified_at', 'avatar', 'subscribe','roll_number','dob','nric','grade','player_id'
     ];
 
     /**
@@ -98,7 +98,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function enrolls()
     {
         return $this->hasManyThrough(
-            CourseEnrolled::class, 
+            CourseEnrolled::class,
             Course::class,
         );
         // return $this->hasManyThrough(

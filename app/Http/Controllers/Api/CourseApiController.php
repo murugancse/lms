@@ -2,14 +2,22 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\BillingDetails;
+use App\Http\Controllers\PaymentController;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\CourseSetting\Entities\Category;
 use Modules\CourseSetting\Entities\Course;
 use Modules\CourseSetting\Entities\Chapter;
 use Modules\CourseSetting\Entities\Subject;
 use Modules\CourseSetting\Entities\Grade;
+use App\User;
+use Carbon\Carbon;
+use Modules\Payment\Entities\Cart;
+use Modules\Payment\Entities\Checkout;
 
 
 /**
@@ -279,6 +287,135 @@ class CourseApiController extends Controller
         }
 
         return response()->json($response, 200);
+    }
+
+    public function PaymentCourse(Request $request)
+    {
+        $course_id=$request->course_id;
+        $user_id=Auth::user()->id;
+        $user = Auth::user();
+
+        $exist = Cart::where('user_id', $user->id)->where('course_id', $course_id)->first();
+        $oldCart = Cart::where('user_id', $user->id)->first();
+
+        if (isset($exist)) {
+            $message = 'Course already added in your cart';
+            $success = false;
+        } else {
+
+            if (isset($oldCart)) {
+                $course = Course::find($course_id);
+                $cart = new Cart();
+                $cart->user_id = $user->id;
+                $cart->instructor_id = $course->user_id;
+                $cart->course_id = $course_id;
+                $cart->tracking = $oldCart->tracking;
+                if ($course->discount_price != null) {
+                    $cart->price = $course->discount_price;
+                } else {
+                    $cart->price = $course->price;
+                }
+                $cart->save();
+
+            } else {
+
+                $course = Course::find($course_id);
+                $cart = new Cart();
+                $cart->user_id = $user->id;
+                $cart->instructor_id = $course->user_id;
+                $cart->course_id = $course_id;
+                $cart->tracking = getTrx();
+                if ($course->discount_price != null) {
+                    $cart->price = $request->amount;
+                } else {
+                    $cart->price = $request->amount;
+                }
+                $cart->save();
+            }
+
+            $message = 'Course Added to your cart';
+            $success = true;
+        }
+
+        $profile = Auth::user();
+
+
+        $tracking = Cart::where('user_id', $user_id)->first()->tracking;
+        $total = $request->amount;
+        if ($profile->role_id == 3) {
+
+            $total = Cart::where('user_id', $user_id)->sum('price');
+        }
+
+        $checkout = Checkout::where('tracking', $tracking)->where('user_id', $user_id)->latest()->first();
+        if (!$checkout)
+            $checkout = new Checkout();
+
+        $checkout->discount = 0.00;
+        $checkout->purchase_price = $total;
+        $checkout->tracking = $tracking;
+        $checkout->user_id = $user_id;
+        $checkout->price = $total;
+        $checkout->status = 0;
+        $checkout->save();
+
+
+        $bill = BillingDetails::where('tracking_id', $tracking)->first();
+
+
+        if (empty($bill)) {
+            $bill = new BillingDetails();
+        }
+
+        $bill->user_id = $user_id;
+        $bill->tracking_id = $tracking;
+        $bill->first_name = $user->name;
+        $bill->last_name = $user->name;
+        $bill->company_name = 'Local';
+        $bill->email = $user->email;
+        $bill->payment_method = null;
+        $bill->save();
+
+        $checkout_info = $checkout;
+
+        if ($checkout_info) {
+            $checkout_info->billing_detail_id = $bill->id;
+            $checkout_info->save();
+
+            if ($checkout_info->purchase_price == 0) {
+                $checkout_info->payment_method = 'None';
+                $bill->payment_method = 'None';
+                $checkout_info->save();
+                $carts = Cart::where('tracking', $checkout_info->tracking)->get();
+
+                foreach ($carts as $cart) {
+
+                    $payment = new PaymentController();
+                    $payment->directEnroll($cart->course_id, $checkout_info->tracking);
+                    $cart->delete();
+
+                }
+
+
+            }
+        } else {
+            $response = [
+                'success' => false,
+                'message' => 'Operation Failed.'
+            ];
+            return response()->json($response, 500);
+        }
+        $response = $checkout_info;
+
+        (new PaymentController())->payWithGateWay($response,'PayStack');
+
+        $response = [
+            'success' => true,
+            'data' => [],
+            'message' => 'Payment Success',
+        ];
+        return response()->json($response, 200);
+
     }
 
 

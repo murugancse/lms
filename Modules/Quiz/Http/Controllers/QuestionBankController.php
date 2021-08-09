@@ -29,9 +29,7 @@ class QuestionBankController extends Controller
     }
     public function store(Request $request)
     {
-        if (demoCheck()) {
-            return redirect()->back();
-        }
+        
         if ($request->question_type == "") {
             $request->validate([
                 'group' => "required",
@@ -69,7 +67,7 @@ class QuestionBankController extends Controller
                 'suitable_words' => "required"
             ]);
         }
-        try{
+        // try{
            
             if ($request->question_type != 'M' && $request->question_type != 'MM') {
                 if ($request->question_type == 'IA') {
@@ -167,10 +165,10 @@ class QuestionBankController extends Controller
                 return redirect()->back();
 
             }
-        }catch (\Exception $e) {
-           Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
-           return redirect()->back();
-        }
+        // }catch (\Exception $e) {
+        //    Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+        //    return redirect()->back();
+        // }
     }
 
 

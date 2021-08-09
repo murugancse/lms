@@ -21,7 +21,7 @@ class Course extends Model
 
     protected $fillable = [];
 
-    protected $appends = ['dateFormat', 'publishedDate', 'sumRev', 'purchasePrice', 'enrollCount'];
+    protected $appends = ['dateFormat', 'publishedDate', 'sumRev', 'purchasePrice', 'enrollCount','is_enrolled'];
 
     protected $casts = [
         'meta_keywords' => 'object'
@@ -239,5 +239,13 @@ class Course extends Model
             }
         }
         return $price;
+    }
+    public function getIsEnrolledAttribute()
+    {
+        if (Auth::check()) {
+            return isEnrolled($this->id, Auth::user()->id);
+        }else{
+            return 0;
+        }
     }
 }

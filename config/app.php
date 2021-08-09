@@ -186,6 +186,8 @@ return [
         Anand\LaravelPaytmWallet\PaytmWalletServiceProvider::class,
         Unicodeveloper\Paystack\PaystackServiceProvider::class,
         App\Providers\TranslationServiceProvider::class,
+        Ladumor\OneSignal\OneSignalServiceProvider::class,
+
     ],
 
     /*
@@ -244,6 +246,8 @@ return [
         'PaytmWallet' => Anand\LaravelPaytmWallet\Facades\PaytmWallet::class,
         'Paystack' => Unicodeveloper\Paystack\Facades\Paystack::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'OneSignal' => \Ladumor\OneSignal\OneSignal::class,
+
 
     ],
 

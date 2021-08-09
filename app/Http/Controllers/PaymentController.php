@@ -152,9 +152,6 @@ class PaymentController extends Controller
     public function paymentSubmit(Request $request)
     {
 
-        if (demoCheck()) {
-            return redirect()->back();
-        }
 
         $checkout_info = Checkout::where('id', $request->id)->where('tracking', $request->tracking_id)->with('user')->first();
 
@@ -395,7 +392,10 @@ class PaymentController extends Controller
             elseif ($request->payment_method == "PayStack") {
 
                 try {
-                    return Paystack::getAuthorizationUrl()->redirectNow();
+                    $this->payWithGateWay($request->all(), 'PayStack');
+                    Toastr::success('Checkout Successfully Done', 'Success');
+                    return redirect(route('studentDashboard'));
+                    //return Paystack::getAuthorizationUrl()->redirectNow();
 
                 } catch (\Exception $e) {
                     Toastr::error($e->getMessage(), trans('common.Failed'));
@@ -439,7 +439,7 @@ class PaymentController extends Controller
 
     public function directEnroll($id, $tracking = null)
     {
-        try {
+       // try {
             $success = trans('lang.Enrolled') . ' ' . trans('lang.Successfully');
             $course = Course::find($id);
             $user = Auth::user();
@@ -481,23 +481,24 @@ class PaymentController extends Controller
             }
 
 
-            send_email($user, 'Course_Enroll_Payment', [
-                'time' => Carbon::now()->format('d-M-Y ,s:i A'),
-                'course' => $course->title,
-                'price' => getPriceFormat($course->price),
-                'instructor' => $course->user->name,
-                'gateway' => 'None',
-            ]);
+            // send_email($user, 'Course_Enroll_Payment', [
+            //     'time' => Carbon::now()->format('d-M-Y ,s:i A'),
+            //     'course' => $course->title,
+            //     'price' => getPriceFormat($course->price),
+            //     'instructor' => $course->user->name,
+            //     'gateway' => 'None',
+            // ]);
 
-            send_email($user, 'Enroll_notify_Instructor', [
-                'time' => Carbon::now()->format('d-M-Y ,s:i A'),
-                'course' => $course->title,
-                'price' => getPriceFormat($course->price),
-                'rev' => getPriceFormat($reveune ?? 0)
-            ]);
+            // send_email($user, 'Enroll_notify_Instructor', [
+            //     'time' => Carbon::now()->format('d-M-Y ,s:i A'),
+            //     'course' => $course->title,
+            //     'price' => getPriceFormat($course->price),
+            //     'rev' => getPriceFormat($reveune ?? 0)
+            // ]);
 
 
             $enroll->save();
+
             $course->reveune = (($course->reveune) + ($enroll->reveune));
             $course->save();
 
@@ -532,9 +533,9 @@ class PaymentController extends Controller
             return response()->json([
                 'success' => $success
             ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => trans("lang.Operation Failed")]);
-        }
+        // } catch (\Exception $e) {
+        //     return response()->json(['error' => trans("lang.Operation Failed")]);
+        // }
 
     }
 
@@ -612,6 +613,7 @@ class PaymentController extends Controller
                         $referral_settings = UserWiseCouponSetting::where('role_id', Auth::user()->role_id)->first();
 
                         if ($purchase_history == null && $referral_check != null) {
+
                             $referral_check->category_id = $course->category_id;
                             $referral_check->subcategory_id = $course->subcategory_id;
                             $referral_check->course_id = $course->id;
@@ -684,24 +686,25 @@ class PaymentController extends Controller
                         $payout->save();
 
 
-                        send_email($checkout_info->user, 'Course_Enroll_Payment', [
-                            'time' => \Illuminate\Support\Carbon::now()->format('d-M-Y ,s:i A'),
-                            'course' => $course->title,
-                            'currency' => $checkout_info->user->currency->symbol ?? '$',
-                            'price' => ($checkout_info->user->currency->conversion_rate * $itemPrice),
-                            'instructor' => $course->user->name,
-                            'gateway' => 'Sslcommerz',
-                        ]);;
-                        send_email($instractor, 'Enroll_notify_Instructor', [
-                            'time' => Carbon::now()->format('d-M-Y ,s:i A'),
-                            'course' => $course->title,
-                            'currency' => $instractor->currency->symbol ?? '$',
-                            'price' => ($instractor->currency->conversion_rate * $itemPrice),
-                            'rev' => @$reveune,
-                        ]);
+//                        send_email($checkout_info->user, 'Course_Enroll_Payment', [
+//                            'time' => \Illuminate\Support\Carbon::now()->format('d-M-Y ,s:i A'),
+//                            'course' => $course->title,
+//                            'currency' => $checkout_info->user->currency->symbol ?? '$',
+//                            'price' => ($checkout_info->user->currency->conversion_rate * $itemPrice),
+//                            'instructor' => $course->user->name,
+//                            'gateway' => 'Sslcommerz',
+//                        ]);;
+//                        send_email($instractor, 'Enroll_notify_Instructor', [
+//                            'time' => Carbon::now()->format('d-M-Y ,s:i A'),
+//                            'course' => $course->title,
+//                            'currency' => $instractor->currency->symbol ?? '$',
+//                            'price' => ($instractor->currency->conversion_rate * $itemPrice),
+//                            'rev' => @$reveune,
+//                        ]);
 
 
                         $enroll->save();
+
 
                         $course->reveune = (($course->reveune) + ($enroll->reveune));
 

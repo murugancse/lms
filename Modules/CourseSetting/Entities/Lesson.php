@@ -15,6 +15,7 @@ class Lesson extends Model
     protected static $flushCacheOnUpdate = true;
 
     protected $fillable = [];
+    protected $appends = ['quiz_id_new'];
 
     public function chapter()
     {
@@ -45,5 +46,13 @@ class Lesson extends Model
     public function lessonQuiz(){
         return $this->belongsTo(OnlineQuiz::class, 'quiz_id')->withDefault();
 
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getQuizIdNewAttribute()
+    {
+        return $this->quiz_id==null ? '' : $this->quiz_id;
     }
 }

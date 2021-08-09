@@ -19,12 +19,24 @@ use Modules\CourseSetting\Entities\CourseCommentReply;
 use Modules\CourseSetting\Entities\CourseEnrolled;
 use Modules\CourseSetting\Entities\CourseReveiw;
 use Modules\CourseSetting\Entities\Notification;
+use Modules\CourseSetting\Entities\Category;
+use Modules\CourseSetting\Entities\Chapter;
+use Modules\CourseSetting\Entities\Lesson;
 use Modules\Payment\Entities\Cart;
 use Modules\Payment\Entities\Checkout;
 use Modules\Payment\Entities\InstructorPayout;
 use Modules\PaymentMethodSetting\Entities\PaymentMethod;
 use Modules\SystemSetting\Entities\GeneralSettings;
+use Modules\Certificate\Entities\Certificate;
 use Illuminate\Support\Facades\Validator;
+use Modules\Quiz\Entities\OnlineQuiz;
+use Modules\Quiz\Entities\QuizeSetup;
+use Modules\Quiz\Entities\QuestionBankMuOption;
+use Modules\Quiz\Entities\QuizTest;
+use Modules\Quiz\Entities\QuizTestDetails;
+
+use Modules\Quiz\Entities\QuestionBank;
+use Log;
 
 
 /**
@@ -496,10 +508,18 @@ class WebsiteApiController extends Controller
     public function myCourses()
     {
         try {
+            // $courses = CourseEnrolled::where('user_id', Auth::id())->where('status', 1)->with('course','checkout','course.category')->latest()->get();
             $courses = CourseEnrolled::where('course_enrolleds.user_id', Auth::user()->id)
                 ->leftjoin('courses', 'courses.id', 'course_enrolleds.course_id')
                 ->select('courses.*')
                 ->get();
+            foreach($courses as $course){
+                $category = Category::where('id',$course->category_id)->first();
+                $chapters = Chapter::where('course_id',$course->id)->get();
+                $course['category'] = $category;
+                $course['chapters'] = $chapters;
+                $course['chapters_count'] = count($chapters);
+            }
             $response = [
                 'success' => true,
                 'data' => $courses,
@@ -553,7 +573,7 @@ class WebsiteApiController extends Controller
                ]);
            }*/
            $validator = Validator::make($request->all(),['name' => 'required','email' => 'required|email','phone' => 'required']);
-           if ($validator->fails()) {    
+           if ($validator->fails()) {
                 return response()->json( ['success' => false,'message' => $validator->messages() ]);
             }
 
@@ -575,6 +595,75 @@ class WebsiteApiController extends Controller
             $user->instagram = $request->instagram;
             $user->about = $request->about;
             $user->gender = $request->gender;
+            $user->grade = $request->grade;
+            $user->dob = $request->dob;
+            $fileName = "";
+            if ($request->file('image') != "") {
+                $file = $request->file('image');
+                $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+                $file->move('public/profile/', $fileName);
+                $fileName = 'public/profile/' . $fileName;
+                $user->image = $fileName;
+            }
+            $user->save();
+            $response = [
+                'success' => true,
+                'message' => "Profile has been updated",
+            ];
+            return response()->json($response, 200);
+        } catch (\Exception $e) {
+            $response = [
+                'success' => false,
+                'message' => "Something went wrong",
+            ];
+            return response()->json($response, 500);
+        }
+    }
+
+    public function updatePhoto(Request $request)
+    {
+        /*   if (Auth::user()->role_id == 1) {
+               $request->validate([
+                   'name' => 'required',
+                   'email' => 'required|email',
+
+               ]);
+           } else {
+               $request->validate([
+                   'name' => 'required',
+                   'email' => 'required|email',
+                   'phone' => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:11|unique:users',
+                   'address' => 'required',
+                   'city' => 'required',
+                   'country' => 'required',
+                   'zip' => 'required',
+               ]);
+           }*/
+        $validator = Validator::make($request->all(),['image' => 'required']);
+        if ($validator->fails()) {
+            return response()->json( ['success' => false,'message' => $validator->messages() ]);
+        }
+
+        try {
+
+            $user = Auth::user();
+//            $user->name = $request->name;
+//            $user->email = $request->email;
+//            $user->phone = $request->phone;
+//            $user->address = $request->address;
+//            $user->language_id = $request->language;
+//            $user->city = $request->city;
+//            $user->country = $request->country;
+//            $user->zip = $request->zip;
+//            $user->currency_id = 112;
+//            $user->facebook = $request->facebook;
+//            $user->twitter = $request->twitter;
+//            $user->linkedin = $request->linkedin;
+//            $user->instagram = $request->instagram;
+//            $user->about = $request->about;
+//            $user->gender = $request->gender;
+//            $user->grade = $request->grade;
+//            $user->dob = $request->dob;
             $fileName = "";
             if ($request->file('image') != "") {
                 $file = $request->file('image');
@@ -1446,6 +1535,505 @@ class WebsiteApiController extends Controller
             return response()->json($response, 200);
 
         }
+    }
+
+
+    public function myPurchases()
+    {
+
+        //try {
+
+            $courseEnrolleds = CourseEnrolled::where('user_id', Auth::id())->where('status', 1)->with('course','checkout','course.category')->latest()->paginate(5);
+           // $enrolls = Checkout::where('user_id', Auth::id())->where('status', 1)->with('courses.course')->latest()->paginate(5);
+            // $lastMeasures = $enrolls->map(function($hive) {
+            //     return $enrolls->courses()->latest()->first();
+            // });
+
+            if (moduleStatusCheck("Subscription")) {
+                $checkouts = SubscriptionCheckout::where('user_id', Auth::id())->with('plan')->latest()->paginate(5);
+            } else {
+                $checkouts = [];
+            }
+            $response = [
+                'success' => true,
+                'data' => $courseEnrolleds,
+                'message' => "Operation successful"
+            ];
+            return response()->json($response, 200);
+
+
+//        } catch (\Exception $e) {
+//            $response = [
+//                'success' => false,
+//                'message' => "Operation Failed!"
+//            ];
+//            return response()->json($response, 200);
+//        }
+    }
+
+    public function fullScreenView(Request $request)
+    {
+
+        $course_id = $request->input('course_id');
+
+
+        $data = [];
+
+        $course = Course::findOrFail($course_id);
+
+
+        $lesson = Lesson::where('course_id', $course_id)->first();
+       // $lesson = Lesson::where('id', $lesson_id)->first();
+        //$lesson->is_lock;
+        $isEnrolled = false;
+        
+
+        if (!isEnrolled($course_id, Auth::id())) {
+            if ($lesson->is_lock == 1) {
+                //Toastr::error('You are not enrolled for this course !', 'Failed');
+                //return redirect()->back();
+            }
+        } else {
+            $isEnrolled = true;
+        }
+
+
+        if ($course->type == 1)
+            $certificate = Certificate::where('for_course', 1)->first();
+        else
+            $certificate = Certificate::where('for_quiz', 1)->first();
+
+        //drop content  start
+        date_default_timezone_set(\config('app.timezone'));
+        $today = Carbon::now()->toDateString();
+        $showDrip = getSetting()->show_drip ?? 0;
+        $all = Lesson::where('course_id', $course->id)->orderBy('position', 'asc')->get();;
+
+        $lessons = [];
+        if ($course->drip == 1) {
+            if ($showDrip == 1) {
+                foreach ($all as $key => $data) {
+                    $show = false;
+                    $unlock_date = $data->unlock_date;
+                    $unlock_days = $data->unlock_days;
+
+                    if (!empty($unlock_days) || !empty($unlock_date)) {
+
+                        if (!empty($unlock_date)) {
+                            if (strtotime($unlock_date) == strtotime($today)) {
+                                $show = true;
+                            }
+                        }
+                        if (!empty($unlock_days)) {
+                            if (Auth::check()) {
+                                $enrolled = DB::table('course_enrolleds')->where('user_id', Auth::user()->id)->where('course_id', $course->id)->where('status', 1)->first();
+                                if (!empty($enrolled)) {
+                                    $unlock = Carbon::parse($enrolled->created_at);
+                                    $unlock->addDays($data->unlock_days);
+                                    $unlock = $unlock->toDateString();
+
+                                    if (strtotime($unlock) <= strtotime($today)) {
+                                        $show = true;
+                                    }
+                                }
+
+                            }
+                        }
+
+                        if ($show) {
+                            $lessons[] = $data;
+                        }
+                    } else {
+                        $lessons[] = $data;
+                    }
+
+
+                }
+
+
+            } else {
+                $lessons = $all;
+            }
+        } else {
+            $lessons = $all;
+        }
+
+        $total = count($lessons);
+        // drop content end
+
+
+        $lessonShow = false;
+        $unlock_lesson_date = $lesson->unlock_date;
+        $unlock_lesson_days = $lesson->unlock_days;
+        if (!empty($unlock_lesson_days) || !empty($unlock_lesson_date)) {
+            if (!empty($unlock_lesson_date)) {
+                if (strtotime($unlock_lesson_date) == strtotime($today)) {
+                    $lessonShow = true;
+                }
+
+            }
+
+            if (!empty($unlock_lesson_days)) {
+                if (!Auth::check()) {
+                    $lessonShow = false;
+                } else {
+                    $enrolled = DB::table('course_enrolleds')->where('user_id', Auth::user()->id)->where('course_id', $course_id)->where('status', 1)->first();
+                    $unlock_lesson = Carbon::parse($enrolled->created_at);
+                    $unlock_lesson->addDays($lesson->unlock_days);
+                    $unlock_lesson = $unlock_lesson->toDateString();
+
+                    if (strtotime($unlock_lesson) <= strtotime($today)) {
+                        $lessonShow = true;
+
+                    }
+                }
+
+            }
+        } else {
+            $lessonShow = true;
+        }
+
+        if (!$lessonShow) {
+           // Toastr::error('Lesson currently unavailable!', 'Failed');
+           // return redirect()->back();
+        }
+
+        $countCourse = count($course->completeLessons->where('status', 1));
+        if ($countCourse != 0) {
+            $percentage = ceil($countCourse / count($course->lessons) * 100);
+        } else {
+            $percentage = 0;
+        }
+
+        $course_reviews = DB::table('course_reveiws')->select('user_id')->where('course_id', $course->id)->get();
+
+        $reviewer_user_ids = [];
+        foreach ($course_reviews as $key => $review) {
+            $reviewer_user_ids[] = $review->user_id;
+        }
+        $chapters = Chapter::where('course_id', $course->id)->with('lessons')->orderBy('position', 'asc')->get();
+        $data['course'] = $course;
+        $data['chapters'] = $chapters;
+        $data['percentage'] = $percentage;
+        $data['reviewer_user_ids'] = $reviewer_user_ids;
+        $data['isEnrolled'] = $isEnrolled;
+        $data['total'] = $total;
+        $data['certificate'] = $certificate;
+        $data['lesson'] = $lesson;
+        $data['lessons'] = $lessons;
+        
+        if ($course) {
+            $response = [
+                'success' => true,
+                'data' => $data,
+                'message' => 'Getting Course Data',
+            ];
+        } else {
+            $response = [
+                'success' => false,
+                'message' => 'No Data Found',
+            ];
+        }
+
+        return response()->json($response, 200);
+
+    }
+
+    public function quizStart(Request $request)
+    {
+
+
+        //try {
+            $id = $request->input('course_id');
+            $quiz_id = $request->input('quiz_id');
+            $user = Auth::user();
+            
+
+            if (Auth::check() && isEnrolled($id, $user->id)) {
+                
+                $data['course'] = Course::where('courses.id', $id)->first();
+                
+                //$data['quiz'] = OnlineQuiz::where('id', $quiz_id)->with('assign')->first();
+                $data['quiz'] = OnlineQuiz::where('id', $quiz_id)->first();
+                $data['questions'] = DB::table('question_banks as q')->select('q.*')
+                                    ->leftjoin('online_exam_question_assigns as a', 'a.question_bank_id', '=', 'q.id')
+                                    ->leftjoin('online_quizzes as oq', 'a.online_exam_id', '=', 'oq.id')
+                                    ->where('oq.id', '=', $quiz_id)
+                                    ->get();
+
+                foreach($data['questions'] as $question){
+                    $options = QuestionBankMuOption::where('question_bank_id',$question->id)->get();
+                    $question->options = $options;
+                }
+                
+                $data['quizSetup'] = QuizeSetup::first();
+               
+                $response = [
+                    'success' => true,
+                    'data' => $data,
+                    'message' => 'Quiz Details',
+                ];
+                return response()->json($response, 200);
+
+
+            } else {
+                $response = [
+                    'success' => false,
+                    'message' => 'Permission Denied',
+                ];
+                return response()->json($response, 200);
+            }
+
+
+        // } catch (\Exception $e) {
+        //     $response = [
+        //         'success' => false,
+        //         'message' => 'Server issue',
+        //     ];
+        //     return response()->json($response, 200);
+        // }
+    }
+
+    public function quizSubmit(Request $request)
+    {
+        Log::info($request->all());
+        //return $request->all();
+        // try {
+            $setting = QuizeSetup::first();
+            $allAns = $request->ans;
+            $allAnswer = $request->answer;
+            $userId = Auth::id();
+            $courseId = $request->get('course_id');
+            $quizId = $request->get('quiz_id');
+            $quiz_start_time = $request->get('quiz_start_time');
+            $quiz_end_time = $request->get('quiz_end_time');
+            $answer = $request->get('answer');
+            $answer_type = $request->get('answer_type');
+            $question_review = $setting->question_review;
+            $show_result_each_submit = $setting->show_result_each_submit;
+
+            $str_arr = explode ("|", $answer); 
+            
+            $str_options = explode ("|", $answer_type); 
+           
+            $quiz = new QuizTest();
+            $quiz->user_id = $userId;
+            $quiz->course_id = $courseId;
+            $quiz->quiz_id = $quizId;
+            $quiz->save();
+
+            foreach ($str_arr as $itemArr) {
+                $qusAns = explode('_', $itemArr);
+                $qus = $qusAns[0] ?? '';
+                $ans = $qusAns[1] ?? '';
+
+                $quizDetails = new QuizTestDetails();
+                $option = QuestionBankMuOption::find($ans);
+                if ($option) {
+                    $quizDetails->quiz_test_id = $quiz->id;
+                    $quizDetails->qus_id = $qus;
+                    $quizDetails->ans_id = $ans;
+                    $quizDetails->status = $option->status;
+                    $quizDetails->mark = $option->question->marks;
+
+                    $quizDetails->save();
+                }
+            }
+
+            
+            // if(count($allAns)>0){
+            //     foreach ($allAns as $itemArr) {
+            //         foreach ($itemArr as $item) {
+            //             $qusAns = explode('|', $item);
+            //             $qus = $qusAns[0] ?? '';
+            //             $ans = $qusAns[1] ?? '';
+            //             //print_r($qus);
+
+
+            //             if ($courseId && !empty($qusAns)) {
+            //                 $quizDetails = new QuizTestDetails();
+            //                 $option = QuestionBankMuOption::find($ans);
+            //                 if ($option) {
+            //                     $quizDetails->quiz_test_id = $quiz->id;
+            //                     $quizDetails->qus_id = $qus;
+            //                     $quizDetails->ans_id = $ans;
+            //                     $quizDetails->status = $option->status;
+            //                     $quizDetails->mark = $option->question->marks;
+
+            //                     $quizDetails->save();
+            //                 }
+
+
+            //             }
+            //         }
+            //     }
+            // }
+            
+            // if($allAnswer != null){
+            //     foreach ($allAnswer as $item) {
+                    
+            //         $ans = $item;
+
+            //         if ($courseId && !empty($allAnswer)) {
+            //             $quizDetails = new QuizTestDetails();
+                        
+            //             $quizDetails->quiz_test_id = $quiz->id;
+            //             $quizDetails->qus_id = $qus;
+            //             $quizDetails->ans_id = 0;
+            //             $quizDetails->answer = $ans;
+            //             $quizDetails->status = 0;
+            //             $quizDetails->mark = 0;
+
+            //             $quizDetails->save();
+
+            //         }
+            //     }
+            // }
+
+            
+
+            return $this->quizResult($quiz->id);
+            // $response = [
+            //     'success' => true,
+            //     'data' => $data,
+            //     'message' => 'Quiz Details',
+            // ];
+            // return response()->json($response, 200);
+
+        // } catch (\Exception $e) {
+
+        //      $response = [
+        //         'success' => false,
+        //         'message' => 'Permission Denied',
+        //     ];
+        //     return response()->json($response, 200);
+        // }
+    }
+
+    public function quizResult($id)
+    {
+        //try {
+            $quizSetup = QuizeSetup::first();
+            $user = Auth::user();
+
+            $quiz = QuizTest::findOrFail($id);
+            if ($quiz->user_id == $user->id) {
+                $course = Course::findOrFail($quiz->course_id);
+
+
+                $onlineQuiz = OnlineQuiz::find($quiz->quiz_id);
+                //dd($onlineQuiz);
+
+                $totalQus = totalQuizQus($quiz->quiz_id);
+                $totalAns = count($quiz->details);
+                $totalCorrect = 0;
+                $totalScore = totalQuizMarks($quiz->quiz_id);
+                $score = 0;
+                //dd($totalAns);
+                if ($totalAns != 0) {
+                    foreach ($quiz->details as $test) {
+                        $qtype = DB::table('question_banks')->where('id',$test->qus_id)->pluck('type')->first();
+                        //dd($qtype);
+                        $ans = QuestionBankMuOption::find($test->ans_id);
+
+                        if($qtype='M' || $qtype='T'){
+                            if (!empty($ans)) {
+                                if ($ans->status == 1) {
+
+                                    $score += $ans->question->marks ?? 1;
+                                    $totalCorrect++;
+                                }
+                            }
+                        }
+                        
+
+                    }
+                }
+                //dd($totalCorrect);
+                $totalCorrect = 0;
+                $textcount = 0;
+                $totalmultiple = 0;
+               $questions = QuestionBank::where('q_group_id',$onlineQuiz->id)->get();
+               $questionid = QuestionBank::where('q_group_id',$onlineQuiz->id)->where('type','=','MM')->pluck('id');
+               //dd($questions);
+               foreach ($questions as $key => $value) {
+                    if($value->type=='MM'){
+                        $options = $value->questionMu;
+                        $coptions = [];
+                        foreach ($options as $key1 => $option) {
+                            if($option->status==1){
+                                $coptions[] = $option->id;
+                            }
+                        }
+                        //dd($coptions);
+                        $anscount = DB::table('quiz_test_details')->where('quiz_test_id',$quiz->id)->whereIn('ans_id',$coptions)->where('status',1)->count();
+                        if($anscount==count($coptions)){
+                            $score += $value->marks ?? 1;
+                            $totalCorrect++;
+                        }else{
+                            $totalmultiple = $totalmultiple+$anscount;
+                        }
+                        //dd($anscount);
+                    }else if($value->type=='SA' || $value->type=='LA' || $value->type=='IA'){
+                        $textcount++;
+                    }else{
+                        foreach ($quiz->details as $test) {
+                            $ans = QuestionBankMuOption::where('id',$test->ans_id)->where('question_bank_id',$value->id)->whereNotIn('question_bank_id',$questionid)->first();
+                            //dd(ans)
+                           if($ans!=null){
+                            //echo "<pre>";
+                            
+                                if ($ans->status) {
+                                   // print_r($ans->status);
+                                    $totalCorrect++;
+                                }
+                           }
+                            
+                            
+                        }
+                    }
+                    
+               }
+              // dd($totalCorrect);
+               //dd($questions);
+
+                //$qtype = DB::table('question_banks')->where('id',$test->qus_id)->pluck('type')->first();
+
+
+                $result = [];
+                $result['totalQus'] = $totalQus;
+                $result['totalAns'] = $totalAns;
+                $result['totalCorrect'] = $totalCorrect;
+                $result['totalWrong'] = count($questions)- $result['totalCorrect']-$textcount;
+                $result['score'] = $score;
+                $result['totalScore'] = $totalScore;
+                $result['textcount'] = $textcount;
+                $result['passMark'] = $onlineQuiz->percentage ?? 0;
+                $result['mark'] = $score / $totalScore * 100 ?? 0;
+                $result['status'] = $result['mark'] >= $result['passMark'] ? "Passed" : "Failed";
+
+                $certificate = Certificate::where('for_quiz', 1)->first();
+                //return view(theme('quizResult'), $data, compact('certificate', 'quiz', 'quizSetup', 'user', 'course', 'result'));
+                $response = [
+                    'success' => true,
+                    'data' => $result,
+                    'message' => 'Quiz Details',
+                ];
+            return response()->json($response, 200);
+
+            } else {
+                $response = [
+                        'success' => false,
+                        'message' => $exception->getMessage()
+                ];
+                return response()->json($response, 500);
+            }
+
+        // } catch (\Exception $e) {
+
+        //     Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+        //     return redirect()->back();
+        // }
     }
 
 
