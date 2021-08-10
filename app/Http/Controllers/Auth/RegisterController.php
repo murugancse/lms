@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Repositories\UserRepositoryInterface;
+use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Modules\FrontendManage\Entities\LoginPage;
+use Illuminate\Http\Request;
+use App\Models\StudentParent;
 
 class RegisterController extends Controller
 {
@@ -106,10 +109,53 @@ class RegisterController extends Controller
         return view(theme('auth.register'), compact('page'));
     }
 
+    public function ParentRegisterForm()
+    {
+        $page = LoginPage::first();
+        return view(theme('auth.register-parent'), compact('page'));
+    }
+
     public function showRegistrationForm()
     {
         $page = LoginPage::first();
         return view(theme('auth.register'), compact('page'));
+    }
+
+    /**
+     * Create a new user instance after a valid registration.
+     *
+     * @param array $data
+     * @return \App\User
+     */
+    protected function ParentCreate(Request $request)
+    {
+        try {
+            $data = StudentParent::create([
+                'parent_name' => $request->parent_name,
+                'parent_ic' => $request->parent_ic,
+                'parent_phone_no' => $request->parent_phone_no,
+                'parent_email' => $request->parent_email,
+                'username' => $request->parent_email,
+                'country' => getSetting()->country_id,
+                'state' => $request->state,
+                'district' => $request->district,
+                'city' => $request->city,
+                'post_code' => $request->post_code,
+                'house_address' => $request->house_address,
+                'student_name' => $request->student_name,
+                'student_ic' => $request->student_ic,
+                'school_name' => $request->school_name,
+                'password' => Hash::make($request->password),
+            ]);
+            if ($data) {
+                Toastr::success('Parent Registration Successful', 'Success');
+                return redirect('login');
+            }
+        }catch (\Exception $e) {
+
+            Toastr::error(trans("lang.Oops, Something Went Wrong"), trans('common.Failed'));
+            return redirect()->back();
+        }
     }
 
 

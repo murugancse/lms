@@ -9,8 +9,10 @@ Auth::routes(['verify' => true]);
 Route::get('send-password-reset-link', 'Auth\ForgotPasswordController@SendPasswordResetLink')->name('SendPasswordResetLink');
 Route::get('reset-password', 'Auth\ForgotPasswordController@ResetPassword')->name('ResetPassword');
 Route::get('register', 'Auth\RegisterController@RegisterForm')->name('register');
+Route::get('parent-registration', 'Auth\RegisterController@ParentRegisterForm')->name('parent.register');
 
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
+Route::post('parent-registration', 'Auth\RegisterController@ParentCreate')->name('parent.create');
 Route::post('/resend', '\App\Http\Controllers\Auth\VerificationController@resend_mail')->name('verification_mail_resend');
 
 

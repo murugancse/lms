@@ -3,7 +3,11 @@
 Route::group(['prefix' => 'admin/student', 'middleware' => ['auth', 'admin']], function () {
 
     Route::get('/allStudent', 'StudentSettingController@index')->name('student.student_list')->middleware('RoutePermissionCheck:student.student_list');
+    Route::get('/allParents', 'StudentSettingController@parentsIndex')->name('student.parents_list')->middleware('RoutePermissionCheck:student.student_list');
+    Route::get('/newStudent', 'StudentSettingController@AddStudent')->name('AddStudent')->middleware('RoutePermissionCheck:student.student_list');
+    Route::get('/newParent', 'StudentSettingController@AddParent')->name('AddParent')->middleware('RoutePermissionCheck:student.student_list');
     Route::post('/store', 'StudentSettingController@store')->name('student.store')->middleware('RoutePermissionCheck:student.store');
+    Route::post('/parent-store', 'StudentSettingController@parentStore')->name('parent.store')->middleware('RoutePermissionCheck:student.store');
     Route::get('/edit/{id}', 'StudentSettingController@edit')->middleware('RoutePermissionCheck:student.edit');
     Route::post('/update', 'StudentSettingController@update')->name('student.update')->middleware('RoutePermissionCheck:student.edit');
     Route::post('/destroy', 'StudentSettingController@destroy')->name('student.delete')->middleware('RoutePermissionCheck:student.delete');

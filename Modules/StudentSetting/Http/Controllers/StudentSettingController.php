@@ -3,11 +3,13 @@
 namespace Modules\StudentSetting\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\StudentParent;
 use App\User;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Modules\CourseSetting\Entities\CourseEnrolled;
@@ -40,6 +42,33 @@ class StudentSettingController extends Controller
             Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
             return redirect()->back();
         }
+    }
+
+    public function parentsIndex()
+    {
+        try {
+            $parents = StudentParent::latest()->get();
+            return view('studentsetting::parents_list', compact('parents'));
+
+        } catch (\Exception $e) {
+            Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
+            return redirect()->back();
+        }
+    }
+
+    public function AddStudent(){
+
+        $subjects = Subject::get();
+        $grades = Grade::get();
+
+        $title = 'New Student';
+        return view('studentsetting::student_new', compact('grades','subjects'));
+    }
+
+    public function AddParent(){
+
+        $title = 'New Parent';
+        return view('studentsetting::parent_new');
     }
 
     /**
@@ -120,6 +149,57 @@ class StudentSettingController extends Controller
             return redirect()->back();
 
         } catch (\Exception $e) {
+
+            Toastr::error(trans("lang.Oops, Something Went Wrong"), trans('common.Failed'));
+            return redirect()->back();
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function parentStore(Request $request)
+    {
+        Session::flash('type', 'store');
+
+        $request->validate([
+            'parent_name' => 'required',
+            'parent_ic' => 'required',
+            'student_name' => 'required',
+            'student_ic' => 'required',
+            'password' => 'required',
+//            'roll_number' => 'required|unique:users,roll_number',
+//            'nric' => 'required|unique:users,nric',
+//            'phone' => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:5|unique:users,phone',
+//            'email' => 'required|email|unique:users,email',
+//            'password' => 'required|min:8|confirmed',
+        ]);
+
+        try {
+            $data = StudentParent::create([
+                'parent_name' => $request->parent_name,
+                'parent_ic' => $request->parent_ic,
+                'parent_phone_no' => $request->parent_phone_no,
+                'parent_email' => $request->parent_email,
+                'username' => $request->parent_email,
+                'country' => getSetting()->country_id,
+                'state' => $request->state,
+                'district' => $request->district,
+                'city' => $request->city,
+                'post_code' => $request->post_code,
+                'house_address' => $request->house_address,
+                'student_name' => $request->student_name,
+                'student_ic' => $request->student_ic,
+                'school_name' => $request->school_name,
+                'password' => Hash::make($request->password),
+            ]);
+            if ($data) {
+                Toastr::success('Parent Registration Successful', 'Success');
+                return redirect()->back();
+            }
+        }catch (\Exception $e) {
 
             Toastr::error(trans("lang.Oops, Something Went Wrong"), trans('common.Failed'));
             return redirect()->back();

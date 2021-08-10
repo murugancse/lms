@@ -29,6 +29,21 @@
             </li>
         @endif
 
+            <li>
+                <a href="#" class="has-arrow" aria-expanded="false">
+                    <div class="nav_icon_small">
+                        <span class="fas fa-list"></span>
+                    </div>
+                    <div class="nav_title">
+                        <span>Parents</span>
+                    </div>
+                </a>
+                <ul id="parentlistul">
+                    <li id="parent_list">
+                        <a href="{{ route('student.parents_list') }}">Parents List</a>
+                    </li>
+                </ul>
+            </li>
 
         @if (permissionCheck('students'))
             @include('studentsetting::menu')
@@ -54,7 +69,7 @@
                     </div>
                 </a>
                 <ul>
-                   
+
                     @if (permissionCheck('getAllCourse'))
                         <li>
                             <a href="{{ route('getAllCourse') }}">{{ __('courses.All') }} {{ __('courses.Courses') }}</a>
@@ -82,14 +97,14 @@
             </li>
         @endif
 
-        @if (auth()->check()) 
-            @if (auth()->user()->role_id == 1) 
+        @if (auth()->check())
+            @if (auth()->user()->role_id == 1)
                 @if (permissionCheck('virtual-class'))
                     @include('virtualclass::menu')
                 @endif
             @endif
         @endif
-   
+
         @if (permissionCheck('quiz'))
             @include('quiz::menu')
         @endif
@@ -108,14 +123,14 @@
                     @if (permissionCheck('communication.PrivateMessage'))
                         <li>
                             <a href="{{ route('communication.PrivateMessage') }}">
-                                @if (auth()->user()->role_id == 1) 
+                                @if (auth()->user()->role_id == 1)
                                     Instructor Messages
                                 @else
                                     {{__('communication.Private Messages')}}
                                 @endif
                             </a>
                         </li>
-                        @if (auth()->user()->role_id == 1) 
+                        @if (auth()->user()->role_id == 1)
                         <li>
                             <a href="{{ route('communication.StudentMessage') }}">Student Messages</a>
                         </li>
@@ -220,7 +235,7 @@
             @endif
         @endif
 
-        
+
 
 
         @if (permissionCheck('blog'))
@@ -258,7 +273,7 @@
                 </ul>
             </li>
         @endif
-        
+
         @if (permissionCheck('settings'))
             <li>
                 <a href="#" class="has-arrow" aria-expanded="false">
