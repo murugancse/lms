@@ -29,7 +29,7 @@
                     <ul class="d-flex float-right">
                         <li><a class="primary-btn radius_30px mr-10 fix-gr-bg" id="add_student_btn" href="{{asset('storage/app/parents/sample.xlsx')}}"><i
                                                 class="ti-arrow-down"></i>Download Sample</a></li>
-                        <li><a class="primary-btn radius_30px mr-10 fix-gr-bg" id="add_student_btn" href="{{route('student.importview')}}"><i
+                        <li><a class="primary-btn radius_30px mr-10 fix-gr-bg" id="add_student_btn" href="{{route('parent.importview')}}"><i
                                                 class="ti-arrow-up"></i>Upload</a></li>
                     </ul>
                     <br>

@@ -16,7 +16,9 @@ Route::group(['prefix' => 'admin/student', 'middleware' => ['auth', 'admin']], f
     Route::post('/enrol_update', 'StudentSettingController@EnrolUpdate')->name('enrol.update');
 
     Route::get('importExportView', 'StudentSettingController@importExportView')->name('student.importview');
+    Route::get('parentImportExportView', 'StudentSettingController@ParentimportView')->name('parent.importview');
 	Route::post('import', 'StudentSettingController@import')->name('import');
+	Route::post('parent_import', 'StudentSettingController@importParent')->name('parent.import');
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function () {

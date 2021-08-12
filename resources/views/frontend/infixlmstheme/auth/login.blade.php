@@ -80,7 +80,7 @@
             <h5 class="shitch_text">{{__("frontend.Don’t have an account")}}? <a href="{{route('register')}}">
                     {{__('common.Register')}}
                 </a></h5>
-            <h5 class="shitch_text">{{__("Don’t have Parent Registration an account")}}? <a href="{{route('parent.register')}}">
+            <h5 class="shitch_text">{{__("Don’t have an Parent account")}}? <a href="{{route('parent.register')}}">
                     {{__('Parent Registeration')}}
                 </a></h5>
             @if(appMode())
