@@ -41,9 +41,14 @@ return [
             'provider' => 'users',
         ],
 
+        'parent' => [
+            'driver' => 'session',
+            'provider' => 'parents',
+        ],
+
         'api' => [
             'driver' => 'passport',
-            'provider' => 'users', 
+            'provider' => 'users',
         ],
     ],
 
@@ -68,6 +73,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\User::class,
+        ],
+
+        'parents' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\StudentParent::class,
         ],
 
         // 'users' => [

@@ -138,6 +138,10 @@
                                                     <li class="@if($menu->show==1) right_control_submenu @endif">
                                                     <a @if($menu->is_newtab==1) target="_blank"
                                                        @endif href="{{getMenuLink($menu->id)}}?type=1">Group Class</a>
+                                                       <li>
+                                                       <a @if($menu->is_newtab==1) target="_blank"
+                                                       @endif href="{{ 'blogs' }}">Blogs</a>
+                                                    </li>
                                                     @else
                                                     <a @if($menu->is_newtab==1) target="_blank"
                                                        @endif href="{{getMenuLink($menu->id)}}">{{$menu->title}}</a>

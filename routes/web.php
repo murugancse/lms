@@ -14,7 +14,10 @@ Route::get('parent-registration', 'Auth\RegisterController@ParentRegisterForm')-
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Route::post('parent-registration', 'Auth\RegisterController@ParentCreate')->name('parent.create');
 Route::post('/resend', '\App\Http\Controllers\Auth\VerificationController@resend_mail')->name('verification_mail_resend');
+Route::get('parent-login', '\App\Http\Controllers\Auth\LoginController@parentLogin')->name('parent.login');
+Route::post('parent-login', '\App\Http\Controllers\Auth\LoginController@LoginParent')->name('login.parent');
 
+Route::get('parent-dashboard', 'ParentController@dashboard')->name('parent.dashboard');
 
 Route::group(['namespace' => 'Frontend'], function () {
     Route::get('/', 'WebsiteController@index')->name('index');

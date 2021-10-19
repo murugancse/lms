@@ -8,10 +8,10 @@
                 </a>
             </div>
             <div class="login_wrapper_content">
-                <h4>{{__('frontend.Welcome back, Please login')}} <br>{{__('frontend.to your account')}} </h4>
+                <h4>Parent Login </h4>
 
 
-                <form action="{{route('login')}}" method="POST">
+                <form action="{{route('login.parent')}}" method="POST">
                     @csrf
                     <div class="row">
                         <div class="col-12">
@@ -77,9 +77,7 @@
                     </div>
                 </form>
             </div>
-            <h5 class="shitch_text">{{__("frontend.Don’t have an account")}}? <a href="{{route('register')}}">
-                    {{__('common.Register')}}
-                </a></h5>
+
             <h5 class="shitch_text">{{__("Don’t have an Parent account")}}? <a href="{{route('parent.register')}}">
                     {{__('Parent Registration')}}
                 </a></h5>

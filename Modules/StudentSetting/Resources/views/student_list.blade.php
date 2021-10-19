@@ -42,6 +42,8 @@
                             <h3 class="mb-0 mr-30 mb_xs_15px mb_sm_20px">{{__('student.Students List')}}</h3>
                             @if (permissionCheck('student.store'))
                                 <ul class="d-flex">
+{{--                                    <li><a href="{{route('AddStudent')}}" class="primary-btn radius_30px mr-10 fix-gr-bg"><i--}}
+{{--                                                class="ti-plus"></i>{{__('student.Add Student')}}</a></li>--}}
                                     <li><a class="primary-btn radius_30px mr-10 fix-gr-bg" data-toggle="modal" id="add_student_btn"
                                            data-target="#add_student" href="#"><i
                                                 class="ti-plus"></i>{{__('student.Add Student')}}</a></li>
@@ -70,10 +72,13 @@
                                     </tr>
                                     </thead>
                                     <tbody>
+                                    @php
+                                       // dd($students);
+                                    @endphp
                                     @foreach ($students as $key => $student)
                                         @php
                                             $courses = $student->enrollCourse;
-                
+
                                         @endphp
                                         <tr>
                                             <th>{{$key+1}}</th>
@@ -89,18 +94,18 @@
                                             <!-- <td>{{@$student->nric}}</td> -->
                                             <td>
                                                 <ul>
-                                                    
-                                               
+
+
                                                 @foreach($courses as $course)
                                                 <li style="list-style-type: circle;"> {{$course->title}}</li>
-                                                  
+
                                                 @endforeach
                                                  </ul>
                                             </td>
                                             <td class="nowrap">
                                                 <span id="spanstatus{{@$student->id }}">
-                                                    @if (@$student->status == 1) Active @else Inactive @endif 
-                                                </span> 
+                                                    @if (@$student->status == 1) Active @else Inactive @endif
+                                                </span>
                                                 <br>
                                                 <label class="switch_toggle" for="active_checkbox{{@$student->id }}">
                                                     <input type="checkbox"
@@ -169,7 +174,7 @@
                                                        value="{{ old('name') }}" {{$errors->first('name') ? 'autofocus' : ''}}>
                                             </div>
                                         </div>
-                                       
+
                                     </div>
                                     <div class="row">
                                         <div class="col-xl-6">
@@ -231,7 +236,7 @@
                                                 @foreach($grades as $grade)
                                                 <option value="{{$grade->id}}">{{$grade->title}}</option>
                                                 @endforeach
-                                                
+
                                             </select>
                                         </div>
                                     </div>
@@ -246,7 +251,7 @@
                                                        type="text" {{$errors->first('phone') ? 'autofocus' : ''}}>
                                             </div>
                                         </div>
-                                       
+
                                         <div class="col-xl-6">
                                             <div class="primary_input mb-35">
                                                 <label class="primary_input_label" for="">{{__('common.Image')}}
@@ -278,7 +283,7 @@
                                                        type="email">
                                             </div>
                                         </div>
-                                        
+
                                     </div>
 
                                     <div class="row">
@@ -318,8 +323,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                   
+
+
                                     <div class="col-lg-12 text-center pt_15">
                                         <div class="d-flex justify-content-center">
                                             <button class="primary-btn semi_large2  fix-gr-bg" id="save_button_parent"
@@ -429,10 +434,10 @@
                                                 @foreach($grades as $grade)
                                                 <option value="{{$grade->id}}">{{$grade->title}}</option>
                                                 @endforeach
-                                                
+
                                             </select>
                                         </div>
-                                        
+
                                     </div>
                                     <div class="row">
 
@@ -486,7 +491,7 @@
                                                        placeholder="-" type="email">
                                             </div>
                                         </div>
-                                        
+
                                     </div>
                                     <div class="row">
 
@@ -531,8 +536,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                   
+
+
                                     <div class="col-lg-12 text-center pt_15">
                                         <div class="d-flex justify-content-center">
                                             <button class="primary-btn semi_large2  fix-gr-bg"

@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\BillingDetails;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PaymentController;
+use App\Mail\SendMailableFeedback;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Modules\Coupons\Entities\Coupon;
 use Modules\Coupons\Entities\UserWiseCoupon;
 use Modules\Coupons\Entities\UserWiseCouponSetting;
@@ -26,6 +28,8 @@ use Modules\Payment\Entities\Cart;
 use Modules\Payment\Entities\Checkout;
 use Modules\Payment\Entities\InstructorPayout;
 use Modules\PaymentMethodSetting\Entities\PaymentMethod;
+use Modules\Setting\Model\GeneralSetting;
+use Modules\StudentSetting\Entities\BookmarkCourse;
 use Modules\SystemSetting\Entities\GeneralSettings;
 use Modules\Certificate\Entities\Certificate;
 use Illuminate\Support\Facades\Validator;
@@ -1586,7 +1590,7 @@ class WebsiteApiController extends Controller
        // $lesson = Lesson::where('id', $lesson_id)->first();
         //$lesson->is_lock;
         $isEnrolled = false;
-        
+
 
         if (!isEnrolled($course_id, Auth::id())) {
             if ($lesson->is_lock == 1) {
@@ -1721,7 +1725,7 @@ class WebsiteApiController extends Controller
         $data['certificate'] = $certificate;
         $data['lesson'] = $lesson;
         $data['lessons'] = $lessons;
-        
+
         if ($course) {
             $response = [
                 'success' => true,
@@ -1747,12 +1751,12 @@ class WebsiteApiController extends Controller
             $id = $request->input('course_id');
             $quiz_id = $request->input('quiz_id');
             $user = Auth::user();
-            
+
 
             if (Auth::check() && isEnrolled($id, $user->id)) {
-                
+
                 $data['course'] = Course::where('courses.id', $id)->first();
-                
+
                 //$data['quiz'] = OnlineQuiz::where('id', $quiz_id)->with('assign')->first();
                 $data['quiz'] = OnlineQuiz::where('id', $quiz_id)->first();
                 $data['questions'] = DB::table('question_banks as q')->select('q.*')
@@ -1765,9 +1769,9 @@ class WebsiteApiController extends Controller
                     $options = QuestionBankMuOption::where('question_bank_id',$question->id)->get();
                     $question->options = $options;
                 }
-                
+
                 $data['quizSetup'] = QuizeSetup::first();
-               
+
                 $response = [
                     'success' => true,
                     'data' => $data,
@@ -1812,10 +1816,10 @@ class WebsiteApiController extends Controller
             $question_review = $setting->question_review;
             $show_result_each_submit = $setting->show_result_each_submit;
 
-            $str_arr = explode ("|", $answer); 
-            
-            $str_options = explode ("|", $answer_type); 
-           
+            $str_arr = explode ("|", $answer);
+
+            $str_options = explode ("|", $answer_type);
+
             $quiz = new QuizTest();
             $quiz->user_id = $userId;
             $quiz->course_id = $courseId;
@@ -1840,7 +1844,7 @@ class WebsiteApiController extends Controller
                 }
             }
 
-            
+
             // if(count($allAns)>0){
             //     foreach ($allAns as $itemArr) {
             //         foreach ($itemArr as $item) {
@@ -1868,15 +1872,15 @@ class WebsiteApiController extends Controller
             //         }
             //     }
             // }
-            
+
             // if($allAnswer != null){
             //     foreach ($allAnswer as $item) {
-                    
+
             //         $ans = $item;
 
             //         if ($courseId && !empty($allAnswer)) {
             //             $quizDetails = new QuizTestDetails();
-                        
+
             //             $quizDetails->quiz_test_id = $quiz->id;
             //             $quizDetails->qus_id = $qus;
             //             $quizDetails->ans_id = 0;
@@ -1890,7 +1894,7 @@ class WebsiteApiController extends Controller
             //     }
             // }
 
-            
+
 
             return $this->quizResult($quiz->id);
             // $response = [
@@ -1945,7 +1949,7 @@ class WebsiteApiController extends Controller
                                 }
                             }
                         }
-                        
+
 
                     }
                 }
@@ -1982,17 +1986,17 @@ class WebsiteApiController extends Controller
                             //dd(ans)
                            if($ans!=null){
                             //echo "<pre>";
-                            
+
                                 if ($ans->status) {
                                    // print_r($ans->status);
                                     $totalCorrect++;
                                 }
                            }
-                            
-                            
+
+
                         }
                     }
-                    
+
                }
               // dd($totalCorrect);
                //dd($questions);
@@ -2035,6 +2039,61 @@ class WebsiteApiController extends Controller
         //     return redirect()->back();
         // }
     }
+
+    //speedup
+    // myWishlists Page
+    public function myWishlists()
+    {
+
+        try {
+
+            $bookmarks = BookmarkCourse::where('user_id', Auth::user()->id)
+                ->with('course', 'user', 'course.user', 'course.subCategory', 'course.lessons')->get();
+            $response = [
+                'success' => true,
+                'data' => $bookmarks,
+                'message' => 'My favorite Courses',
+            ];
+            return response()->json($response, 200);
+        } catch (\Exception $e) {
+            $response = [
+                'success' => false,
+                'message' => "Something went wrong",
+            ];
+            return response()->json($response, 500);
+        }
+    }
+
+    public function sendFeedback(Request $request)
+    {
+        $validator = Validator::make($request->all(),['message' => 'required']);
+        if ($validator->fails()) {
+            return response()->json( ['success' => false,'message' => $validator->messages() ]);
+        }
+
+        try {
+            //dd(Auth::user());
+
+            $message = $request->input('message');
+            $generalSetting = GeneralSetting::first();
+
+            $result =  Mail::to($generalSetting->email)->send(new SendMailableFeedback($message));
+
+            $response = [
+                'success' => true,
+                'message' => 'Successfully submitted!',
+            ];
+
+            return response()->json($response, 200);
+        } catch (\Exception $exception) {
+            $response = [
+                'success' => false,
+                'message' => $exception->getMessage()
+            ];
+            return response()->json($response, 500);
+        }
+    }
+
 
 
 }

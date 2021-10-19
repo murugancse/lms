@@ -147,7 +147,7 @@
 
 
             <h5 class="shitch_text">
-                {{__('common.You have already an account?')}} <a href="{{route('login')}}"> {{__('common.Login')}}</a>
+                {{__('common.You have already an account?')}} <a href="{{route('parent.login')}}"> Parent {{__('common.Login')}}</a>
 
             </h5>
         </div>

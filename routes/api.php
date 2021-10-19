@@ -31,13 +31,13 @@ Route::group([
     Route::get('/get-all-courses', 'CourseApiController@getAllCourses');
     Route::get('/get-popular-courses', 'CourseApiController@getPopularCourses');
     Route::get('/get-course-details/{id}', 'CourseApiController@getCourseDetails');
-    
-    
+
+
 
     Route::get('/top-categories', 'CourseApiController@topCategories');
     Route::get('/get-categories', 'CourseApiController@getCategories');
     Route::get('/search-course', 'CourseApiController@searchCourse');
-    
+
     Route::get('/payment-gateways', 'WebsiteApiController@paymentGateways');
     Route::get('/get-subjects', 'CourseApiController@getSubjects');
     Route::get('/get-grades', 'CourseApiController@getGrades');
@@ -50,6 +50,7 @@ Route::group([
     ], function () {
         //with login routes
         Route::get('/filter-course', 'CourseApiController@filterCourse');
+        Route::get('/upcoming-courses', 'CourseApiController@upcomingCourse');
         Route::post('/pay-course', 'CourseApiController@PaymentCourse');
         Route::get('/cart-list', 'WebsiteApiController@cartList');
         Route::get('/add-to-cart/{id}', 'WebsiteApiController@addToCart');
@@ -88,6 +89,9 @@ Route::group([
         Route::get('/my-billing-address', 'WebsiteApiController@myBilling');
 
         Route::post('lession-view', 'WebsiteApiController@fullScreenView');
+        Route::post('send-feedback', 'WebsiteApiController@sendFeedback');
+
+        Route::get('my-wishlist', 'WebsiteApiController@myWishlists')->name('myWishlists');
 
     });
 });

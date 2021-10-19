@@ -1,4 +1,5 @@
 @extends('frontend.infixlmstheme.layouts.master')
+
 @section('title'){{getSetting()->site_title ? getSetting()->site_title : 'Infix LMS'}} | {{__('frontendmanage.Home')}} @endsection
 @section('css') @endsection
 @section('js') @endsection
@@ -43,7 +44,6 @@
 
                             <div class="couses_category">
                                 <div class="row">
-
 
                                     <div class="col-xl-4 col-md-4">
                                         <div class="single_course_cat">

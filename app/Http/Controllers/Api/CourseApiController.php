@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Modules\CourseSetting\Entities\Category;
 use Modules\CourseSetting\Entities\Course;
 use Modules\CourseSetting\Entities\Chapter;
+use Modules\CourseSetting\Entities\CourseEnrolled;
 use Modules\CourseSetting\Entities\Subject;
 use Modules\CourseSetting\Entities\Grade;
 use App\User;
@@ -296,11 +297,22 @@ class CourseApiController extends Controller
         $user = Auth::user();
 
         $exist = Cart::where('user_id', $user->id)->where('course_id', $course_id)->first();
+        $existCourse = CourseEnrolled::where('user_id', $user->id)->where('course_id', $course_id)->first();
         $oldCart = Cart::where('user_id', $user->id)->first();
 
         if (isset($exist)) {
             $message = 'Course already added in your cart';
             $success = false;
+        } else if (isset($existCourse)) {
+            $message = 'Course already purchased';
+            $success = false;
+
+            $response = [
+                'success' => false,
+                'data' => [],
+                'message' => $message,
+            ];
+            return response()->json($response, 200);
         } else {
 
             if (isset($oldCart)) {
@@ -1371,6 +1383,30 @@ class CourseApiController extends Controller
                 'data' => $courses,
                 'total' => count($courses),
                 'message' => 'Getting Courses Data',
+            ];
+        } else {
+            $response = [
+                'success' => false,
+                'message' => 'No Course Found',
+            ];
+        }
+
+        return response()->json($response, 200);
+    }
+    public function upcomingCourse(Request $request)
+    {
+        $query = Course::whereHas('class', function($q){
+                  $q->where('start_date','>=', date('Y-m-d'));
+                })->where('status', 1)->where('type', 3);
+
+        $courses = $query->get();
+
+        if ($courses) {
+            $response = [
+                'success' => true,
+                'data' => $courses,
+                'total' => count($courses),
+                'message' => 'Getting Upcoming class Data',
             ];
         } else {
             $response = [

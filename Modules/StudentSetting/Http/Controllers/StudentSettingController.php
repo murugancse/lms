@@ -3,6 +3,7 @@
 namespace Modules\StudentSetting\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Imports\ParentsImport;
 use App\Models\StudentParent;
 use App\User;
 use Brian2694\Toastr\Facades\Toastr;
@@ -414,13 +415,34 @@ class StudentSettingController extends Controller
     {
        return view('studentsetting::import');
     }
+    public function ParentimportView()
+    {
+       return view('studentsetting::parent_import');
+    }
 
     /**
     * @return \Illuminate\Support\Collection
     */
     public function import()
     {
-        Excel::import(new StudentsImport,request()->file('file'));
+        try {
+            Excel::import(new StudentsImport,request()->file('file'));
+
+            Toastr::success(trans('common.Operation successful'), trans('common.Success'));
+            return redirect()->back();
+        }catch (\Exception $e) {
+            Toastr::error('Please check the sheet', trans('common.Failed'));
+            return redirect()->back();
+        }
+    }
+    /**
+    * @return \Illuminate\Support\Collection
+    */
+    public function importParent()
+    {
+        ini_set('memory_limit', -1);
+        ini_set('max_execution_time', 0);
+        Excel::import(new ParentsImport,request()->file('file'));
 
         Toastr::success(trans('common.Operation successful'), trans('common.Success'));
         return redirect()->back();

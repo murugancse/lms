@@ -173,6 +173,13 @@ class LoginController extends Controller
 
     }
 
+    public function parentLogin()
+    {
+        $page = LoginPage::first();
+        return view(theme('auth.parent-login'), compact('page'));
+
+    }
+
     /**
      * Handle a login request to the application.
      *
@@ -247,6 +254,36 @@ class LoginController extends Controller
         return $this->sendFailedLoginResponse($request);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\Response|void
+     * @throws ValidationException
+     */
+    public function LoginParent(Request $request)
+    {
+
+        $this->validateLogin($request);
+
+
+        if ($this->hasTooManyLoginAttempts($request)) {
+            $this->fireLockoutEvent($request);
+
+            return $this->sendLockoutResponse($request);
+        }
+
+        if (Auth::guard('parent')->attempt(['parent_email' => $request->email, 'password' => $request->password])) {
+            //dd(Auth::guard('parent')->user());
+
+            session(['role' => 'parent']);
+
+            return redirect()->intended('/parent-dashboard');
+        }
+
+        $this->incrementLoginAttempts($request);
+
+        return $this->sendFailedLoginResponse($request);
+    }
+
     public function multipleLogin($request)
     {
         $device_limit = getSetting()->device_limit;
@@ -286,6 +323,22 @@ class LoginController extends Controller
      * @throws \Illuminate\Validation\ValidationException
      */
     protected function validateLogin(Request $request)
+    {
+        $request->validate([
+            $this->username() => 'required|string',
+            'password' => 'required|string',
+        ]);
+    }
+
+    /**
+     * Validate the user login request.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return void
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    protected function validateParentLogin(Request $request)
     {
         $request->validate([
             $this->username() => 'required|string',

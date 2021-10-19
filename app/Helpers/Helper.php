@@ -23,6 +23,7 @@ use Modules\Setting\Model\Currency;
 use Modules\StudentSetting\Entities\BookmarkCourse;
 use Modules\Subscription\Entities\SubscriptionCheckout;
 use Modules\SystemSetting\Entities\EmailTemplate;
+use Modules\Setting\Model\GeneralSetting;
 
 
 if (!function_exists('send_smtp_mail')) {
@@ -183,12 +184,14 @@ if (!function_exists('vimeoVideoEmbed')) {
 if (!function_exists('getSetting')) {
     function getSetting()
     {
-        try {
+        //try {
+        return GeneralSetting::first();
             return app('getSetting');
 
-        } catch (Exception $exception) {
-            return false;
-        }
+
+//        } catch (Exception $exception) {
+//            return false;
+//        }
     }
 }
 if (!function_exists('getVideoId')) {

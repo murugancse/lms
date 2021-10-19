@@ -3079,7 +3079,7 @@ class WebsiteController extends Controller
         // if($type!=''){
         //     $query->where('class_type', $type);
         // }
-       
+
 
         $order = $request->order;
         if (empty($order)) {
@@ -3578,7 +3578,7 @@ class WebsiteController extends Controller
             $quiz->save();
 
             //dd($allAns);
-            
+
             if(count($allAns)>0){
                 foreach ($allAns as $itemArr) {
                     foreach ($itemArr as $item) {
@@ -3606,15 +3606,15 @@ class WebsiteController extends Controller
                     }
                 }
             }
-            
+
             if($allAnswer != null){
                 foreach ($allAnswer as $item) {
-                    
+
                     $ans = $item;
 
                     if ($courseId && !empty($allAnswer)) {
                         $quizDetails = new QuizTestDetails();
-                        
+
                         $quizDetails->quiz_test_id = $quiz->id;
                         $quizDetails->qus_id = $qus;
                         $quizDetails->ans_id = 0;
@@ -3627,7 +3627,7 @@ class WebsiteController extends Controller
                     }
                 }
             }
-            
+
             //dd('done');
             Toastr::success('Successfully submitted', 'Success');
             return redirect()->route('getQuizResult', $quiz->id);
@@ -3675,7 +3675,7 @@ class WebsiteController extends Controller
                                 }
                             }
                         }
-                        
+
 
                     }
                 }
@@ -3712,17 +3712,17 @@ class WebsiteController extends Controller
                             //dd(ans)
                            if($ans!=null){
                             //echo "<pre>";
-                            
+
                                 if ($ans->status) {
                                    // print_r($ans->status);
                                     $totalCorrect++;
                                 }
                            }
-                            
-                            
+
+
                         }
                     }
-                    
+
                }
               // dd($totalCorrect);
                //dd($questions);
@@ -3909,7 +3909,7 @@ class WebsiteController extends Controller
             if(empty($certificate)){
                 $certificate = Certificate::where('for_course', 1)->first();
             }
-        } 
+        }
         else
             $certificate = Certificate::where('for_quiz', 1)->first();
 
