@@ -784,14 +784,14 @@ class WebsiteController extends Controller
                 $notification->save();
 
 
-                send_email($course->user, 'Course_comment', [
-                    'time' => Carbon::now()->format('d-M-Y, s:i A'),
-                    'course' => $course->title,
-                    'comment' => $comment->comment,
-                ]);
+//                send_email($course->user, 'Course_comment', [
+//                    'time' => Carbon::now()->format('d-M-Y, s:i A'),
+//                    'course' => $course->title,
+//                    'comment' => $comment->comment,
+//                ]);
 
                 Toastr::success(trans('common.Operation successful'), trans('common.Success'));
-                return redirect()->back();
+                return redirect('/courses-details/5/10th-science'.'?section=qa');
             } else {
                 Toastr::error('Invalid Action !', 'Failed');
                 return redirect()->back();
@@ -800,6 +800,65 @@ class WebsiteController extends Controller
             Toastr::error(trans('common.Operation failed'), trans('common.Failed'));
             return redirect()->back();
         }
+    }
+
+
+    public function saveAjaxComment(Request $request)
+    {
+        $request->validate([
+            'course_id' => 'required',
+            'comment' => 'required',
+        ]);
+
+
+        //try {
+            $course = Course::where('id', $request->course_id)->first();
+
+            if (isset($course)) {
+                $settings = GeneralSettings::first();
+                $comment = new CourseComment();
+                $comment->user_id = Auth::user()->id;
+                $comment->course_id = $request->course_id;
+                $comment->instructor_id = $course->user_id;
+                $comment->comment = $request->comment;
+                $comment->status = 1;
+                $comment->save();
+
+                $notification = new Notification();
+                $notification->author_id = Auth::user()->id;
+                $notification->user_id = $course->user_id;
+                $notification->course_id = $course->id;
+                $notification->course_comment_id = $comment->id;
+                $notification->save();
+
+//
+//                send_email($course->user, 'Course_comment', [
+//                    'time' => Carbon::now()->format('d-M-Y, s:i A'),
+//                    'course' => $course->title,
+//                    'comment' => $comment->comment,
+//                ]);
+
+                $response = [
+                    'success' => true,
+                    'data' => $comment,
+                    'message' => 'Your comment has submitted',
+                ];
+
+                return response()->json($response, 200);
+            } else {
+                $response = [
+                    'success' => false,
+                    'message' => "Something went wrong",
+                ];
+                return response()->json($response, 500);
+            }
+//        } catch (\Exception $e) {
+//            $response = [
+//                'success' => false,
+//                'message' => "Something went wrong",
+//            ];
+//            return response()->json($response, 500);
+//        }
     }
 
     public function submitCommnetReply(Request $request)
@@ -812,7 +871,6 @@ class WebsiteController extends Controller
         try {
             $comment = CourseComment::find($request->comment_id);
             $course = $comment->course;
-
 
             if (isset($course)) {
                 $settings = GeneralSettings::first();
@@ -830,17 +888,15 @@ class WebsiteController extends Controller
                 $comment->status = 1;
                 $comment->save();
 
-
-                send_email($course->user, 'Course_comment_Reply', [
-                    'time' => Carbon::now()->format('d-M-Y ,s:i A'),
-                    'course' => $course->title,
-                    'comment' => $comment->comment,
-                    'reply' => $comment->reply,
-                ]);
-
+//                send_email($course->user, 'Course_comment_Reply', [
+//                    'time' => Carbon::now()->format('d-M-Y ,s:i A'),
+//                    'course' => $course->title,
+//                    'comment' => $comment->comment,
+//                    'reply' => $comment->reply,
+//                ]);
 
                 Toastr::success(trans('common.Operation successful'), trans('common.Success'));
-                return redirect()->back();
+                return redirect('/courses-details/5/10th-science'.'?section=qa');
             } else {
                 Toastr::error('Invalid Action !', 'Failed');
                 return redirect()->back();

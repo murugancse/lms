@@ -4722,7 +4722,7 @@ input[type=number] {
     height: 18px;
     background: transparent;
     border-radius: 50%;
-    border: 1px solid #E9E7F7;
+    border: 1px solid #19191a;
     transition: .3s;
     transform: scale(1);
 }

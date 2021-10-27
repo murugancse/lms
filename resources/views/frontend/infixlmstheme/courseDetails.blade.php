@@ -109,13 +109,16 @@
                             <p>{{__('frontend.Preview this course')}}</p>
                         </div>
                     </div>
+                    @php
+                        //dd(request()->section);
+                    @endphp
                     <div class="row">
                         <div class="col-xl-8 col-lg-8">
                             <div class="course_tabs text-center">
                                 <ul class="w-100 nav lms_tabmenu justify-content-between  mb_55" id="myTab"
                                     role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active" id="Overview-tab" data-toggle="tab" href="#Overview"
+                                        <a class="nav-link @if(!isset(request()->section)) active @endif" id="Overview-tab" data-toggle="tab" href="#Overview"
                                            role="tab" aria-controls="Overview"
                                            aria-selected="true">{{__('frontend.Overview')}}</a>
                                     </li>
@@ -135,14 +138,14 @@
                                            aria-selected="false">{{__('frontend.Reviews')}}</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="QA-tab" data-toggle="tab" href="#QASection"
+                                        <a class="nav-link @if(isset(request()->section) && request()->section=='qa') active @endif" id="QA-tab" data-toggle="tab" href="#QASection"
                                            role="tab" aria-controls="Instructor"
                                            aria-selected="false">{{__('frontend.QA')}}</a>
                                     </li>
                                 </ul>
                             </div>
                             <div class="tab-content lms_tab_content" id="myTabContent">
-                                <div class="tab-pane fade show active " id="Overview" role="tabpanel"
+                                <div class="tab-pane fade show  @if(!isset(request()->section)) active @endif " id="Overview" role="tabpanel"
                                      aria-labelledby="Overview-tab">
                                     <!-- content  -->
                                     <div class="course_overview_description">
@@ -881,9 +884,11 @@
                                     </div>
                                     <!-- content  -->
                                 </div>
-                                <div class="tab-pane fade " id="QASection" role="tabpanel" aria-labelledby="QA-tab">
+                                <div class="tab-pane fade @if(isset(request()->section) && request()->section=='qa') active show @endif" id="QASection" role="tabpanel" aria-labelledby="QA-tab">
                                     <!-- content  -->
-
+                                    @php
+                                        //dd(Auth::user()->name);
+                                    @endphp
                                     <div class="conversition_box">
                                         @if(isset($course->comments))
                                             @foreach ($course->comments as $comment)
@@ -1077,10 +1082,10 @@
                                                 </div>
                                             @endforeach
                                         @endif
-                                        <div class="row">
+                                        <div class="row" id="CommentFormdiv">
                                             @if ($isEnrolled)
                                                 <div class="col-lg-12 " id="mainComment">
-                                                    <form action="{{route('saveComment')}}" method="post" class="">
+                                                    <form action="{{ route('saveComment') }}" id="commentform" method="post" class="">
                                                         @csrf
                                                         <input type="hidden" name="course_id" value="{{@$course->id}}">
                                                         <div class="row">
@@ -1091,7 +1096,7 @@
                                                             </div>
                                                             <div class="col-lg-12">
                                                                 <div class="single_input mb_25">
-                                                                                        <textarea
+                                                                                        <textarea id="commentdesc"
                                                                                             placeholder="{{__('frontend.Leave a question/comment') }}"
                                                                                             name="comment"
                                                                                             class="primary_textarea gray_input"></textarea>
@@ -1099,7 +1104,7 @@
                                                             </div>
                                                             <div class="col-lg-12 mb_30">
 
-                                                                <button type="submit"
+                                                                <button id="commentSection" type="submit"
                                                                         class="theme_btn height_50">
                                                                     <i class="fas fa-comments"></i>
                                                                     {{__('frontend.Question') }}/
@@ -1305,5 +1310,21 @@
         function deleteCommnet(item) {
             $('#deleteCommentForm').attr('action', item);
         }
+
+        $("#commentSection").click(function(){
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('saveAjaxComment') }}",
+                data: $("#commentform").serialize(),
+                success:function(data){
+                    console.log(data.data);
+                    var commentData = data.data;
+                    var imagepath = 'https://localhost/lms/lmsdevthambi/public/demo/user/admin.jpg';
+                    $("#commentdesc").val('');
+                    $("<div class='single_comment_box'> <div class='comment_box_inner'> <div class='comment_box_info'> <div class='thumb'> <div class='profile_info profile_img collaps_icon d-flex align-items-center'> <div class='studentProfileThumb' style='background-image: url("+imagepath+");margin: 0'></div> </div> </div> <div class='comment_box_text link'> <a class='position_right reply_btn   ' data-comment='9' href='#'> Reply <i class='fas fa-chevron-right'></i> </a> <a href='#'> <h5>{{ Auth::user()->name }}</h5> </a> <span>43 seconds ago </span> <p>"+commentData.comment+"</p> </div> </div> </div> <div class='d-none inputForm comment_box_inner comment_box_inner_reply reply_form_9'> <form action='"+{{route('submitCommnetReply')}}+"' method='post'> <input type='hidden' name='_token' value='bN9hV128USWQa4NxU28bI0JgV9a1Ao8JLOrfZz2j'> <input type='hidden' name='comment_id' value='9'> <div class='row'> <div class='col-lg-12'> <div class='single_input mb_25'> <textarea placeholder='Leave a reply' rows='2' name='reply' class='primary_textarea gray_input h-25'></textarea> </div> </div> <div class='col-lg-12 mb_30'> <button type='submit' class='theme_btn small_btn4'> <i class='fas fa-reply'></i> Reply </button> </div> </div> </form> </div> </div>").insertBefore("#CommentFormdiv");
+                    alert(data.success);
+                }
+            });
+        });
     </script>
 @endsection

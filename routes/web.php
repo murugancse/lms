@@ -122,6 +122,7 @@ Route::group(['prefix' => 'subscription', 'middleware' => ['auth']], function ()
 
 Route::group(['namespace' => 'Frontend'], function () {
     Route::post('comment', 'WebsiteController@saveComment')->name('saveComment');
+    Route::post('ajaxcomment', 'WebsiteController@saveAjaxComment')->name('saveAjaxComment');
     Route::post('comment-replay', 'WebsiteController@submitCommnetReply')->name('submitCommnetReply');
 
     Route::post('comment-delete/{id}', 'WebsiteController@deleteComment')->name('deleteComment')->middleware('auth');
